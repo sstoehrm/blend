@@ -1,0 +1,15 @@
+{
+  "name": "soeren-skills",
+  "description": "Sören's personal Claude Code skills",
+  "owner": {
+    "name": "Sören Stöhrmann",
+    "email": "soeren.stoehrmann@googlemail.com"
+  },
+  "plugins": [
+    {
+      "name": "skills",
+      "source": "./plugins/skills",
+      "description": "Collection of personal skills"
+    }
+  ]
+}
