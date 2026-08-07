@@ -1,4 +1,4 @@
-# skills
+# blend
 
 Personal Claude Code skills, packaged as a plugin marketplace.
 
@@ -17,9 +17,9 @@ plugins/skills/                     # the "skills" plugin
 Add the marketplace (from a local checkout or a git remote):
 
 ```bash
-claude plugin marketplace add ~/repos/private/skills
-# or, once pushed to a remote:
-claude plugin marketplace add <owner>/<repo>
+claude plugin marketplace add ~/repos/private/blend
+# or from GitHub:
+claude plugin marketplace add sstoehrm/blend
 ```
 
 Install the skills plugin:
@@ -31,7 +31,7 @@ claude plugin install skills@soeren-skills --scope user
 Or in a Claude Code session:
 
 ```
-/plugin marketplace add ~/repos/private/skills
+/plugin marketplace add ~/repos/private/blend
 /plugin install skills@soeren-skills
 ```
 

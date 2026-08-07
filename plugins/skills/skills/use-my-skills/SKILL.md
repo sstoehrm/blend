@@ -1,5 +1,5 @@
 ---
-name: use-my-skills
+name: use-blend
 description: Use when starting any coding, design, debugging, or writing task â€” before clarifying questions, exploration, or implementation. Establishes communication style, verification habits, and which skill to route each phase of work through.
 ---
 
@@ -8,6 +8,15 @@ description: Use when starting any coding, design, debugging, or writing task â€
 How to work and which skill to route each phase through. Always prefer the
 most specific available skill over improvising; if a referenced skill is not
 installed on this machine, apply its core principle inline instead.
+
+## Ideas
+
+- Use simple viz to generate a figure
+- translate this into a spec with superpowers
+- Might amend the figure after having the spec
+- continue normal flow
+
+- Blend because we blend multiple skills
 
 ## Communication Style
 
