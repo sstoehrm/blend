@@ -6,8 +6,9 @@ Personal Claude Code skills, packaged as a plugin marketplace.
 
 ```
 .claude-plugin/marketplace.json     # marketplace catalog
-plugins/skills/                     # the "skills" plugin
+plugins/blend/                      # the "blend" plugin
 ├── .claude-plugin/plugin.json
+├── hooks/hooks.json                # SessionStart: injects use-blend
 └── skills/
     └── <skill-name>/SKILL.md       # one directory per skill
 ```
@@ -25,14 +26,14 @@ claude plugin marketplace add sstoehrm/blend
 Install the skills plugin:
 
 ```bash
-claude plugin install skills@soeren-skills --scope user
+claude plugin install blend@soeren-skills --scope user
 ```
 
 Or in a Claude Code session:
 
 ```
 /plugin marketplace add ~/repos/private/blend
-/plugin install skills@soeren-skills
+/plugin install blend@soeren-skills
 ```
 
 After editing skills, pick up changes with:
@@ -43,7 +44,7 @@ claude plugin marketplace update soeren-skills
 
 ## Adding a skill
 
-Create `plugins/skills/skills/<skill-name>/SKILL.md`:
+Create `plugins/blend/skills/<skill-name>/SKILL.md`:
 
 ```markdown
 ---

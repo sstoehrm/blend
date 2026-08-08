@@ -3,20 +3,17 @@ name: use-blend
 description: Use when starting any coding, design, debugging, or writing task — before clarifying questions, exploration, or implementation. Establishes communication style, verification habits, and which skill to route each phase of work through.
 ---
 
-# Use My Skills
+# Use Blend
 
-How to work and which skill to route each phase through. Always prefer the
-most specific available skill over improvising; if a referenced skill is not
-installed on this machine, apply its core principle inline instead.
+How to work and which skill to route each phase through. Blend skills blend
+multiple skills into one workflow. Always prefer the most specific available
+skill over improvising; if a referenced skill is not installed on this
+machine, apply its core principle inline instead.
 
-## Ideas
-
-- Use simple viz to generate a figure
-- translate this into a spec with superpowers
-- Might amend the figure after having the spec
-- continue normal flow
-
-- Blend because we blend multiple skills
+Where this overlaps with superpowers' using-superpowers routing, this skill
+supersedes it: brainstorming always goes through blend:brainstorming (which
+itself loads superpowers:brainstorming), never superpowers:brainstorming
+directly.
 
 ## Communication Style
 
@@ -60,9 +57,10 @@ prevents data loss, security, accessibility, anything explicitly requested.
 
 | Phase                   | Route through                                                                                                                         | Loop until                               |
 | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------- |
-| New feature / idea      | superpowers:brainstorming                                                                                                             | design agreed with user                  |
+| New feature / idea      | blend:brainstorming (loads superpowers:brainstorming, adds spec figure)                                                               | design agreed with user                  |
+| Architecture overview   | blend:deduce                                                                                                                          | user confirms concept graph              |
 | Writing/editing a skill | superpowers:writing-skills                                                                                                            | subagent tests pass                      |
-| Design + mock-ups       | superpowers:brainstorming, then artifact-design / dataviz for the mock-up                                                             | reviewer satisfied                       |
+| Design + mock-ups       | blend:brainstorming, then artifact-design / dataviz for the mock-up                                                                   | reviewer satisfied                       |
 | Spec                    | superpowers:writing-plans                                                                                                             | reviewer satisfied                       |
 | Implementation plan     | plan mode + superpowers:writing-plans                                                                                                 | reviewer satisfied                       |
 | Implementation          | superpowers:executing-plans or subagent-driven-development, with test-driven-development                                              | tests green, per-task review clean       |
@@ -70,4 +68,4 @@ prevents data loss, security, accessibility, anything explicitly requested.
 | Code review             | /code-review for the working diff (/review for GitHub PRs), then /simplify; /security-review when auth, input, or secrets are touched | no blocking findings                     |
 | Finishing               | superpowers:verification-before-completion, then finishing-a-development-branch                                                       | evidence shown, not asserted             |
 
-Phases marked "reviewer satisfied" run the writer-reviewer-loop skill.
+Phases marked "reviewer satisfied" run the blend:writer-reviewer-loop skill.

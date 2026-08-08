@@ -7,9 +7,9 @@
   },
   "plugins": [
     {
-      "name": "skills",
-      "source": "./plugins/skills",
-      "description": "Collection of personal skills"
+      "name": "blend",
+      "source": "./plugins/blend",
+      "description": "Sören's workflow skills — blends superpowers, simpleviz, and review loops"
     }
   ]
 }

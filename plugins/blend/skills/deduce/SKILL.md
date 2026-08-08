@@ -1,0 +1,48 @@
+---
+name: deduce
+description: Use when creating or updating a project's concept graph (superficial architecture view) from its code, a plan, or a spec — or when the user asks how the system fits together.
+---
+
+# Deduce
+
+Deduce the project's concepts from evidence and maintain them as a simpleviz
+graph at `.blend/concept.edn` in the target project. Superficial by intent:
+concepts, subsystems, and flows — not classes or files. Target 10–30 nodes;
+if a node wouldn't appear in a whiteboard explanation of the system, it
+doesn't belong.
+
+Simpleviz setup and EDN format: read
+[../brainstorming/simpleviz.md](../brainstorming/simpleviz.md).
+
+## Process
+
+1. **Load current state.** Read `.blend/concept.edn` if it exists — you are
+   updating, not rebuilding. Never silently drop existing nodes.
+2. **Gather evidence.** Dispatch Explore subagents over the codebase (entry
+   points, module boundaries, build config, data stores, external services).
+   When invoked from blend:brainstorming, the approved spec is the primary
+   evidence and a full code sweep is unnecessary.
+3. **Propose concepts.** Diff findings against the current graph. Present
+   proposed additions/removals/changes to the user (AskUserQuestion,
+   multiSelect) with one line of evidence each — the user decides what is a
+   concept in their architecture, you decide what the code says.
+4. **Update and show.** Apply the accepted changes to `.blend/concept.edn`,
+   serve it with simpleviz, give the user the URL. Node `:type` examples:
+   service, store, ui, external. Edge = real dependency or data flow you can
+   point to; box = subsystem/zone grouping.
+5. **Validate.** Dispatch a reviewer subagent with the graph and repo access:
+   for each node/edge, name the file(s) that evidence it; flag anything
+   unsupported, plus obvious concepts the graph missed. Fix findings; take
+   new concept candidates back to step 3.
+6. **Loop** steps 3–5 until the user confirms the graph and the reviewer has
+   no unsupported elements. Then commit `.blend/concept.edn`.
+
+## Common Mistakes
+
+- File-tree mirroring: one node per directory is a listing, not a deduction.
+- Edges from imports alone — an import that carries no meaningful dependency
+  or data flow is noise.
+- Rebuilding from scratch when a graph exists; history and user decisions
+  live in that file.
+- Skipping validation because the graph "looks right" — every element needs
+  evidence a reviewer could check.
