@@ -15,6 +15,19 @@ supersedes it: brainstorming always goes through blend:brainstorming (which
 itself loads superpowers:brainstorming), never superpowers:brainstorming
 directly.
 
+## Dependencies
+
+Check lazily — verify a dependency right before the first phase that needs
+it, not at session start. If one is missing, give the user the fix below
+and wait; fall back to inline principles only if they decline to install.
+
+| Dependency         | Check                              | Fix                                                                        |
+| ------------------ | ---------------------------------- | -------------------------------------------------------------------------- |
+| superpowers plugin | superpowers:* in the skill list    | `/plugin install superpowers@claude-plugins-official`                       |
+| simpleviz skill    | simpleviz:simpleviz in skill list  | `/plugin install simpleviz@simpleviz`                                       |
+| simpleviz launcher | `simpleviz --version`              | `curl -fsSL https://raw.githubusercontent.com/sstoehrm/simpleviz/main/install.sh \| bash`; later: `simpleviz update` |
+| babashka           | `command -v bb`                    | https://github.com/babashka/babashka#installation                           |
+
 ## Communication Style
 
 - Concise and direct. No filler praise, no hedging, no sycophancy. Dry wit

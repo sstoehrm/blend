@@ -7,12 +7,11 @@ description: Use when creating or updating a project's concept graph (superficia
 
 Deduce the project's concepts from evidence and maintain them as a simpleviz
 graph at `.blend/concept.edn` in the target project. Superficial by intent:
-concepts, subsystems, and flows — not classes or files. Target 10–30 nodes;
-if a node wouldn't appear in a whiteboard explanation of the system, it
-doesn't belong.
+concepts, subsystems, and flows — not classes or files. If a node wouldn't
+appear in a whiteboard explanation of the system, it doesn't belong.
 
-Simpleviz setup and EDN format: read
-[../brainstorming/simpleviz.md](../brainstorming/simpleviz.md).
+**REQUIRED SUB-SKILL:** load simpleviz:simpleviz for the EDN format and
+how to serve.
 
 ## Process
 
@@ -27,7 +26,9 @@ Simpleviz setup and EDN format: read
    multiSelect) with one line of evidence each — the user decides what is a
    concept in their architecture, you decide what the code says.
 4. **Update and show.** Apply the accepted changes to `.blend/concept.edn`,
-   serve it with simpleviz, give the user the URL. Node `:type` examples:
+   serve it with simpleviz, give the user the URL. When updating an
+   existing graph, serve compare mode instead (old committed version vs
+   new, via `git show`) so the user reviews the diff, not the whole graph. Node `:type` examples:
    service, store, ui, external. Edge = real dependency or data flow you can
    point to; box = subsystem/zone grouping.
 5. **Validate.** Dispatch a reviewer subagent with the graph and repo access:

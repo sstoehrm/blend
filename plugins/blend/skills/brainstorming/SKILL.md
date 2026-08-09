@@ -15,12 +15,14 @@ do not replace it.
 **1. Draw the design as you present it.** When you reach "Present design"
 in the superpowers checklist, also express the design as a simpleviz graph:
 components as nodes, dependencies/data flow as edges, subsystem groupings
-as boxes. Setup and EDN format: read [simpleviz.md](simpleviz.md).
+as boxes. **REQUIRED SUB-SKILL:** load simpleviz:simpleviz for the EDN
+format and how to serve.
 
 - Store the graph at `.blend/specs/YYYY-MM-DD-<topic>.edn` in the target
   project (same date and topic as the spec document).
-- Serve it and give the user the URL; the page live-reloads, so revise the
-  EDN in place as the design discussion changes it.
+- Serve it (`simpleviz <file>.edn`) and give the user the URL; the page
+  live-reloads, so revise the EDN in place as the design discussion
+  changes it.
 
 **2. Amend the figure after the spec is written.** The written spec is the
 source of truth. After the spec self-review passes, update the figure to
