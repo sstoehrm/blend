@@ -16,11 +16,19 @@ how to serve.
 ## Process
 
 1. **Load current state.** Read `.blend/concept.edn` if it exists — you are
-   updating, not rebuilding. Never silently drop existing nodes.
+   updating, not rebuilding. Never silently drop existing nodes. Also read
+   `.blend/concept-hash`: the repo commit the graph was last validated
+   against.
 2. **Gather evidence.** Dispatch Explore subagents over the codebase (entry
    points, module boundaries, build config, data stores, external services).
-   When invoked from blend:brainstorming, the approved spec is the primary
-   evidence and a full code sweep is unnecessary.
+   If `.blend/concept-hash` exists and git knows the commit, scope the
+   sweep: `git diff --name-status <hash>..HEAD` shows what changed since
+   the graph was last true — explore those areas, take the rest of the
+   graph as still-valid. The scope applies to the sweep only; step 5's
+   reviewer still validates every element. No hash, or a hash git can't resolve (rebase,
+   squash): full sweep. When invoked from blend:brainstorming, the
+   approved spec is the primary evidence and a full code sweep is
+   unnecessary.
 3. **Propose concepts.** Diff findings against the current graph. Present
    proposed additions/removals/changes to the user (AskUserQuestion,
    multiSelect) with one line of evidence each — the user decides what is a
@@ -39,7 +47,10 @@ how to serve.
    unsupported, plus obvious concepts the graph missed. Fix findings; take
    new concept candidates back to step 3.
 6. **Loop** steps 3–5 until the user confirms the graph and the reviewer has
-   no unsupported elements. Then commit `.blend/concept.edn`.
+   no unsupported elements. Then write `git rev-parse HEAD` to
+   `.blend/concept-hash` and commit it together with `.blend/concept.edn`
+   (the hash is the commit the evidence was gathered from — the graph
+   commit's parent).
 
 ## Common Mistakes
 
