@@ -29,19 +29,21 @@ source of truth. After the spec self-review passes, update the figure to
 match the final spec exactly, then commit the `.edn` together with the spec
 document.
 
-**3. Fold the design into the concept graph.** After the user approves the
-spec, invoke blend:deduce to integrate the new components into the
-project's concept graph. If the user defers this, add a TODO line to the
-spec document instead so it isn't lost.
+**3. Fold the design into the concept graph — optional.** After the user
+approves the spec, ask (AskUserQuestion) whether to integrate the new
+components into the project's concept graph now, or skip it. If they
+integrate, invoke blend:deduce. If they skip, add a TODO line to the spec
+document so it isn't lost, and continue to writing-plans.
 
-The concept graph is a review gate, not a formality: it is the first view
-of the design in context of the whole system. If integration reveals a
-misfit — wrong boundary, duplicated concept, an unwanted dependency — the
-spec reopens: revise it, re-run the spec self-review and user review gate,
-update the spec figure, then re-integrate.
+When it runs, the concept graph is a review gate, not a formality: it is
+the first view of the design in context of the whole system. If
+integration reveals a misfit — wrong boundary, duplicated concept, an
+unwanted dependency — the spec reopens: revise it, re-run the spec
+self-review and user review gate, update the spec figure, then
+re-integrate.
 
-Continue to superpowers:writing-plans only once both the spec and the
-concept graph are accepted.
+Continue to superpowers:writing-plans once the spec is accepted and —
+unless the user skipped it — the concept graph too.
 
 ## Judgment
 
