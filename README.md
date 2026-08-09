@@ -70,14 +70,14 @@ Add the marketplace and install the plugin:
 
 ```bash
 claude plugin marketplace add sstoehrm/blend
-claude plugin install blend@soeren-skills --scope user
+claude plugin install blend@blend --scope user
 ```
 
 Or in a Claude Code session:
 
 ```
 /plugin marketplace add sstoehrm/blend
-/plugin install blend@soeren-skills
+/plugin install blend@blend
 ```
 
 The marketplace tracks GitHub, so picking up skill edits means publishing
@@ -85,7 +85,7 @@ them first:
 
 ```bash
 git push                                        # publish the edits
-claude plugin marketplace update soeren-skills  # pull them into the cache
+claude plugin marketplace update blend          # pull them into the cache
 ```
 
 Skills and the SessionStart hook register at session start — restart the
