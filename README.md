@@ -66,32 +66,30 @@ plugins/blend/                      # the "blend" plugin
 
 ## Usage
 
-Add the marketplace (from a local checkout or a git remote):
+Add the marketplace and install the plugin:
 
 ```bash
-claude plugin marketplace add ~/repos/private/blend
-# or from GitHub:
 claude plugin marketplace add sstoehrm/blend
-```
-
-Install the blend plugin:
-
-```bash
 claude plugin install blend@soeren-skills --scope user
 ```
 
 Or in a Claude Code session:
 
 ```
-/plugin marketplace add ~/repos/private/blend
+/plugin marketplace add sstoehrm/blend
 /plugin install blend@soeren-skills
 ```
 
-After editing skills, pick up changes with:
+The marketplace tracks GitHub, so picking up skill edits means publishing
+them first:
 
 ```bash
-claude plugin marketplace update soeren-skills
+git push                                        # publish the edits
+claude plugin marketplace update soeren-skills  # pull them into the cache
 ```
+
+Skills and the SessionStart hook register at session start — restart the
+session (or `/clear`) after updating.
 
 ## Adding a skill
 
