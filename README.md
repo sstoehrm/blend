@@ -81,11 +81,13 @@ Or in a Claude Code session:
 ```
 
 The marketplace tracks GitHub, so picking up skill edits means publishing
-them first:
+them first — and bumping the version in `plugins/blend/.claude-plugin/plugin.json`,
+since the installed plugin only re-fetches on a version change:
 
 ```bash
-git push                                        # publish the edits
-claude plugin marketplace update blend          # pull them into the cache
+git push                                # publish the edits (version bumped)
+claude plugin marketplace update blend  # refresh the catalog
+claude plugin update blend@blend        # re-fetch the installed plugin
 ```
 
 Skills and the SessionStart hook register at session start — restart the
