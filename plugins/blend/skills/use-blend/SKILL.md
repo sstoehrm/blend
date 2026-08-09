@@ -21,12 +21,12 @@ Check lazily — verify a dependency right before the first phase that needs
 it, not at session start. If one is missing, give the user the fix below
 and wait; fall back to inline principles only if they decline to install.
 
-| Dependency         | Check                              | Fix                                                                        |
-| ------------------ | ---------------------------------- | -------------------------------------------------------------------------- |
-| superpowers plugin | superpowers:* in the skill list    | `/plugin install superpowers@claude-plugins-official`                       |
-| simpleviz skill    | simpleviz:simpleviz in skill list  | `/plugin install simpleviz@simpleviz`                                       |
-| simpleviz launcher | `simpleviz --version`              | `curl -fsSL https://raw.githubusercontent.com/sstoehrm/simpleviz/main/install.sh \| bash`; later: `simpleviz update` |
-| babashka           | `command -v bb`                    | https://github.com/babashka/babashka#installation                           |
+| Dependency         | Check                             | Fix                                                                                                                  |
+| ------------------ | --------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| superpowers plugin | superpowers:* in the skill list   | `/plugin install superpowers@claude-plugins-official`                                                                |
+| simpleviz skill    | simpleviz:simpleviz in skill list | `/plugin install simpleviz@simpleviz`                                                                                |
+| simpleviz launcher | `simpleviz --version`             | `curl -fsSL https://raw.githubusercontent.com/sstoehrm/simpleviz/main/install.sh \| bash`; later: `simpleviz update` |
+| babashka           | `command -v bb`                   | https://github.com/babashka/babashka#installation                                                                    |
 
 ## Communication Style
 
@@ -80,5 +80,3 @@ prevents data loss, security, accessibility, anything explicitly requested.
 | Bug / failing test      | superpowers:systematic-debugging                                                                                                      | root cause found, regression test passes |
 | Code review             | /code-review for the working diff (/review for GitHub PRs), then /simplify; /security-review when auth, input, or secrets are touched | no blocking findings                     |
 | Finishing               | superpowers:verification-before-completion, then finishing-a-development-branch                                                       | evidence shown, not asserted             |
-
-Phases marked "reviewer satisfied" run the blend:writer-reviewer-loop skill.

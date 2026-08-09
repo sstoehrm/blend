@@ -34,7 +34,14 @@ spec, invoke blend:deduce to integrate the new components into the
 project's concept graph. If the user defers this, add a TODO line to the
 spec document instead so it isn't lost.
 
-Then continue the normal flow: superpowers:writing-plans.
+The concept graph is a review gate, not a formality: it is the first view
+of the design in context of the whole system. If integration reveals a
+misfit — wrong boundary, duplicated concept, an unwanted dependency — the
+spec reopens: revise it, re-run the spec self-review and user review gate,
+update the spec figure, then re-integrate.
+
+Continue to superpowers:writing-plans only once both the spec and the
+concept graph are accepted.
 
 ## Judgment
 

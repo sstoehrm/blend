@@ -24,7 +24,10 @@ how to serve.
 3. **Propose concepts.** Diff findings against the current graph. Present
    proposed additions/removals/changes to the user (AskUserQuestion,
    multiSelect) with one line of evidence each — the user decides what is a
-   concept in their architecture, you decide what the code says.
+   concept in their architecture, you decide what the code says. When
+   invoked from blend:brainstorming, treat user objections as spec feedback
+   first, graph feedback second: a misfit reopens the spec (see
+   blend:brainstorming amendment 3), it is not a layout preference.
 4. **Update and show.** Apply the accepted changes to `.blend/concept.edn`,
    serve it with simpleviz, give the user the URL. When updating an
    existing graph, serve compare mode instead (old committed version vs
