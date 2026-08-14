@@ -19,8 +19,11 @@ how to serve.
    updating, not rebuilding. Never silently drop existing nodes. Also read
    `.blend/concept-hash`: the repo commit the graph was last validated
    against.
-2. **Gather evidence.** Dispatch Explore subagents over the codebase (entry
-   points, module boundaries, build config, data stores, external services).
+2. **Gather evidence.** Dispatch parallel Explore subagents over the codebase,
+   split by concern (entry points/module boundaries, deployment/communication,
+   data flow/stores). READMEs and CLAUDE.md are claims to verify against code,
+   not evidence — storage layers and rendering libs are the classic liars;
+   grep the actual requires/deps before encoding a doc's claim.
    If `.blend/concept-hash` exists and git knows the commit, scope the
    sweep: `git diff --name-status <hash>..HEAD` shows what changed since
    the graph was last true — explore those areas, take the rest of the
@@ -32,7 +35,12 @@ how to serve.
 3. **Propose concepts.** Diff findings against the current graph. Present
    proposed additions/removals/changes to the user (AskUserQuestion,
    multiSelect) with one line of evidence each — the user decides what is a
-   concept in their architecture, you decide what the code says. When
+   concept in their architecture, you decide what the code says. A fresh
+   graph proposes more concepts than the question UI holds: assert the
+   obvious core in text and spend the questions on contested inclusions and
+   granularity. Granularity (one aggregate node vs per-item nodes vs
+   per-item boxes) is the axis users actually push on — offer such
+   structural alternatives as options with ASCII previews. When
    invoked from blend:brainstorming, treat user objections as spec feedback
    first, graph feedback second: a misfit reopens the spec (see
    blend:brainstorming amendment 3), it is not a layout preference.
@@ -41,13 +49,25 @@ how to serve.
    existing graph, serve compare mode instead (old committed version vs
    new, via `git show`) so the user reviews the diff, not the whole graph. Node `:type` examples:
    service, store, ui, external. Edge = real dependency or data flow you can
-   point to; box = subsystem/zone grouping.
-5. **Validate.** Dispatch a reviewer subagent with the graph and repo access:
-   for each node/edge, name the file(s) that evidence it; flag anything
-   unsupported, plus obvious concepts the graph missed. Fix findings; take
-   new concept candidates back to step 3.
+   point to; box = subsystem/zone grouping. Carry characteristics as
+   free-form node attrs (`:role`, `:tech`, `:highlights`, `:persists`) —
+   they show in the click inspector. Write `:evidence` as path + symbol
+   name; bare line numbers drift and fail review. Boxes can't anchor edges,
+   so node granularity decides edge fan-out — pick it by which edges the
+   story needs.
+5. **Validate.** Dispatch a reviewer subagent with the graph and repo access.
+   Its brief, per node/edge: does the evidence exist and support the claim;
+   is the direction right; is the label accurate or overstated; and if most
+   siblings have an edge a node lacks, does it genuinely lack the flow or
+   was it missed. Also: obvious concepts the graph misses. Fix findings;
+   take new concept candidates back to step 3. On later loop iterations,
+   scope the reviewer to added/changed elements — the first pass covered
+   the rest.
 6. **Loop** steps 3–5 until the user confirms the graph and the reviewer has
-   no unsupported elements. Then write `git rev-parse HEAD` to
+   no unsupported elements. At confirm time, offer to strip `:evidence`
+   attrs — they are validation scaffolding, and the audit trail is
+   concept-hash plus the reviewed session, not the artifact. Then write
+   `git rev-parse HEAD` to
    `.blend/concept-hash` and commit it together with `.blend/concept.edn`
    (the hash is the commit the evidence was gathered from — the graph
    commit's parent).
@@ -61,3 +81,6 @@ how to serve.
   live in that file.
 - Skipping validation because the graph "looks right" — every element needs
   evidence a reviewer could check.
+- Deleting a hub node on request without rewiring: reroute the real flows it
+  mediated through the remaining endpoints and move its distinguishing facts
+  into neighbor attrs — removing a node is not removing what it carried.
