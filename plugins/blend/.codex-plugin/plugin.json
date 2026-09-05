@@ -1,0 +1,18 @@
+{
+  "name": "blend",
+  "version": "0.3.0",
+  "description": "Sören's workflow skills — blends superpowers, simpleviz, and review loops",
+  "author": {
+    "name": "Sören Stöhrmann"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Blend",
+    "shortDescription": "Visual design and evidence-based architecture",
+    "longDescription": "Combine superpowers workflows with simpleviz design figures and reviewed concept graphs.",
+    "developerName": "Sören Stöhrmann",
+    "category": "Developer Tools",
+    "capabilities": ["Read", "Write"],
+    "defaultPrompt": ["Use Blend to guide this task."]
+  }
+}

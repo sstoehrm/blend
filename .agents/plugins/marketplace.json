@@ -1,0 +1,20 @@
+{
+  "name": "blend",
+  "interface": {
+    "displayName": "Blend"
+  },
+  "plugins": [
+    {
+      "name": "blend",
+      "source": {
+        "source": "local",
+        "path": "./plugins/blend"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Developer Tools"
+    }
+  ]
+}

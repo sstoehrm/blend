@@ -5,6 +5,9 @@ description: Use when creating or updating a project's concept graph (superficia
 
 # Deduce
 
+Load [use-blend](../use-blend/SKILL.md) first if it isn't already loaded;
+its host compatibility and dependency guidance applies to this workflow.
+
 Deduce the project's concepts from evidence and maintain them as a simpleviz
 graph at `.blend/concept.edn` in the target project. Superficial by intent:
 concepts, subsystems, and flows — not classes or files. If a node wouldn't
@@ -19,10 +22,11 @@ how to serve.
    updating, not rebuilding. Never silently drop existing nodes. Also read
    `.blend/concept-hash`: the repo commit the graph was last validated
    against.
-2. **Gather evidence.** Dispatch parallel Explore subagents over the codebase,
-   split by concern (entry points/module boundaries, deployment/communication,
-   data flow/stores). READMEs and CLAUDE.md are claims to verify against code,
-   not evidence — storage layers and rendering libs are the classic liars;
+2. **Gather evidence.** Dispatch parallel read-only exploration subagents
+   over the codebase, split by concern (entry points/module boundaries,
+   deployment/communication, data flow/stores). READMEs, AGENTS.md, and
+   CLAUDE.md are claims to verify against code, not evidence — storage
+   layers and rendering libs are the classic liars;
    grep the actual requires/deps before encoding a doc's claim.
    If `.blend/concept-hash` exists and git knows the commit, scope the
    sweep: `git diff --name-status <hash>..HEAD` shows what changed since
@@ -33,9 +37,10 @@ how to serve.
    approved spec is the primary evidence and a full code sweep is
    unnecessary.
 3. **Propose concepts.** Diff findings against the current graph. Present
-   proposed additions/removals/changes to the user (AskUserQuestion,
-   multiSelect) with one line of evidence each — the user decides what is a
-   concept in their architecture, you decide what the code says. A fresh
+   proposed additions/removals/changes to the user using a multiple-selection
+   question or numbered choices in chat, with one line of evidence each —
+   the user decides what is a concept in their architecture, you decide
+   what the code says. A fresh
    graph proposes more concepts than the question UI holds: assert the
    obvious core in text and spend the questions on contested inclusions and
    granularity. Granularity (one aggregate node vs per-item nodes vs
