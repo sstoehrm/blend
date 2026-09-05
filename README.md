@@ -100,9 +100,9 @@ codex plugin marketplace add .
 codex plugin add blend@blend
 ```
 
-Once this version is published, replace `.` with `sstoehrm/blend` to install
-from GitHub. Start a new session after installation. Review and trust the
-plugin's SessionStart hook when Codex prompts; it loads `use-blend` on
+To install from GitHub instead, replace `.` with `sstoehrm/blend` in the
+marketplace command. Start a new session after installation. Review and
+trust the plugin's SessionStart hook when Codex prompts; it loads `use-blend` on
 startup, resume, clear, and compaction. If hooks are disabled or not trusted,
 select `use-blend` in the skill picker or ask: "Load Blend's use-blend skill
 and follow it for this task."
@@ -114,16 +114,58 @@ the same name. The skill files are shared by both hosts. Following
 `use-blend` conditionally loads a Codex reference for tool mappings;
 other hosts don't load that reference.
 
-For GitHub installations, refresh the marketplace before re-adding the
-plugin. Local marketplaces read directly from the checkout:
+#### Updating
+
+First check which source Codex uses for Blend:
 
 ```bash
-codex plugin marketplace upgrade blend  # GitHub installations only
+codex plugin marketplace list --json
+```
+
+Find the `blend` entry and check `marketplaceSource.sourceType`: `local`
+means a checkout on disk; `git` means a Git-backed marketplace managed by
+Codex. Both install a **cached copy** of the plugin. Editing or pulling
+the source alone does not refresh that installed copy.
+
+**Local checkout** (`codex plugin marketplace add .`): update the checkout
+shown in `marketplaceSource.source`, then reinstall from it. For the latest
+merged changes, run in that checkout:
+
+```bash
+git switch main
+git pull --ff-only
 codex plugin add blend@blend
 ```
 
-Start a new session after updates. Keep versions in both plugin manifests
-in sync when releasing changes.
+During local development, keep your working branch and run only the last
+command to install its current files. `marketplace upgrade` does not pull
+or update a local checkout.
+
+**Git-backed marketplace** (`codex plugin marketplace add sstoehrm/blend`):
+refresh Codex's marketplace snapshot, then reinstall the plugin:
+
+```bash
+codex plugin marketplace upgrade blend
+codex plugin add blend@blend
+```
+
+If the marketplace was installed with a pinned ref, the refresh follows
+that ref; it does not switch to `main`.
+
+Check the installed version, then start a **new Codex thread/session**:
+
+```bash
+codex plugin list --marketplace blend
+```
+
+An existing conversation keeps its previously loaded skill instructions.
+If the hook definition changed, review and trust it again when prompted.
+Keep versions in both plugin manifests in sync when releasing changes.
+
+These commands were checked against Codex CLI `0.153.4`. Its
+[installer](https://github.com/openai/codex/blob/rust-v0.153.4/codex-rs/core-plugins/src/store.rs)
+replaces the cached plugin on `plugin add`, including when the version is
+unchanged.
 
 Codex packaging and hook behavior follow the official
 [plugin documentation](https://developers.openai.com/codex/plugins/build)
