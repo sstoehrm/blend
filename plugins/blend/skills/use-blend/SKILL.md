@@ -15,35 +15,11 @@ supersedes it: brainstorming always goes through blend:brainstorming (which
 itself loads superpowers:brainstorming), never superpowers:brainstorming
 directly.
 
-## Host Compatibility
+## Platform Adaptation
 
-These skills work in Claude Code and Codex. Use the tools actually available
-in the current session; names below describe capabilities, not required APIs.
+If your host appears here, read its reference before following the workflow:
 
-- **Load skills:** Claude Code uses its Skill tool. In Codex, select the
-  installed skill or read its `SKILL.md` at the path in the skill list.
-  Resolve names such as `blend:brainstorming` by plugin and skill, so it
-  isn't confused with `superpowers:brainstorming`. For a direct file load,
-  Blend's sibling skills are at `../<skill-name>/SKILL.md` relative to this
-  skill's directory. Resolve external skills from the installed skill list.
-- **Ask questions:** use the host's question tool when available in the
-  current mode. Otherwise ask in ordinary chat and wait for the answer.
-  If multiple selections aren't supported, present numbered choices and
-  ask for the selected numbers. Preserve all user review gates.
-- **Explore and review:** use the host's subagent tools when available.
-  `Explore` means a read-only exploration task, not a required agent type.
-  Without delegation, perform the same evidence checks directly in
-  separate exploration and review passes; disclose that the review was
-  not independent. Never claim a subagent review occurred when it didn't.
-- **Browse and inspect:** use the host's web search/fetch and shell/file
-  tools in place of Claude-specific tool names.
-- **Code review:** in Claude Code, use the installed review commands in
-  the routing table. In Codex, use its available review workflow or inspect
-  the diff directly for correctness, simplification, and relevant security
-  issues. Slash commands from another host are not shell commands.
-- **Startup:** the plugin's SessionStart hook loads this skill in both
-  hosts. If hooks are disabled or not trusted, explicitly select `use-blend`
-  or ask the agent to read it before starting the task.
+- Codex: [references/codex-tools.md](references/codex-tools.md)
 
 ## Dependencies
 
@@ -53,8 +29,8 @@ and wait; fall back to inline principles only if they decline to install.
 
 | Dependency         | Check                             | Fix                                                                                                                  |
 | ------------------ | --------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| superpowers skills | superpowers skills in the skill list | Claude Code: `/plugin install superpowers@claude-plugins-official`. Codex: install superpowers through its plugin browser, or follow the [repository's Codex instructions](https://github.com/obra/superpowers). |
-| simpleviz skill    | simpleviz skill in the skill list | Claude Code: `/plugin install simpleviz@simpleviz`. Codex: use its skill installer with [the simpleviz repository](https://github.com/sstoehrm/simpleviz) and the directory containing the simpleviz `SKILL.md`. |
+| superpowers skills | superpowers skills in the skill list | `/plugin install superpowers@claude-plugins-official`, or the current host's installation method from [superpowers](https://github.com/obra/superpowers). |
+| simpleviz skill    | simpleviz skill in the skill list | `/plugin install simpleviz@simpleviz`, or the current host's installation method from [simpleviz](https://github.com/sstoehrm/simpleviz). |
 | simpleviz launcher | `simpleviz --version`             | `curl -fsSL https://raw.githubusercontent.com/sstoehrm/simpleviz/main/install.sh \| bash`; later: `simpleviz update` |
 | babashka           | `command -v bb`                   | https://github.com/babashka/babashka#installation                                                                    |
 
@@ -72,9 +48,9 @@ and wait; fall back to inline principles only if they decline to install.
 
 Never "know" — always verify:
 
-- Unfamiliar APIs/libraries: fetch current docs before writing code against
-  them — WebFetch/WebSearch in Claude Code, or the available web search/fetch
-  tools in Codex. Training memory is stale by default.
+- Unfamiliar APIs/libraries: fetch current docs (WebFetch/WebSearch or the
+  host's equivalent web tools) before writing code against them. Training
+  memory is stale by default.
 - Dependencies: look up the newest version online before pinning or
   recommending one.
 - Claims about this codebase: grep/read first, assert second.

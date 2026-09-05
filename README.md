@@ -94,8 +94,10 @@ and follow it for this task."
 
 To use an individual skill, ask for **Blend's brainstorming skill** or
 **Blend's deduce skill**. Select the Blend entry if another plugin exposes
-the same name. The skill files are shared by both hosts; `use-blend` maps
-questions, exploration, and review to available tools.
+the same name. The skill files are shared by both hosts. Following
+[Superpowers' platform adaptation pattern](https://github.com/obra/superpowers/blob/main/skills/using-superpowers/SKILL.md),
+`use-blend` conditionally loads a Codex reference for tool mappings;
+other hosts don't load that reference.
 
 For GitHub installations, refresh the marketplace before re-adding the
 plugin. Local marketplaces read directly from the checkout:
@@ -151,8 +153,8 @@ name: skill-name
 description: Use when <triggering conditions — not a workflow summary>.
 ---
 
-Instructions shared by Claude Code and Codex. Use the host compatibility
-guidance in use-blend when a step needs host-specific tools.
+Instructions shared by Claude Code and Codex. Keep host-specific tool
+mappings in a reference loaded conditionally from use-blend.
 ```
 
 Follow superpowers:writing-skills: test the skill with fresh-context
