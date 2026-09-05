@@ -72,8 +72,9 @@ and wait; fall back to inline principles only if they decline to install.
 
 Never "know" — always verify:
 
-- Unfamiliar APIs/libraries: fetch current docs with the host's web tools before
-  writing code against them. Training memory is stale by default.
+- Unfamiliar APIs/libraries: fetch current docs before writing code against
+  them — WebFetch/WebSearch in Claude Code, or the available web search/fetch
+  tools in Codex. Training memory is stale by default.
 - Dependencies: look up the newest version online before pinning or
   recommending one.
 - Claims about this codebase: grep/read first, assert second.

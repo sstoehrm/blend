@@ -5,9 +5,6 @@ description: Use when creating or updating a project's concept graph (superficia
 
 # Deduce
 
-Load [use-blend](../use-blend/SKILL.md) first if it isn't already loaded;
-its host compatibility and dependency guidance applies to this workflow.
-
 Deduce the project's concepts from evidence and maintain them as a simpleviz
 graph at `.blend/concept.edn` in the target project. Superficial by intent:
 concepts, subsystems, and flows — not classes or files. If a node wouldn't
@@ -37,10 +34,9 @@ how to serve.
    approved spec is the primary evidence and a full code sweep is
    unnecessary.
 3. **Propose concepts.** Diff findings against the current graph. Present
-   proposed additions/removals/changes to the user using a multiple-selection
-   question or numbered choices in chat, with one line of evidence each —
-   the user decides what is a concept in their architecture, you decide
-   what the code says. A fresh
+   proposed additions/removals/changes to the user (AskUserQuestion,
+   multiSelect) with one line of evidence each — the user decides what is a
+   concept in their architecture, you decide what the code says. A fresh
    graph proposes more concepts than the question UI holds: assert the
    obvious core in text and spend the questions on contested inclusions and
    granularity. Granularity (one aggregate node vs per-item nodes vs

@@ -5,9 +5,6 @@ description: Use when brainstorming, designing, or writing a spec for any featur
 
 # Brainstorming (blend)
 
-Load [use-blend](../use-blend/SKILL.md) first if it isn't already loaded;
-its host compatibility and dependency guidance applies to this workflow.
-
 Runs superpowers:brainstorming with a visual spec figure alongside it.
 Load superpowers:brainstorming now and follow it fully — checklist, hard
 gate, user review gate all apply. The steps below amend that process; they
@@ -33,7 +30,7 @@ match the final spec exactly, then commit the `.edn` together with the spec
 document.
 
 **3. Fold the design into the concept graph — optional.** After the user
-approves the spec, ask whether to integrate the new
+approves the spec, ask (AskUserQuestion) whether to integrate the new
 components into the project's concept graph now, or skip it. If they
 integrate, invoke blend:deduce. If they skip, add a TODO line to the spec
 document so it isn't lost, and continue to writing-plans.
