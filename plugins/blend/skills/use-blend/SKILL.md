@@ -15,6 +15,12 @@ supersedes it: brainstorming always goes through blend:brainstorming (which
 itself loads superpowers:brainstorming), never superpowers:brainstorming
 directly.
 
+## Platform Adaptation
+
+If your host appears here, read its reference before following the workflow:
+
+- Codex: [references/codex-tools.md](references/codex-tools.md)
+
 ## Dependencies
 
 Check lazily — verify a dependency right before the first phase that needs
@@ -23,8 +29,8 @@ and wait; fall back to inline principles only if they decline to install.
 
 | Dependency         | Check                             | Fix                                                                                                                  |
 | ------------------ | --------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| superpowers plugin | superpowers:* in the skill list   | `/plugin install superpowers@claude-plugins-official`                                                                |
-| simpleviz skill    | simpleviz:simpleviz in skill list | `/plugin install simpleviz@simpleviz`                                                                                |
+| superpowers skills | superpowers skills in the skill list | `/plugin install superpowers@claude-plugins-official`, or the current host's installation method from [superpowers](https://github.com/obra/superpowers). |
+| simpleviz skill    | simpleviz skill in the skill list | `/plugin install simpleviz@simpleviz`, or the current host's installation method from [simpleviz](https://github.com/sstoehrm/simpleviz). |
 | simpleviz launcher | `simpleviz --version`             | `curl -fsSL https://raw.githubusercontent.com/sstoehrm/simpleviz/main/install.sh \| bash`; later: `simpleviz update` |
 | babashka           | `command -v bb`                   | https://github.com/babashka/babashka#installation                                                                    |
 
@@ -42,8 +48,9 @@ and wait; fall back to inline principles only if they decline to install.
 
 Never "know" — always verify:
 
-- Unfamiliar APIs/libraries: fetch current docs (WebFetch/WebSearch) before
-  writing code against them. Training memory is stale by default.
+- Unfamiliar APIs/libraries: fetch current docs (WebFetch/WebSearch or the
+  host's equivalent web tools) before writing code against them. Training
+  memory is stale by default.
 - Dependencies: look up the newest version online before pinning or
   recommending one.
 - Claims about this codebase: grep/read first, assert second.

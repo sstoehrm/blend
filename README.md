@@ -1,6 +1,6 @@
 # blend
 
-A Claude Code plugin that blends existing skills into one opinionated
+A Claude Code and Codex plugin that blends existing skills into one opinionated
 workflow: [superpowers](https://github.com/obra/superpowers) drives the
 process, [simpleviz](https://github.com/sstoehrm/simpleviz) makes designs
 visible, and a session-start hook wires it all together. Packaged as a
@@ -44,7 +44,7 @@ re-explores what changed.
 
 ## Dependencies
 
-| Dependency         | Install                                                                                   |
+| Dependency         | Claude Code install                                                                       |
 | ------------------ | ----------------------------------------------------------------------------------------- |
 | superpowers plugin | `/plugin install superpowers@claude-plugins-official`                                     |
 | simpleviz plugin   | `/plugin install simpleviz@simpleviz`                                                     |
@@ -53,18 +53,68 @@ re-explores what changed.
 
 use-blend checks these lazily and tells you the fix when one is missing.
 
+In Codex, install **superpowers** through the plugin browser or follow its
+[Codex setup instructions](https://github.com/obra/superpowers). Install the
+**simpleviz skill** using Codex's skill installer: provide
+`https://github.com/sstoehrm/simpleviz` and select the directory containing
+its `SKILL.md`. The simpleviz launcher and babashka are required in both
+hosts. A Claude Code plugin installation alone doesn't make its skills
+available to Codex.
+
 ## Structure
 
 ```
-.claude-plugin/marketplace.json     # marketplace catalog
+.claude-plugin/marketplace.json     # Claude Code marketplace catalog
+.agents/plugins/marketplace.json   # Codex marketplace catalog
 plugins/blend/                      # the "blend" plugin
 ├── .claude-plugin/plugin.json
+├── .codex-plugin/plugin.json
 ├── hooks/hooks.json                # SessionStart: injects use-blend
 └── skills/
     └── <skill-name>/SKILL.md       # one directory per skill
 ```
 
 ## Usage
+
+### Codex
+
+From this checkout, install the local marketplace and plugin:
+
+```bash
+codex plugin marketplace add .
+codex plugin add blend@blend
+```
+
+Once this version is published, replace `.` with `sstoehrm/blend` to install
+from GitHub. Start a new session after installation. Review and trust the
+plugin's SessionStart hook when Codex prompts; it loads `use-blend` on
+startup, resume, clear, and compaction. If hooks are disabled or not trusted,
+select `use-blend` in the skill picker or ask: "Load Blend's use-blend skill
+and follow it for this task."
+
+To use an individual skill, ask for **Blend's brainstorming skill** or
+**Blend's deduce skill**. Select the Blend entry if another plugin exposes
+the same name. The skill files are shared by both hosts. Following
+[Superpowers' platform adaptation pattern](https://github.com/obra/superpowers/blob/main/skills/using-superpowers/SKILL.md),
+`use-blend` conditionally loads a Codex reference for tool mappings;
+other hosts don't load that reference.
+
+For GitHub installations, refresh the marketplace before re-adding the
+plugin. Local marketplaces read directly from the checkout:
+
+```bash
+codex plugin marketplace upgrade blend  # GitHub installations only
+codex plugin add blend@blend
+```
+
+Start a new session after updates. Keep versions in both plugin manifests
+in sync when releasing changes.
+
+Codex packaging and hook behavior follow the official
+[plugin documentation](https://developers.openai.com/codex/plugins/build)
+and [hook documentation](https://learn.chatgpt.com/docs/hooks).
+
+### Claude Code
 
 Add the marketplace and install the plugin:
 
@@ -81,7 +131,7 @@ Or in a Claude Code session:
 ```
 
 The marketplace tracks GitHub, so picking up skill edits means publishing
-them first — and bumping the version in `plugins/blend/.claude-plugin/plugin.json`,
+them first — and bumping the version in both plugin manifests,
 since the installed plugin only re-fetches on a version change:
 
 ```bash
@@ -103,7 +153,8 @@ name: skill-name
 description: Use when <triggering conditions — not a workflow summary>.
 ---
 
-Instructions for Claude.
+Instructions shared by Claude Code and Codex. Keep host-specific tool
+mappings in a reference loaded conditionally from use-blend.
 ```
 
 Follow superpowers:writing-skills: test the skill with fresh-context

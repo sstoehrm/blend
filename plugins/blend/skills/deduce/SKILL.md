@@ -19,10 +19,11 @@ how to serve.
    updating, not rebuilding. Never silently drop existing nodes. Also read
    `.blend/concept-hash`: the repo commit the graph was last validated
    against.
-2. **Gather evidence.** Dispatch parallel Explore subagents over the codebase,
-   split by concern (entry points/module boundaries, deployment/communication,
-   data flow/stores). READMEs and CLAUDE.md are claims to verify against code,
-   not evidence — storage layers and rendering libs are the classic liars;
+2. **Gather evidence.** Dispatch parallel read-only exploration subagents
+   over the codebase, split by concern (entry points/module boundaries,
+   deployment/communication, data flow/stores). READMEs, AGENTS.md, and
+   CLAUDE.md are claims to verify against code, not evidence — storage
+   layers and rendering libs are the classic liars;
    grep the actual requires/deps before encoding a doc's claim.
    If `.blend/concept-hash` exists and git knows the commit, scope the
    sweep: `git diff --name-status <hash>..HEAD` shows what changed since
