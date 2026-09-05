@@ -42,6 +42,21 @@ Artifacts land in the target project:
 `concept-hash` scopes the next update: deduce diffs against it and only
 re-explores what changed.
 
+## Code review
+
+Blend uses **superpowers:requesting-code-review** for working changes and
+PRs, then **superpowers:receiving-code-review** to handle feedback. One
+read-only reviewer checks the change against its requirements, including
+correctness, relevant security issues, and unnecessary complexity. Review
+fixes where needed; reuse an existing review when the diff is unchanged.
+Built-in review, simplify, and security-review commands aren't chained
+automatically.
+
+| Skill | Fit for Blend |
+| --- | --- |
+| [Superpowers requesting-code-review](https://github.com/obra/superpowers/blob/main/skills/requesting-code-review/SKILL.md) | Default: general code review with one reviewer, already included in Blend's dependencies. Its [reviewer template](https://github.com/obra/superpowers/blob/main/skills/requesting-code-review/code-reviewer.md) prohibits nested reviewers. |
+| [Ponytail review](https://github.com/DietrichGebert/ponytail/blob/main/skills/ponytail-review/SKILL.md) | Useful for a requested over-engineering review. Explicitly excludes correctness, security, and performance, so it cannot replace general code review. Optional; no new dependency. |
+
 ## Dependencies
 
 | Dependency         | Claude Code install                                                                       |

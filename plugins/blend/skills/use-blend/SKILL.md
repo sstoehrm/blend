@@ -73,6 +73,25 @@ Never "know" — always verify:
 Never simplify away: validation at trust boundaries, error handling that
 prevents data loss, security, accessibility, anything explicitly requested.
 
+## Code Review
+
+Use superpowers:requesting-code-review for both working changes and PRs.
+Give one read-only reviewer the requirements and exact review scope. For
+uncommitted work, include staged, unstaged, and relevant untracked changes;
+commit SHAs alone omit them. Inspect surrounding code as needed to verify
+findings.
+
+Cover correctness, regressions, requirements, concrete security issues,
+and unnecessary complexity in that pass. Report actionable findings with
+evidence and severity; style preferences aren't blockers. Do not
+automatically chain built-in review, simplification, or security-review
+commands. Broader audits require a user request or a concrete unresolved
+finding.
+
+Handle feedback through superpowers:receiving-code-review. Recheck fixes
+and affected behavior; reuse a completed code review while its diff remains
+unchanged instead of starting another full review at each workflow step.
+
 ## Workflow → Skill Routing
 
 | Phase                   | Route through                                                                                                                         | Loop until                               |
@@ -85,5 +104,5 @@ prevents data loss, security, accessibility, anything explicitly requested.
 | Implementation plan     | plan mode + superpowers:writing-plans                                                                                                 | reviewer satisfied                       |
 | Implementation          | superpowers:executing-plans or subagent-driven-development, with test-driven-development                                              | tests green, per-task review clean       |
 | Bug / failing test      | superpowers:systematic-debugging                                                                                                      | root cause found, regression test passes |
-| Code review             | /code-review for the working diff (/review for GitHub PRs), then /simplify; /security-review when auth, input, or secrets are touched | no blocking findings                     |
+| Code review             | superpowers:requesting-code-review; superpowers:receiving-code-review for feedback                                                    | no blocking findings                     |
 | Finishing               | superpowers:verification-before-completion, then finishing-a-development-branch                                                       | evidence shown, not asserted             |
