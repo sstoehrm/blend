@@ -34,7 +34,3 @@ The simpleviz launcher and babashka checks in `use-blend` apply unchanged.
   the review wasn't independent. Never claim a subagent review occurred
   when it didn't.
 - **WebFetch / WebSearch:** use the available web fetch/search tools.
-- **Review commands:** use Codex's available review workflow or inspect the
-  diff for correctness, simplification, and relevant security issues.
-  Claude's `/code-review`, `/simplify`, and `/security-review` commands are
-  not shell commands.
