@@ -5,10 +5,10 @@ description: Use when brainstorming, designing, or writing a spec for any featur
 
 # Brainstorming (blend)
 
-Runs superpowers:brainstorming with a visual spec figure alongside it.
-Load superpowers:brainstorming now and follow it fully — checklist, hard
-gate, user review gate all apply. The steps below amend that process; they
-do not replace it.
+Runs superpowers:brainstorming with a visual spec figure alongside it, and
+a task graph for the plan that follows. Load superpowers:brainstorming now
+and follow it fully — checklist, hard gate, user review gate all apply. The
+steps below amend that process; they do not replace it.
 
 ## Amendments
 
@@ -29,21 +29,24 @@ source of truth. After the spec self-review passes, update the figure to
 match the final spec exactly, then commit the `.edn` together with the spec
 document.
 
-**3. Fold the design into the concept graph — optional.** After the user
-approves the spec, ask (AskUserQuestion) whether to integrate the new
-components into the project's concept graph now, or skip it. If they
-integrate, invoke blend:deduce. If they skip, add a TODO line to the spec
-document so it isn't lost, and continue to writing-plans.
+**3. Draw the plan's tasks.** Once the spec is accepted, continue to
+superpowers:writing-plans. When it saves a plan with 3+ tasks, draw the
+tasks as a simpleviz graph (load simpleviz:simpleviz if amendment 1 was
+skipped):
 
-When it runs, the concept graph is a review gate, not a formality: it is
-the first view of the design in context of the whole system. If
-integration reveals a misfit — wrong boundary, duplicated concept, an
-unwanted dependency — the spec reopens: revise it, re-run the spec
-self-review and user review gate, update the spec figure, then
-re-integrate.
-
-Continue to superpowers:writing-plans once the spec is accepted and —
-unless the user skipped it — the concept graph too.
+- File: `.blend/specs/YYYY-MM-DD-<topic>-tasks.edn`, beside the spec
+  figure — a `:ref` can't leave the served file's folder.
+- One node per task (`:name` "N. <title>", `:state :new`); edge
+  `[:a :b] {:direction :->}` when b needs a done first.
+- If the spec has a figure: box tasks by the spec component they mainly
+  build, each box `:ref "YYYY-MM-DD-<topic>.edn"` to jump to the design.
+- Serve it, give the user the URL, commit it with the plan; keep it in
+  sync when the plan changes.
+- Add a line to the plan header naming the graph file and telling the
+  executor to set each task's `:state` alongside its checkbox:
+  `:in-progress`, `:done` once its review is clean, `:blocked` + `:reason`.
+  Execution often runs in a later session without this skill; the plan
+  carries the instruction there.
 
 ## Judgment
 
@@ -51,6 +54,6 @@ unless the user skipped it — the concept graph too.
   requirements, trade-offs, or open questions into the graph; those stay in
   the conversation and the spec.
 - A design with fewer than ~3 components doesn't need a figure; say so and
-  skip amendment 1 (amendment 3 still applies).
+  skip amendment 1.
 - This figure is independent of superpowers' visual companion. If the user
   declined the companion, the spec figure is still drawn.

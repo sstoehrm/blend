@@ -96,8 +96,7 @@ unchanged instead of starting another full review at each workflow step.
 
 | Phase                   | Route through                                                                                                                         | Loop until                               |
 | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------- |
-| New feature / idea      | blend:brainstorming (loads superpowers:brainstorming, adds spec figure)                                                               | design agreed with user                  |
-| Architecture overview   | blend:deduce                                                                                                                          | user confirms concept graph              |
+| New feature / idea      | blend:brainstorming (loads superpowers:brainstorming, adds spec figure and task graph)                                                | design agreed with user                  |
 | Writing/editing a skill | superpowers:writing-skills                                                                                                            | subagent tests pass                      |
 | Design + mock-ups       | blend:brainstorming, then artifact-design / dataviz for the mock-up                                                                   | reviewer satisfied                       |
 | Spec                    | superpowers:writing-plans                                                                                                             | reviewer satisfied                       |
