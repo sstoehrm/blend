@@ -11,7 +11,7 @@ plugin marketplace.
 | Skill              | What it does                                                                                                                                       |
 | ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------- |
 | use-blend          | Injected into every session via SessionStart hook. Communication style, verification habits, dependency checks, and the phase → skill routing table. |
-| blend:brainstorming | Wraps superpowers:brainstorming: draws the design as a live simpleviz figure while presenting it, keeps figure and spec in sync, then draws the plan's tasks as a progress graph linked to the figure. |
+| blend:brainstorming | Wraps superpowers:brainstorming: first asks how involved you want to be (high, medium, full auto), draws the design as a live simpleviz figure while presenting it, keeps figure and spec in sync, then draws the plan's tasks as a progress graph linked to the figure. |
 | blend:deduce       | Deduces and maintains a concept graph — a superficial architecture view of a project — from code, plans, or specs. Iterative: user approves concepts, a reviewer subagent validates every element against evidence. Work in progress: not part of the workflow yet, invoke it directly. Writes `.blend/concept.edn` and `.blend/concept-hash` (the commit the graph was validated against; scopes the next update). |
 
 ## The workflow
@@ -29,6 +29,17 @@ blend:brainstorming adds a task graph beside the figure: tasks, their
 order, and progress, with each component box linking to the figure. The
 plan header tells implementation to keep the task states current; review
 follows.
+
+Brainstorming first asks how involved you want to be:
+
+| Level     | You get asked                                                              |
+| --------- | -------------------------------------------------------------------------- |
+| High      | Everything superpowers asks: each question, each design section, spec, plan |
+| Medium    | Only design-changing questions; one design review, then spec and plan       |
+| Full auto | Nothing; the agent decides, implements on a branch, and reports. Never merges or pushes |
+
+Name the level in your request ("full auto", "just decide") to skip the
+question.
 
 Artifacts land in the target project:
 
