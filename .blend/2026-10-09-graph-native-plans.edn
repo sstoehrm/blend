@@ -14,9 +14,9 @@
                :pair ["2026-10-09-graph-native-plans/modules.edn#brainstorming" "2026-10-09-graph-native-plans/architecture.edn#plan-views" "2026-10-09-graph-native-plans/architecture.edn#overview" "2026-10-09-graph-native-plans/architecture.edn#spec-fig" "2026-10-09-graph-native-plans/architecture.edn#spec-md"]}
          :t05 {:name "5. Planning skill" :type "task" :state :done :md-ref "2026-10-09-graph-native-plans/tasks/05-planning.md"
                :pair ["2026-10-09-graph-native-plans/modules.edn#planning" "2026-10-09-graph-native-plans/architecture.edn#planning" "2026-10-09-graph-native-plans/architecture.edn#plan-graph" "2026-10-09-graph-native-plans/architecture.edn#task-files" "2026-10-09-graph-native-plans/architecture.edn#sp-plans" "2026-10-09-graph-native-plans/architecture.edn#plan-md" "2026-10-09-graph-native-plans/architecture.edn#task-graph" "2026-10-09-graph-native-plans/architecture.edn#sp-exec"]}
-         :t06 {:name "6. README + version" :type "task" :state :in-progress :md-ref "2026-10-09-graph-native-plans/tasks/06-docs-version.md"
+         :t06 {:name "6. README + version" :type "task" :state :done :md-ref "2026-10-09-graph-native-plans/tasks/06-docs-version.md"
                :pair ["2026-10-09-graph-native-plans/modules.edn#claude-plugin" "2026-10-09-graph-native-plans/modules.edn#codex-plugin"]}
-         :t07 {:name "7. Dry run" :type "task" :state :new :md-ref "2026-10-09-graph-native-plans/tasks/07-dry-run.md"
+         :t07 {:name "7. Dry run" :type "task" :state :in-progress :md-ref "2026-10-09-graph-native-plans/tasks/07-dry-run.md"
                :pair ["2026-10-09-graph-native-plans/modules.edn#brainstorming" "2026-10-09-graph-native-plans/modules.edn#planning" "2026-10-09-graph-native-plans/modules.edn#project-views"]}}
  :edges {[:architecture :proj-arch]  {:direction :-> :name "changes"}
          [:modules :proj-modules]    {:direction :-> :name "changes"}
