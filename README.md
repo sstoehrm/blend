@@ -10,25 +10,31 @@ plugin marketplace.
 
 | Skill              | What it does                                                                                                                                       |
 | ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| use-blend          | Injected into every session via SessionStart hook. Communication style, verification habits, dependency checks, and the phase → skill routing table. |
-| blend:brainstorming | Wraps superpowers:brainstorming: first asks how involved you want to be (high, medium, full auto), draws the design as a live simpleviz figure while presenting it, keeps figure and spec in sync, then draws the plan's tasks as a progress graph linked to the figure. |
+| use-blend           | Injected into every session via SessionStart hook. Communication style, verification habits, dependency checks, and the phase → skill routing table. The hook also installs blend's simpleviz templates. |
+| blend:brainstorming | Wraps superpowers:brainstorming: asks how involved you want to be (high, medium, full auto), refreshes the project views, draws the design as plan views with a plan graph as entry point, and writes `overview.md` instead of a spec. |
+| blend:planning      | Replaces superpowers:writing-plans: adds the tasks to the plan graph (dependencies show what can run in parallel), writes one task file per task, and tells execution how to run the plan. |
+| blend:project-views | Keeps `.blend/views/architecture.edn` and `.blend/views/modules.edn` current: derives the module graph from code, draws architecture, syncs both after implementation and reports unplanned changes. |
 | blend:deduce       | Deduces and maintains a concept graph — a superficial architecture view of a project — from code, plans, or specs. Iterative: user approves concepts, a reviewer subagent validates every element against evidence. Work in progress: not part of the workflow yet, invoke it directly. Writes `.blend/concept.edn` and `.blend/concept-hash` (the commit the graph was validated against; scopes the next update). |
 
 ## The workflow
 
 ```
-idea ──▶ blend:brainstorming ──▶ spec + figure ──▶ writing-plans ──▶ plan + task graph ──▶ implementation
-              │
-              ▼
+idea ──▶ blend:brainstorming ──▶ overview.md + plan views ──▶ blend:planning ──▶ plan graph + task files ──▶ implementation ──▶ sync project views
+              │                         ▲                                                                                        │
+              ▼                         └──── .blend/views (architecture, modules) ◀─────────────────────────────────────────────┘
       superpowers:brainstorming
 ```
 
-Brainstorming produces a spec document plus a simpleviz figure of the
-design. superpowers:writing-plans turns the spec into a plan, and
-blend:brainstorming adds a task graph beside the figure: tasks, their
-order, and progress, with each component box linking to the figure. The
-plan header tells implementation to keep the task states current; review
-follows.
+There is no spec or plan document. Brainstorming refreshes the project
+views, then draws what the feature changes as plan views — a slice of the
+architecture and of the module graph, marked new / changed / removed /
+context — and writes a short `overview.md` (goal, decisions, non-goals,
+success criteria). You review those. blend:planning adds the tasks to the
+plan graph: edges show order, tasks without a path between them can run
+in parallel, and each task links to its task file and to the modules and
+components it touches. After implementation the module graph is
+re-derived from the code and anything the plan did not predict is
+reported.
 
 Brainstorming first asks how involved you want to be:
 
@@ -45,9 +51,17 @@ Artifacts land in the target project:
 
 ```
 .blend/
-├── specs/YYYY-MM-DD-<topic>.edn        # design figure per spec
-└── specs/YYYY-MM-DD-<topic>-tasks.edn  # plan tasks + progress, boxes :ref the figure
+├── views/architecture.edn             # project: components and flows, always current
+├── views/modules.edn                  # project: every module and its imports, derived from code
+├── YYYY-MM-DD-<topic>.edn             # plan graph — the entry point; serve this
+└── YYYY-MM-DD-<topic>/
+    ├── overview.md                    # goal, decisions, non-goals, success criteria, how to execute
+    ├── architecture.edn               # what the plan changes in the architecture
+    ├── modules.edn                    # which modules the plan touches, and by which task
+    └── tasks/NN-<slug>.md             # one brief per task: files, TDD steps, acceptance
 ```
+
+Templates: `simpleviz init <file> -t blend-plan | blend-plan-view | blend-architecture | blend-modules`.
 
 ## Code review
 
@@ -91,7 +105,9 @@ available to Codex.
 plugins/blend/                      # the "blend" plugin
 ├── .claude-plugin/plugin.json
 ├── .codex-plugin/plugin.json
-├── hooks/hooks.json                # SessionStart: injects use-blend
+├── hooks/hooks.json                # SessionStart: injects use-blend, installs templates
+├── hooks/install-templates.sh      # copies templates/ into ~/.simpleviz/templates
+├── templates/blend-*.edn           # simpleviz templates (init -t blend-plan …)
 └── skills/
     └── <skill-name>/SKILL.md       # one directory per skill
 ```
