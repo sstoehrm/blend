@@ -1,0 +1,59 @@
+;; Plan view: blend's workflow after this plan. :type is the change against views/architecture.edn.
+{:nodes {:use-blend    {:name "use-blend" :type "changed" :kind "router"
+                        :change "routes planning to blend:planning; installs templates"
+                        :pair "../views/architecture.edn#use-blend"}
+         :involvement  {:name "involvement level" :type "context" :kind "step"
+                        :pair "../views/architecture.edn#involvement"}
+         :refresh      {:name "refresh project views" :type "new" :kind "step"
+                        :note "re-derive views/modules.edn; draw missing architecture parts the feature touches"}
+         :sp-brain     {:name "superpowers:brainstorming" :type "context" :kind "external"
+                        :pair "../views/architecture.edn#sp-brain"}
+         :proj-views   {:name "project views" :type "new" :kind "artifact"
+                        :note ".blend/views/architecture.edn + modules.edn, always current"}
+         :plan-views   {:name "plan views" :type "new" :kind "artifact"
+                        :note ".blend/<date>-<topic>/architecture.edn, modules.edn, task-only views"}
+         :overview     {:name "overview.md" :type "new" :kind "artifact"
+                        :note "goal, decisions, non-goals, success criteria, test strategy; gate 1 with the plan views"}
+         :plan-graph   {:name "plan graph" :type "new" :kind "artifact"
+                        :note ".blend/<date>-<topic>.edn — entry point; overview + view nodes, then tasks"}
+         :planning     {:name "blend:planning" :type "new" :kind "skill"
+                        :note "tasks + edges, tasks/NN-*.md, :tasks on module slice; gate 2"}
+         :task-files   {:name "task files" :type "new" :kind "artifact"
+                        :note ".blend/<date>-<topic>/tasks/NN-<slug>.md"}
+         :sp-exec      {:name "superpowers execution" :type "changed" :kind "external"
+                        :change "reads the plan graph via overview.md's Executing this plan"
+                        :pair "../views/architecture.edn#sp-exec"}
+         :sync         {:name "sync project views" :type "new" :kind "step"
+                        :note "re-derive modules, report unplanned changes, apply architecture slice, commit"}
+         :sp-finish    {:name "superpowers:finishing-a-development-branch" :type "context" :kind "external"
+                        :pair "../views/architecture.edn#sp-finish"}
+         :spec-fig     {:name "spec figure" :type "removed" :kind "artifact" :pair "../views/architecture.edn#spec-fig"}
+         :spec-md      {:name "spec" :type "removed" :kind "artifact" :pair "../views/architecture.edn#spec-md"}
+         :sp-plans     {:name "superpowers:writing-plans" :type "removed" :kind "external" :pair "../views/architecture.edn#sp-plans"}
+         :plan-md      {:name "plan" :type "removed" :kind "artifact" :pair "../views/architecture.edn#plan-md"}
+         :task-graph   {:name "task graph (beside spec)" :type "removed" :kind "artifact" :pair "../views/architecture.edn#task-graph"}}
+ :edges {[:use-blend :involvement]  {:direction :-> :type "context"}
+         [:involvement :refresh]    {:direction :-> :type "new"}
+         [:refresh :proj-views]     {:direction :-> :name "derive / draw" :type "new"}
+         [:refresh :sp-brain]       {:direction :-> :type "new"}
+         [:sp-brain :plan-views]    {:direction :-> :name "present design" :type "new"}
+         [:sp-brain :overview]      {:direction :-> :name "write design" :type "new"}
+         [:plan-views :proj-views]  {:direction :-> :name ":pair" :type "new"}
+         [:plan-graph :overview]    {:direction :-> :name ":md-ref" :type "new"}
+         [:plan-graph :plan-views]  {:direction :-> :name ":ref" :type "new"}
+         [:overview :planning]      {:direction :-> :name "approved design" :type "new"}
+         [:planning :plan-graph]    {:direction :-> :name "adds tasks" :type "new"}
+         [:planning :task-files]    {:direction :-> :name "writes" :type "new"}
+         [:plan-graph :sp-exec]     {:direction :-> :name "approved plan" :type "new"}
+         [:sp-exec :sync]           {:direction :-> :type "new"}
+         [:sync :proj-views]        {:direction :-> :name "update" :type "new"}
+         [:sync :sp-finish]         {:direction :-> :type "new"}
+         [:sp-brain :spec-md]       {:direction :-> :type "removed"}
+         [:spec-md :sp-plans]       {:direction :-> :type "removed"}
+         [:sp-plans :plan-md]       {:direction :-> :type "removed"}}
+ :boxes {:brainstorm {:name "blend:brainstorming" :type "changed"
+                      :components #{:involvement :refresh :sp-brain :plan-views :overview :spec-fig :spec-md}}
+         :plan       {:name "plan (graph + task files)" :type "new"
+                      :components #{:plan-graph :task-files}}
+         :finish     {:name "finishing" :type "changed"
+                      :components #{:sync :sp-finish}}}}

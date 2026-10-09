@@ -1,0 +1,31 @@
+;; Project view: how blend works today — session start to finished branch.
+{:nodes {:session     {:name "session start" :type "trigger"}
+         :use-blend   {:name "use-blend" :type "router"
+                       :note "style, verification, dependency checks, phase → skill routing"}
+         :involvement {:name "involvement level" :type "step"
+                       :note "high / medium / full auto, asked first"}
+         :sp-brain    {:name "superpowers:brainstorming" :type "external"}
+         :spec-fig    {:name "spec figure" :type "artifact"
+                       :note ".blend/specs/<date>-<topic>.edn"}
+         :spec-md     {:name "spec" :type "artifact"
+                       :note "docs/superpowers/specs/<date>-<topic>-design.md"}
+         :sp-plans    {:name "superpowers:writing-plans" :type "external"}
+         :plan-md     {:name "plan" :type "artifact"
+                       :note "docs/superpowers/plans/<date>-<topic>.md"}
+         :task-graph  {:name "task graph" :type "artifact"
+                       :note ".blend/specs/<date>-<topic>-tasks.edn, boxes :ref the spec figure"}
+         :sp-exec     {:name "superpowers execution" :type "external"
+                       :note "subagent-driven-development / executing-plans"}
+         :sp-finish   {:name "superpowers:finishing-a-development-branch" :type "external"}}
+ :edges {[:session :use-blend]     {:direction :-> :name "SessionStart hook"}
+         [:use-blend :involvement] {:direction :-> :name "new feature → blend:brainstorming"}
+         [:involvement :sp-brain]  {:direction :->}
+         [:sp-brain :spec-fig]     {:direction :-> :name "amendment 1, 2"}
+         [:sp-brain :spec-md]      {:direction :-> :name "writes"}
+         [:spec-md :sp-plans]      {:direction :-> :name "approved spec"}
+         [:sp-plans :plan-md]      {:direction :-> :name "writes"}
+         [:sp-plans :task-graph]   {:direction :-> :name "amendment 3"}
+         [:plan-md :sp-exec]       {:direction :-> :name "approved plan"}
+         [:sp-exec :sp-finish]     {:direction :->}}
+ :boxes {:brainstorm {:name "blend:brainstorming" :type "skill"
+                      :components #{:involvement :sp-brain :spec-fig :spec-md :sp-plans :task-graph :plan-md}}}}

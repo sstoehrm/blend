@@ -1,0 +1,25 @@
+;; Project view: blend's modules and what references what. Derived from the repo.
+{:nodes {:hook          {:name "hooks/hooks.json" :type "hook"}
+         :use-blend     {:name "skills/use-blend" :type "skill"}
+         :codex-tools   {:name "use-blend/references/codex-tools.md" :type "skill"}
+         :brainstorming {:name "skills/brainstorming" :type "skill"}
+         :deduce        {:name "skills/deduce" :type "skill"}
+         :claude-plugin {:name ".claude-plugin/plugin.json" :type "manifest"}
+         :codex-plugin  {:name ".codex-plugin/plugin.json" :type "manifest"}
+         :superpowers   {:name "superpowers" :type "external"}
+         :simpleviz     {:name "simpleviz" :type "external"}}
+ :edges {[:hook :use-blend]              {:direction :-> :name "injects" :type "requires"}
+         [:use-blend :codex-tools]       {:direction :-> :name "loads on Codex" :type "requires"}
+         [:use-blend :brainstorming]     {:direction :-> :name "routes" :type "requires"}
+         [:use-blend :superpowers]       {:direction :-> :name "routes" :type "requires"}
+         [:brainstorming :superpowers]   {:direction :-> :name "loads brainstorming, writing-plans" :type "requires"}
+         [:brainstorming :simpleviz]     {:direction :-> :name "loads skill, runs CLI" :type "requires"}
+         [:deduce :simpleviz]            {:direction :-> :name "loads skill" :type "requires"}
+         [:claude-plugin :hook]          {:direction :-> :name "ships" :type "requires"}
+         [:codex-plugin :hook]           {:direction :-> :name "ships" :type "requires"}}
+ :boxes {:skills    {:name "plugins/blend/skills" :type "dir"
+                     :components #{:use-blend :codex-tools :brainstorming :deduce}}
+         :plugin    {:name "plugins/blend" :type "dir"
+                     :components #{:skills :hook :claude-plugin :codex-plugin}}
+         :externals {:name "other plugins" :type "dir"
+                     :components #{:superpowers :simpleviz}}}}
