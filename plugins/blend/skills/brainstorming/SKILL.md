@@ -5,10 +5,11 @@ description: Use when brainstorming, designing, or writing a spec for any featur
 
 # Brainstorming (blend)
 
-Runs superpowers:brainstorming with a visual spec figure alongside it, and
-a task graph for the plan that follows. Load superpowers:brainstorming now
-and follow it at the involvement level the user picks below. The steps
-below amend that process; they do not replace it.
+Runs superpowers:brainstorming, with the design kept as simpleviz graphs
+and a short `overview.md` instead of a spec document; planning continues
+in blend:planning. Load superpowers:brainstorming now and follow it at the
+involvement level the user picks below. The steps below amend that
+process; they do not replace it.
 
 ## Involvement level
 
@@ -32,10 +33,10 @@ advance; "a reply approves the stage actually presented" does not apply.
 
 | Step                           | High       | Medium                                                                                                       | Full auto                                         |
 | ------------------------------ | ---------- | ------------------------------------------------------------------------------------------------------------ | ------------------------------------------------- |
-| Clarifying questions           | as written | only those whose answer changes the design and the repo can't answer; the rest become stated assumptions     | none; decide, record assumptions in spec/design   |
+| Clarifying questions           | as written | only those whose answer changes the design and the repo can't answer; the rest become stated assumptions     | none; decide, record assumptions in overview.md  |
 | Write-back, approaches, design | as written | one message: understanding, approaches with recommendation, whole design; one approval                       | no stop                                           |
 | Visual companion               | as written | as written                                                                                                   | never offer                                       |
-| Spec review                    | stop       | stop                                                                                                         | no stop                                           |
+| Design review (overview + views) | stop       | stop                                                                                                         | no stop                                           |
 | Plan review + execution method | stop       | stop                                                                                                         | no stop; pick subagent-driven if available        |
 | Worktree consent               | as written | as written                                                                                                   | no stop; create the worktree                      |
 | Finishing menu                 | stop       | stop                                                                                                         | no stop; keep the branch, never merge or push     |
@@ -50,7 +51,7 @@ Full auto also:
 - Turns every other ask in a downstream skill (failing baseline tests, a
   missing simpleviz, an unclear base branch) into a decision it logs.
 - Ends with a report: what was built, every decision made, and the
-  figure/spec/plan paths.
+  plan graph path.
 
 Every level still stops for the execution blockers superpowers lists:
 destructive or security-sensitive actions, side effects outside the
@@ -58,48 +59,56 @@ worktree, a plan too broken to guess past.
 
 ## Amendments
 
-**1. Draw the design as you present it.** When you reach "Present design"
-in the superpowers checklist, also express the design as a simpleviz graph:
-components as nodes, dependencies/data flow as edges, subsystem groupings
-as boxes. **REQUIRED SUB-SKILL:** load simpleviz:simpleviz for the EDN
-format and how to serve.
+**1. Refresh the project views first.** Right after announcing the path,
+before clarifying questions: **REQUIRED SUB-SKILL:** blend:project-views.
+Re-derive `.blend/views/modules.edn` (create it if missing). If
+`.blend/views/architecture.edn` is missing in a project with code, draw
+the parts this feature touches. Greenfield: create both from their
+templates, emptied. Ignore `.blend/specs/` — files from blend's earlier
+format, history only.
 
-- Store the graph at `.blend/specs/YYYY-MM-DD-<topic>.edn` in the target
-  project (same date and topic as the spec document).
-- Serve it (`simpleviz <file>.edn`) and give the user the URL; the page
-  live-reloads, so revise the EDN in place as the design discussion
-  changes it.
+**2. Draw the design as plan views.** At "Present design" (architectural
+path), with `<plan>` = `YYYY-MM-DD-<topic>`. **REQUIRED SUB-SKILL:**
+simpleviz:simpleviz.
 
-**2. Amend the figure after the spec is written.** The written spec is the
-source of truth. After the spec self-review passes, update the figure to
-match the final spec exactly, then commit the `.edn` together with the spec
-document.
+- `.blend/<plan>/architecture.edn` and `.blend/<plan>/modules.edn`, each
+  from `simpleviz init <file> -t blend-plan-view`: what the design
+  touches plus direct neighbours. `:type` is `new`, `changed`, `removed`
+  or `context`; the element's own type goes in `:kind`; `:change` says
+  what changes in one line; existing elements `:pair` to
+  `"../views/<file>#<id>"`.
+- `.blend/<plan>.edn` from `simpleviz init <file> -t blend-plan`: replace
+  `DATE-TOPIC`, delete the example tasks. It is the entry point.
+- Serve it in the background (`simpleviz .blend/<plan>.edn --no-open`)
+  and give the user the URL. Revise the views in place as the discussion
+  changes the design.
 
-**3. Draw the plan's tasks.** Once the spec is accepted, continue to
-superpowers:writing-plans. When it saves a plan with 3+ tasks, draw the
-tasks as a simpleviz graph (load simpleviz:simpleviz if amendment 1 was
-skipped):
+**3. Write overview.md instead of the spec.** Where superpowers writes the
+design doc to `docs/superpowers/specs/`, write `.blend/<plan>/overview.md`
+instead: Goal, Decisions, Behavior or Workflow as the design needs,
+Non-goals, Success criteria, Testing, Open points. Self-review it as
+superpowers says, plus: every file is clean when checked from the plan
+graph — with the plan graph served, `curl -s "$URL/api/errors?file=<path>"`
+for each file prints no warnings. (`simpleviz check` on a plan view alone
+warns that `../views` leaves the folder; the link is fine.) Commit the plan
+graph, the plan folder and `.blend/views/` together. The user review gate
+covers overview.md and the views: give the plan graph URL and the
+overview path.
 
-- File: `.blend/specs/YYYY-MM-DD-<topic>-tasks.edn`, beside the spec
-  figure — a `:ref` can't leave the served file's folder.
-- One node per task (`:name` "N. <title>", `:state :new`); edge
-  `[:a :b] {:direction :->}` when b needs a done first.
-- If the spec has a figure: box tasks by the spec component they mainly
-  build, each box `:ref "YYYY-MM-DD-<topic>.edn"` to jump to the design.
-- Serve it, give the user the URL, commit it with the plan; keep it in
-  sync when the plan changes.
-- Add a line to the plan header naming the graph file and telling the
-  executor to set each task's `:state` alongside its checkbox:
-  `:in-progress`, `:done` once its review is clean, `:blocked` + `:reason`.
-  Execution often runs in a later session without this skill; the plan
-  carries the instruction there.
+**4. Plan with blend:planning.** Where superpowers invokes writing-plans,
+invoke blend:planning instead. Never superpowers:writing-plans; nothing
+under `docs/superpowers/specs/` or `docs/superpowers/plans/`.
+
+Bounded and spike paths write no plan graph, plan views or overview. A
+bounded change runs blend:project-views' "Sync after implementation"
+after it is implemented.
 
 ## Judgment
 
-- The figure covers structure — components, boundaries, flows. Don't force
-  requirements, trade-offs, or open questions into the graph; those stay in
-  the conversation and the spec.
-- A design with fewer than ~3 components doesn't need a figure; say so and
-  skip amendment 1.
-- This figure is independent of superpowers' visual companion. If the user
-  declined the companion, the spec figure is still drawn.
+- Views show structure — components, modules, flows. Requirements,
+  trade-offs and open questions go in overview.md.
+- The modules slice is always drawn: it is how the user sees a plan's
+  reach. An architecture slice with fewer than ~3 touched components may
+  be skipped; say so in overview.md.
+- The plan views are independent of superpowers' visual companion; they
+  are drawn whether or not the user accepted it.
