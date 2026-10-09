@@ -18,8 +18,8 @@ to be — multiple choice (use the host's question tool if it has one). It
 goes in the same message that announces the path classification.
 
 - **High** — the full superpowers process, every question and gate.
-- **Medium** — only questions that change the design, one design review,
-  then spec and plan reviews.
+- **Medium** — only questions that change the design, one design review
+  (overview + views), then plan review.
 - **Full auto** — you decide everything and run through implementation.
 
 Skip the question when the request already names a level ("full auto",
