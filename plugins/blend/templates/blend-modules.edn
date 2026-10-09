@@ -1,0 +1,13 @@
+;; blend-template 0.6.0
+;; Project view: every own module and which modules it imports
+;; (.blend/views/modules.edn). Derived from source by blend:project-views;
+;; do not edit by hand, it is overwritten on the next derive.
+;; Node id = module name made EDN-safe; :name = the name as written in code;
+;; :type = top-level package or directory. External libraries only when a
+;; plan adds one (:type "external").
+;; Edge [:a :b] {:direction :-> :type "requires"}: a imports b.
+;; Boxes = directories / packages (:type "dir"), nested as the tree nests.
+{:nodes {:app-core {:name "app.core" :type "app"}
+         :app-db   {:name "app.db" :type "app"}}
+ :edges {[:app-core :app-db] {:direction :-> :type "requires"}}
+ :boxes {:app {:name "src/app" :type "dir" :components #{:app-core :app-db}}}}

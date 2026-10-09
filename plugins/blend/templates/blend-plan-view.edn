@@ -1,0 +1,19 @@
+;; blend-template 0.6.0
+;; Plan view: the slice of a project view a plan touches, or a task-only view
+;; (.blend/DATE-TOPIC/architecture.edn, modules.edn, <view>.edn).
+;; :type is the change, so it gets the color:
+;;   "new" | "changed" | "removed" | "context" (direct neighbour, unchanged)
+;; :kind  = the element's own type in the project view
+;; :change = one line: what changes
+;; :tasks = ["N. <title>" ...] in the modules slice: the tasks touching it
+;; Existing elements link back to their project-view node:
+;;   :pair "../views/modules.edn#<id>"   (or ../views/architecture.edn#<id>)
+;; Edges carry :type too: new, changed, removed or context.
+{:nodes {:core {:name "app.core" :type "changed" :kind "app"
+                :change "calls the new exporter" :tasks ["2. Wire exporter"]}
+         :exporter {:name "app.export" :type "new" :kind "app"
+                    :change "writes CSV" :tasks ["1. Exporter"]}
+         :db {:name "app.db" :type "context" :kind "app"}}
+ :edges {[:core :exporter] {:direction :-> :type "new"}
+         [:core :db]       {:direction :-> :type "context"}}
+ :boxes {:app {:name "src/app" :type "context" :components #{:core :exporter :db}}}}

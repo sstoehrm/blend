@@ -1,0 +1,13 @@
+;; blend-template 0.6.0
+;; Project view: the system's architecture as it is now (.blend/views/architecture.edn).
+;; Nodes = components, :type one of service, store, ui, cli, library, worker, external.
+;; Edges = data or control flow, :name says what flows.
+;; Boxes = subsystems (:type "subsystem").
+;; Link a component to the modules implementing it:
+;;   :pair "modules.edn#<module-id>"   (a vector for several)
+{:nodes {:ui    {:name "UI" :type "ui"}
+         :api   {:name "API" :type "service"}
+         :store {:name "Store" :type "store"}}
+ :edges {[:ui :api]    {:direction :-> :name "requests"}
+         [:api :store] {:direction :-> :name "reads / writes"}}
+ :boxes {:backend {:name "Backend" :type "subsystem" :components #{:api :store}}}}
