@@ -4,7 +4,7 @@
          :modules      {:name "Modules (plan)" :type "view" :ref "2026-10-09-graph-native-plans/modules.edn"}
          :proj-arch    {:name "Architecture (project)" :type "view" :ref "views/architecture.edn"}
          :proj-modules {:name "Modules (project)" :type "view" :ref "views/modules.edn"}
-         :t01 {:name "1. Templates + installer" :type "task" :state :new :md-ref "2026-10-09-graph-native-plans/tasks/01-templates.md"
+         :t01 {:name "1. Templates + installer" :type "task" :state :in-progress :md-ref "2026-10-09-graph-native-plans/tasks/01-templates.md"
                :pair ["2026-10-09-graph-native-plans/modules.edn#templates" "2026-10-09-graph-native-plans/modules.edn#hook" "2026-10-09-graph-native-plans/modules.edn#tests"]}
          :t02 {:name "2. use-blend routing" :type "task" :state :new :md-ref "2026-10-09-graph-native-plans/tasks/02-use-blend.md"
                :pair ["2026-10-09-graph-native-plans/modules.edn#use-blend" "2026-10-09-graph-native-plans/architecture.edn#use-blend"]}
