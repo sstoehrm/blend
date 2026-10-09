@@ -24,7 +24,7 @@ The simpleviz launcher and babashka checks in `use-blend` apply unchanged.
 
 blend's simpleviz templates are installed by the SessionStart hook; if
 hooks are disabled, copy `../../../templates/blend-*.edn` (relative to
-this reference's directory) to `~/.simpleviz/templates/`.
+this reference's directory) to `${SIMPLEVIZ_HOME:-~/.simpleviz}/templates/`.
 
 ## Tool Mapping
 

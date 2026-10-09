@@ -20,6 +20,8 @@ for t in blend-plan blend-architecture blend-modules blend-plan-view; do
   check "copies $t" 'cmp -s "$src/$t.edn" "$tmp/h2/templates/$t.edn"'
 done
 
+check "silent" '[ -z "$(SIMPLEVIZ_HOME=$tmp/h2 sh "$script")" ]'
+
 # 3. same version, edited by the user: kept
 printf '\n;; my edit\n' >> "$tmp/h2/templates/blend-plan.edn"
 SIMPLEVIZ_HOME="$tmp/h2" sh "$script"

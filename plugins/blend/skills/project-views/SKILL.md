@@ -61,9 +61,10 @@ After the last task of a plan, or after a bounded change:
    each: modules or edges that changed in code but are not `new`,
    `changed` or `removed` in the slice, and planned changes that did not
    happen. An empty report says so.
-3. With a plan: apply its architecture slice to `architecture.edn` — add
-   `new` elements, update `changed` ones, delete `removed` ones, skip
-   `context`. Restore `:type` from `:kind`; drop `:change`, `:kind`,
+3. With a plan: apply its architecture slice to `architecture.edn` —
+   match each slice element to the project-view element named by its
+   `:pair` (or, for `new` elements, add them under their slice id); update
+   `changed` ones, delete `removed` ones, skip `context`. Restore `:type` from `:kind`; drop `:change`, `:kind`,
    `:tasks` and pairs into `views/`.
 4. `simpleviz check` both files, then commit them together:
    `docs: sync project views`.

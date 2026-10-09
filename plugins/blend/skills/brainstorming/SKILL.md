@@ -65,7 +65,7 @@ Re-derive `.blend/views/modules.edn` (create it if missing). If
 `.blend/views/architecture.edn` is missing in a project with code, draw
 the parts this feature touches. Greenfield: create both from their
 templates, emptied. Ignore `.blend/specs/` — files from blend's earlier
-format, history only.
+format, history only. On a spike path, skip the refresh.
 
 **2. Draw the design as plan views.** At "Present design" (architectural
 path), with `<plan>` = `YYYY-MM-DD-<topic>`. **REQUIRED SUB-SKILL:**
@@ -76,7 +76,8 @@ simpleviz:simpleviz.
   touches plus direct neighbours. `:type` is `new`, `changed`, `removed`
   or `context`; the element's own type goes in `:kind`; `:change` says
   what changes in one line; existing elements `:pair` to
-  `"../views/<file>#<id>"`.
+  `"../views/<file>#<id>"`. New modules get the id the derive will give them
+  (module name made EDN-safe).
 - `.blend/<plan>.edn` from `simpleviz init <file> -t blend-plan`: replace
   `DATE-TOPIC`, delete the example tasks. It is the entry point.
 - Serve it in the background (`simpleviz .blend/<plan>.edn --no-open`)
@@ -109,6 +110,7 @@ after it is implemented.
   trade-offs and open questions go in overview.md.
 - The modules slice is always drawn: it is how the user sees a plan's
   reach. An architecture slice with fewer than ~3 touched components may
-  be skipped; say so in overview.md.
+  be skipped; say so in overview.md and delete the :architecture node from the
+  plan graph.
 - The plan views are independent of superpowers' visual companion; they
   are drawn whether or not the user accepted it.

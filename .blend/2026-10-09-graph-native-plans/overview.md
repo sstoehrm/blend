@@ -155,6 +155,7 @@ repo of the user's, reviewed by the user.
 - Template refresh on a newer blend overwrites edits to `blend-*`
   templates; customise under another name.
 - blend:deduce is out of the workflow; its removal is tracked separately.
+- The >150-module scope rule of blend:project-views is untested.
 - A `simpleviz check --root <folder>` option would make the per-file
   check one command; until then, use the server route above.
 
@@ -188,8 +189,7 @@ subagent scenarios run before (baseline) and after (green) the change.
 1. A project with old `.blend/specs/` files: brainstorming must ignore
    them, not treat them as plan views. (Test: task 4, scenario B.)
 2. A large repo (hundreds of modules): deriving modules.edn must scope to
-   the packages the feature touches, not stall on the whole tree. (Test:
-   task 3, scenario B.)
+   the packages the feature touches, not stall on the whole tree. (Untested: simpleviz has 65 modules, below the threshold — see Open points.)
 3. Relative and aliased imports (Python `from . import x`, JS `../x`,
    Clojure `:as`): edges must point at the resolved module. (Test: task 3,
    scenario A.)
@@ -203,6 +203,8 @@ subagent scenarios run before (baseline) and after (green) the change.
 
 Plan graph: `.blend/2026-10-09-graph-native-plans.edn`. Use
 superpowers:subagent-driven-development or superpowers:executing-plans.
+For superpowers' helper scripts, PLAN_FILE is the plan graph; skip
+`task-brief` and `task-start` — each task file is the task's brief.
 Task order follows the graph's edges; tasks without a path between them
 are independent. Each task's brief is its task file plus this overview and
 the views its node links to. Set the task node's `:state` as you go:

@@ -40,8 +40,8 @@ Brainstorming first asks how involved you want to be:
 
 | Level     | You get asked                                                              |
 | --------- | -------------------------------------------------------------------------- |
-| High      | Everything superpowers asks: each question, each design section, spec, plan |
-| Medium    | Only design-changing questions; one design review, then spec and plan       |
+| High      | Everything superpowers asks: each question, each design section, design review, plan review |
+| Medium    | Only design-changing questions; one design review (overview + views), then plan review |
 | Full auto | Nothing; the agent decides, implements on a branch, and reports. Never merges or pushes |
 
 Name the level in your request ("full auto", "just decide") to skip the
@@ -84,7 +84,7 @@ automatically.
 | ------------------ | ----------------------------------------------------------------------------------------- |
 | superpowers plugin | `/plugin install superpowers@claude-plugins-official`                                     |
 | simpleviz plugin   | `/plugin install simpleviz@simpleviz`                                                     |
-| simpleviz launcher | `curl -fsSL https://raw.githubusercontent.com/sstoehrm/simpleviz/main/install.sh \| bash` |
+| simpleviz launcher (≥ 0.32.0) | `curl -fsSL https://raw.githubusercontent.com/sstoehrm/simpleviz/main/install.sh \| bash` |
 | babashka           | https://github.com/babashka/babashka#installation                                         |
 
 use-blend checks these lazily and tells you the fix when one is missing.
@@ -110,6 +110,7 @@ plugins/blend/                      # the "blend" plugin
 ├── templates/blend-*.edn           # simpleviz templates (init -t blend-plan …)
 └── skills/
     └── <skill-name>/SKILL.md       # one directory per skill
+tests/install-templates.test.sh     # run: sh tests/install-templates.test.sh
 ```
 
 ## Usage
@@ -130,9 +131,9 @@ startup, resume, clear, and compaction. If hooks are disabled or not trusted,
 select `use-blend` in the skill picker or ask: "Load Blend's use-blend skill
 and follow it for this task."
 
-To use an individual skill, ask for **Blend's brainstorming skill** or
-**Blend's deduce skill**. Select the Blend entry if another plugin exposes
-the same name. The skill files are shared by both hosts. Following
+To use an individual skill, ask for **Blend's brainstorming skill**,
+**Blend's planning skill** or **Blend's project-views skill**. Select the Blend entry if another plugin
+exposes the same name. The skill files are shared by both hosts. Following
 [Superpowers' platform adaptation pattern](https://github.com/obra/superpowers/blob/main/skills/using-superpowers/SKILL.md),
 `use-blend` conditionally loads a Codex reference for tool mappings;
 other hosts don't load that reference.

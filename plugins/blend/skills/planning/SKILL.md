@@ -53,7 +53,9 @@ Append to overview.md, paths filled in (replace an existing `## Executing this p
 ## Executing this plan
 
 Plan graph: `.blend/<plan>.edn`. Use superpowers:subagent-driven-development
-or superpowers:executing-plans. Task order follows the graph's edges;
+or superpowers:executing-plans. For superpowers' helper scripts, PLAN_FILE is
+the plan graph; skip `task-brief` and `task-start` — each task file is the
+task's brief. Task order follows the graph's edges;
 tasks without a path between them are independent. Each task's brief is
 its task file plus this overview and the views its node links to. Set the
 task node's `:state` as you go: `:in-progress` when started, `:done` once
