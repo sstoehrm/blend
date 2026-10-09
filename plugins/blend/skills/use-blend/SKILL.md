@@ -31,8 +31,13 @@ and wait; fall back to inline principles only if they decline to install.
 | ------------------ | --------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
 | superpowers skills | superpowers skills in the skill list | `/plugin install superpowers@claude-plugins-official`, or the current host's installation method from [superpowers](https://github.com/obra/superpowers). |
 | simpleviz skill    | simpleviz skill in the skill list | `/plugin install simpleviz@simpleviz`, or the current host's installation method from [simpleviz](https://github.com/sstoehrm/simpleviz). |
-| simpleviz launcher | `simpleviz --version`             | `curl -fsSL https://raw.githubusercontent.com/sstoehrm/simpleviz/main/install.sh \| bash`; later: `simpleviz update` |
+| simpleviz launcher | `simpleviz --version` ≥ v0.32.0   | `curl -fsSL https://raw.githubusercontent.com/sstoehrm/simpleviz/main/install.sh \| bash`; older: `simpleviz update` |
 | babashka           | `command -v bb`                   | https://github.com/babashka/babashka#installation                                                                    |
+
+blend's simpleviz templates (`blend-plan`, `blend-architecture`,
+`blend-modules`, `blend-plan-view`) are installed by blend's SessionStart
+hook once simpleviz is installed; after installing simpleviz mid-session,
+start a new session or run `/clear` to get them.
 
 ## Communication Style
 
@@ -96,12 +101,13 @@ unchanged instead of starting another full review at each workflow step.
 
 | Phase                   | Route through                                                                                                                         | Loop until                               |
 | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------- |
-| New feature / idea      | blend:brainstorming (loads superpowers:brainstorming, adds spec figure and task graph)                                                | design agreed (or full auto chosen)      |
+| New feature / idea      | blend:brainstorming (loads superpowers:brainstorming; design as plan views + overview.md)                                             | design agreed (or full auto chosen)      |
 | Writing/editing a skill | superpowers:writing-skills                                                                                                            | subagent tests pass                      |
 | Design + mock-ups       | blend:brainstorming, then artifact-design / dataviz for the mock-up                                                                   | reviewer satisfied                       |
-| Spec                    | superpowers:writing-plans                                                                                                             | reviewer satisfied                       |
-| Implementation plan     | plan mode + superpowers:writing-plans                                                                                                 | reviewer satisfied                       |
-| Implementation          | superpowers:executing-plans or subagent-driven-development, with test-driven-development                                              | tests green, per-task review clean       |
+| Design review           | blend:brainstorming (overview.md + plan views; no spec document)                                                                      | reviewer satisfied                       |
+| Implementation plan     | plan mode + blend:planning — never superpowers:writing-plans                                                                          | reviewer satisfied                       |
+| Implementation          | superpowers:executing-plans or subagent-driven-development, following the plan's overview.md "Executing this plan", with test-driven-development | tests green, per-task review clean       |
 | Bug / failing test      | superpowers:systematic-debugging                                                                                                      | root cause found, regression test passes |
 | Code review             | superpowers:requesting-code-review; superpowers:receiving-code-review for feedback                                                    | no blocking findings                     |
-| Finishing               | superpowers:verification-before-completion, then finishing-a-development-branch                                                       | evidence shown, not asserted             |
+| Finishing               | blend:project-views (sync after implementation), then superpowers:verification-before-completion, then finishing-a-development-branch | evidence shown, not asserted             |
+| How the system fits together | blend:project-views                                                                                                              | views match the code                     |

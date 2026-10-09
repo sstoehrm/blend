@@ -22,6 +22,10 @@ Code `/plugin install` commands in the shared skill:
 
 The simpleviz launcher and babashka checks in `use-blend` apply unchanged.
 
+blend's simpleviz templates are installed by the SessionStart hook; if
+hooks are disabled, copy `../../../templates/blend-*.edn` (relative to
+this reference's directory) to `~/.simpleviz/templates/`.
+
 ## Tool Mapping
 
 - **AskUserQuestion / multiSelect:** use the available question tool in the
