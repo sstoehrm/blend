@@ -1,6 +1,6 @@
 # Graph-native plans — overview
 
-Date: 2026-10-09 · Status: design, awaiting review · Entry point:
+Date: 2026-10-09 · Status: planned · Entry point:
 `.blend/2026-10-09-graph-native-plans.edn`
 
 ## Goal
@@ -66,16 +66,21 @@ graph is kept current — and the human's speed of understanding.
    items.
 8. **Templates.** blend ships `blend-plan`, `blend-architecture`,
    `blend-modules` and `blend-plan-view` in `plugins/blend/templates/`.
-   use-blend's simpleviz dependency check copies missing ones to
-   `~/.simpleviz/templates/` (or `$SIMPLEVIZ_HOME/templates`); each starts
-   with `;; blend-template <version>` and is replaced when blend is newer.
+   blend's SessionStart hook runs `hooks/install-templates.sh`, which
+   copies missing ones to `$SIMPLEVIZ_HOME/templates` (default
+   `~/.simpleviz/templates`) and replaces one whose first line
+   (`;; blend-template <version>`) differs from blend's. (use-blend reaches
+   the agent as hook output, so the agent does not know blend's install
+   path; the hook does.)
    Files start from `simpleviz init <file> -t <template>`. Fixed `:type`
    names give stable colours across plans.
 9. **Skill split.** blend:brainstorming keeps amending
    superpowers:brainstorming (its process does not depend on the output
    format) and keeps the involvement levels. A new **blend:planning**
    replaces superpowers:writing-plans, whose substance is its format; it
-   keeps writing-plans' task rules. Execution and finishing stay
+   keeps writing-plans' task rules. A new **blend:project-views** owns
+   deriving, drawing and syncing `.blend/views/`; brainstorming and the
+   plan's execution notes load it. Execution and finishing stay
    superpowers, pointed at the plan graph.
 
 ## Workflow
@@ -99,14 +104,11 @@ rules: goal, exact files (create / modify / test), bite-sized TDD steps
 (failing test → run → implement → run → commit) with the code they need,
 acceptance criteria, no placeholders, and which views to read.
 
-## Executing this plan
+## Plan notes in the overview
 
-Written by blend:planning at the end of `overview.md`, so a later session
-without blend loaded still finds it: task order is the plan graph's edges;
-each task's brief is its task file plus this overview; set `:state` on the
-task node (`:in-progress`, `:done` once its review is clean, `:blocked` +
-`:reason`); after the last task, re-derive `.blend/views/modules.edn` and
-report differences from this plan's `modules.edn`.
+blend:planning appends `## Plan`, `## Global constraints`,
+`## Review focus` and `## Executing this plan` to `overview.md`, so a
+later session without blend loaded still finds how to run the plan.
 
 ## Checking files
 
@@ -155,3 +157,55 @@ repo of the user's, reviewed by the user.
 - blend:deduce is out of the workflow; its removal is tracked separately.
 - A `simpleviz check --root <folder>` option would make the per-file
   check one command; until then, use the server route above.
+
+## Plan
+
+Tech stack: Markdown skills (Claude Code + Codex plugin), simpleviz ≥
+0.32.0 EDN graphs and templates, POSIX sh for the template installer and
+its test. Skill changes are tested the superpowers:writing-skills way:
+subagent scenarios run before (baseline) and after (green) the change.
+
+## Global constraints
+
+- Skill names: `blend:brainstorming`, `blend:planning`,
+  `blend:project-views`, `use-blend`.
+- Paths: plan graph `.blend/YYYY-MM-DD-<topic>.edn`; plan folder
+  `.blend/YYYY-MM-DD-<topic>/` with `overview.md`, `architecture.edn`,
+  `modules.edn`, `tasks/NN-<slug>.md`; project views
+  `.blend/views/architecture.edn`, `.blend/views/modules.edn`.
+- Template names: `blend-plan`, `blend-architecture`, `blend-modules`,
+  `blend-plan-view`; first line `;; blend-template 0.6.0`.
+- Plan-view `:type` values: `new`, `changed`, `removed`, `context`; the
+  element's own type in `:kind`; one-line `:change`; `:tasks` on module
+  slice elements; task nodes `:type "task"`, edges `:type "needs"`.
+- Templates contain no `:pair` (a pair to a missing file warns); show
+  pairs in comments.
+- simpleviz ≥ 0.32.0 (`init -t`).
+- Plugin version 0.6.0 in both manifests.
+
+## Review focus
+
+1. A project with old `.blend/specs/` files: brainstorming must ignore
+   them, not treat them as plan views. (Test: task 4, scenario B.)
+2. A large repo (hundreds of modules): deriving modules.edn must scope to
+   the packages the feature touches, not stall on the whole tree. (Test:
+   task 3, scenario B.)
+3. Relative and aliased imports (Python `from . import x`, JS `../x`,
+   Clojure `:as`): edges must point at the resolved module. (Test: task 3,
+   scenario A.)
+4. simpleviz older than 0.32.0 or not installed: the hook must not fail
+   the session; templates appear once simpleviz is installed. (Test: task
+   1, test cases 1 and 5.)
+5. Executing in a later session without blend's skills loaded: the plan
+   must explain itself. (Test: task 5, scenario B.)
+
+## Executing this plan
+
+Plan graph: `.blend/2026-10-09-graph-native-plans.edn`. Use
+superpowers:subagent-driven-development or superpowers:executing-plans.
+Task order follows the graph's edges; tasks without a path between them
+are independent. Each task's brief is its task file plus this overview and
+the views its node links to. Set the task node's `:state` as you go:
+`:in-progress` when started, `:done` once its review is clean, `:blocked`
+with `:reason "<why>"`. After the last task, load blend:project-views and
+run its "Sync after implementation" against this plan.

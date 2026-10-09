@@ -1,21 +1,26 @@
 ;; Plan view: modules this plan touches. :type is the change; :kind the module's own type.
 {:nodes {:use-blend     {:name "skills/use-blend" :type "changed" :kind "skill"
-                         :change "routing rows; template install in the simpleviz dependency check"
+                         :change "routing rows; simpleviz ≥ 0.32.0; Codex note" :tasks ["2. use-blend routing"]
                          :pair "../views/modules.edn#use-blend"}
          :brainstorming {:name "skills/brainstorming" :type "changed" :kind "skill"
-                         :change "amendments 1–3 replaced: project views, plan views, overview.md, hand-off to planning"
+                         :change "amendments 1–3 replaced: project views, plan views, overview.md, hand-off to planning" :tasks ["4. Brainstorming rewrite" "7. Dry run"]
                          :pair "../views/modules.edn#brainstorming"}
          :planning      {:name "skills/planning" :type "new" :kind "skill"
-                         :change "replaces superpowers:writing-plans: task nodes, task files, Executing this plan"}
+                         :change "replaces superpowers:writing-plans: task nodes, task files, Executing this plan" :tasks ["5. Planning skill" "7. Dry run"]}
+         :project-views {:name "skills/project-views" :type "new" :kind "skill"
+                         :change "derive modules.edn, draw architecture.edn, sync after implementation" :tasks ["3. Project-views skill" "7. Dry run"]}
+         :tests         {:name "tests/install-templates.test.sh" :type "new" :kind "test"
+                         :change "installer cases + template checks" :tasks ["1. Templates + installer"]}
          :templates     {:name "plugins/blend/templates" :type "new" :kind "templates"
-                         :change "blend-plan, blend-architecture, blend-modules, blend-plan-view"}
+                         :change "blend-plan, blend-architecture, blend-modules, blend-plan-view" :tasks ["1. Templates + installer"]}
          :claude-plugin {:name ".claude-plugin/plugin.json" :type "changed" :kind "manifest"
-                         :change "version bump"
+                         :change "version 0.6.0" :tasks ["6. README + version"]
                          :pair "../views/modules.edn#claude-plugin"}
          :codex-plugin  {:name ".codex-plugin/plugin.json" :type "changed" :kind "manifest"
-                         :change "version bump, description"
+                         :change "version 0.6.0, descriptions" :tasks ["6. README + version"]
                          :pair "../views/modules.edn#codex-plugin"}
-         :hook          {:name "hooks/hooks.json" :type "context" :kind "hook"
+         :hook          {:name "hooks (hooks.json, install-templates.sh)" :type "changed" :kind "hook"
+                         :change "second SessionStart command installs templates" :tasks ["1. Templates + installer"]
                          :pair "../views/modules.edn#hook"}
          :superpowers   {:name "superpowers" :type "context" :kind "external"
                          :pair "../views/modules.edn#superpowers"}
@@ -24,7 +29,12 @@
  :edges {[:hook :use-blend]            {:direction :-> :name "injects" :type "context"}
          [:use-blend :brainstorming]   {:direction :-> :name "routes" :type "context"}
          [:use-blend :planning]        {:direction :-> :name "routes" :type "new"}
-         [:use-blend :templates]       {:direction :-> :name "installs into ~/.simpleviz/templates" :type "new"}
+         [:hook :templates]            {:direction :-> :name "installs into ~/.simpleviz/templates" :type "new"}
+         [:use-blend :project-views]   {:direction :-> :name "routes" :type "new"}
+         [:brainstorming :project-views] {:direction :-> :name "refresh at start" :type "new"}
+         [:planning :project-views]    {:direction :-> :name "names sync in Executing this plan" :type "new"}
+         [:project-views :simpleviz]   {:direction :-> :name "init -t, check" :type "new"}
+         [:tests :hook]                {:direction :-> :name "tests" :type "new"}
          [:use-blend :superpowers]     {:direction :-> :name "routes" :type "context"}
          [:brainstorming :superpowers] {:direction :-> :name "loads brainstorming only (no writing-plans)" :type "changed"}
          [:brainstorming :planning]    {:direction :-> :name "hands off after design review" :type "new"}
@@ -34,8 +44,9 @@
          [:claude-plugin :hook]        {:direction :-> :name "ships" :type "context"}
          [:codex-plugin :hook]         {:direction :-> :name "ships" :type "context"}}
  :boxes {:skills    {:name "plugins/blend/skills" :type "context"
-                     :components #{:use-blend :brainstorming :planning}}
+                     :components #{:use-blend :brainstorming :planning :project-views}}
          :plugin    {:name "plugins/blend" :type "context"
                      :components #{:skills :templates :hook :claude-plugin :codex-plugin}}
+         :repo-tests {:name "tests" :type "new" :components #{:tests}}
          :externals {:name "other plugins" :type "context"
                      :components #{:superpowers :simpleviz}}}}
