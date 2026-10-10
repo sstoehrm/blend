@@ -6,6 +6,7 @@ here=$(cd "$(dirname "$0")" && pwd)
 d=$(mktemp -d)
 case $1 in
   blackboard) git clone -q "${BLACKBOARD_REPO:-$HOME/repos/private/smpl-blackboard}" "$d/repo"
+              git -C "$d/repo" remote remove origin
               echo "$d/repo"; exit 0 ;;
   empty) ;;
   *) [ -d "$here/fixtures/$1" ] || { echo "no fixture $1" >&2; exit 2; }
