@@ -1,7 +1,7 @@
 {
   "name": "blend",
-  "version": "0.6.0",
-  "description": "Sören's workflow skills — blends superpowers, simpleviz, and review loops",
+  "version": "0.7.0",
+  "description": "Sören's workflow skills — opt-in design, planning and execution with simpleviz graphs",
   "author": {
     "name": "Sören Stöhrmann"
   },
@@ -9,7 +9,7 @@
   "interface": {
     "displayName": "Blend",
     "shortDescription": "Visual design and graph-native plans",
-    "longDescription": "Combine superpowers workflows with simpleviz plan graphs, task files and always-current architecture and module views.",
+    "longDescription": "Opt-in skills for designing with simpleviz plan graphs, planning tasks, executing them, and keeping architecture, module and system views current.",
     "developerName": "Sören Stöhrmann",
     "category": "Developer Tools",
     "capabilities": ["Read", "Write"],

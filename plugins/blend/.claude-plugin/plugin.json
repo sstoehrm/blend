@@ -1,7 +1,7 @@
 {
   "name": "blend",
-  "version": "0.6.0",
-  "description": "Sören's workflow skills — blends superpowers, simpleviz, and review loops",
+  "version": "0.7.0",
+  "description": "Sören's workflow skills — opt-in design, planning and execution with simpleviz graphs",
   "author": {
     "name": "Sören Stöhrmann"
   }
