@@ -224,6 +224,7 @@ Tech stack: markdown skills, POSIX sh, `jq`, the `claude` CLI headless
 - Task 9: split into implementer, controller run, outcome writer (Ruling 11) — a subagent idling on a long run is fragile and costly.
 - Task 9: success criterion not met — 0.7.0 costs more ($0.43 vs $0.28 mean), see outcome.md.
 - Final: fix wave I1-I6, T3, T5, M1-M6 (Ruling 12); M7 to the outcome.md writer; M8, M9 left (M9 is the user's design choice).
+- Task 9: the green prompt names the CLI entry point (python3 csv2json.py / python3 -m csv2json from the repo root) for both arms — acceptance can't find src/-layout CLIs otherwise.
 
 ## Executing this plan
 
