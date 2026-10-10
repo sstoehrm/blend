@@ -4,7 +4,7 @@
          :modules      {:name "Modules (plan)" :type "view" :ref "2026-10-10-standalone-blend/modules.edn"}
          :proj-arch    {:name "Architecture (project)" :type "view" :ref "views/architecture.edn"}
          :proj-modules {:name "Modules (project)" :type "view" :ref "views/modules.edn"}
-         :t01 {:name "1. Scenario harness" :type "task" :state :in-progress :md-ref "2026-10-10-standalone-blend/tasks/01-harness.md"
+         :t01 {:name "1. Scenario harness" :type "task" :state :done :md-ref "2026-10-10-standalone-blend/tasks/01-harness.md"
                :pair ["2026-10-10-standalone-blend/modules.edn#scenarios"]}
          :t02 {:name "2. use-blend" :type "task" :state :new :md-ref "2026-10-10-standalone-blend/tasks/02-use-blend.md"
                :pair ["2026-10-10-standalone-blend/modules.edn#use-blend" "2026-10-10-standalone-blend/modules.edn#codex-tools" "2026-10-10-standalone-blend/architecture.edn#use-blend" "2026-10-10-standalone-blend/architecture.edn#offer"]}
