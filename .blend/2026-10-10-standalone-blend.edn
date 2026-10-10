@@ -8,7 +8,7 @@
                :pair ["2026-10-10-standalone-blend/modules.edn#scenarios"]}
          :t02 {:name "2. use-blend" :type "task" :state :done :md-ref "2026-10-10-standalone-blend/tasks/02-use-blend.md"
                :pair ["2026-10-10-standalone-blend/modules.edn#use-blend" "2026-10-10-standalone-blend/modules.edn#codex-tools" "2026-10-10-standalone-blend/architecture.edn#use-blend" "2026-10-10-standalone-blend/architecture.edn#offer"]}
-         :t03 {:name "3. persist" :type "task" :state :in-progress :md-ref "2026-10-10-standalone-blend/tasks/03-persist.md"
+         :t03 {:name "3. persist" :type "task" :state :done :md-ref "2026-10-10-standalone-blend/tasks/03-persist.md"
                :pair ["2026-10-10-standalone-blend/modules.edn#persist" "2026-10-10-standalone-blend/modules.edn#project-views" "2026-10-10-standalone-blend/modules.edn#templates" "2026-10-10-standalone-blend/modules.edn#tests" "2026-10-10-standalone-blend/architecture.edn#refresh" "2026-10-10-standalone-blend/architecture.edn#sync" "2026-10-10-standalone-blend/architecture.edn#persist-req" "2026-10-10-standalone-blend/architecture.edn#proj-views"]}
          :t04 {:name "4. debugging" :type "task" :state :new :md-ref "2026-10-10-standalone-blend/tasks/04-debugging.md"
                :pair ["2026-10-10-standalone-blend/modules.edn#debugging" "2026-10-10-standalone-blend/architecture.edn#debugging"]}
