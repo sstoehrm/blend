@@ -1,6 +1,6 @@
 ---
 name: persist
-description: Use when the global spec in .blend/views (modules.edn, architecture.edn, system.md) should take in recent work — after ad-hoc changes in a session, for a range of git history, after a blend plan is finished, at the start of a blend brainstorm, or when the user asks how the system or its modules fit together.
+description: Use when the global spec in .blend/views (modules.edn, architecture.edn, system.md) should take in recent work — after ad-hoc changes in a session, for a range of git history, after a blend plan is finished, or at the start of a blend brainstorm.
 ---
 
 # Persist
@@ -39,7 +39,8 @@ Say the source and range before starting. Skip commits that only touch
 3. One node per module: id = module name made EDN-safe (`app-io-reader`),
    `:name` = the name as in code, `:type` = top-level package or
    directory. One edge per import: `[:a :b] {:direction :-> :type "requires"}`.
-   One box per directory or package (`:type "dir"`), nested as the tree.
+   One box per directory or package
+   `{:name "<dir>" :type "dir" :components #{…}}`, nested as the tree.
 4. Up to ~150 modules: derive all. Above: the packages the source touches
    plus their direct importers and imports; keep what the file holds;
    `:note "not derived yet: …"` on boxes left incomplete.
@@ -85,6 +86,9 @@ Say the source and range before starting. Skip commits that only touch
   overview's `## Decisions` that still hold.
 - A decision that replaces an older one replaces its line. Purpose and
   Constraints change only when the source says so.
+- session / plan: also read commit messages in `<marker>..HEAD`, as git
+  does. A marker that is not an ancestor of HEAD (rebase, squash) counts
+  as no marker.
 - Marker = `git rev-parse HEAD` before your commit.
 
 ## 4. Report
@@ -98,8 +102,8 @@ changed: say so.
 ## 5. Check and commit
 
 `simpleviz check` on both EDN files prints `ok`. Then commit only the
-views: `git add .blend/views && git commit -m "docs: persist project views"`.
-Never stage the user's other changes. Nothing changed: no commit.
+views: `git add .blend/views && git commit -m "docs: persist project views" -- .blend/views`.
+The pathspec keeps the user's staged code out. Nothing changed: no commit.
 
 Starting files from templates is optional:
 `simpleviz init .blend/views/modules.edn -t blend-modules` (or
@@ -113,4 +117,4 @@ Starting files from templates is optional:
 | Stdlib or third-party modules as nodes | Own modules only |
 | New ids on re-derive | Keep ids; pairs break otherwise |
 | A changelog in Decisions | Only what future work must respect |
-| Committing the user's code with the views | `git add .blend/views` only |
+| Committing the user's code with the views | `git add .blend/views`, commit with `-- .blend/views` |
