@@ -1,30 +1,54 @@
 ---
 name: planning
-description: Use when a blend design (.blend/<date>-<topic>.edn with overview.md and plan views) is approved and needs an implementation plan — use instead of superpowers:writing-plans.
+description: Use when a blend design (.blend/<date>-<topic>.edn with overview.md and plan views) is approved and needs an implementation plan.
 ---
 
 # Planning (blend)
 
 Turns an approved blend design into a plan: task nodes in the plan graph,
 one task file per task, and plan notes in overview.md.
+**REQUIRED SUB-SKILL:** simpleviz:simpleviz. `<plan>` = the design's
+`YYYY-MM-DD-<topic>`.
 
-**REQUIRED BACKGROUND:** superpowers:writing-plans — load it and follow
-its rules for scope check, file structure, task right-sizing, bite-sized
-TDD steps, task structure (Files, Interfaces, checkbox steps with code),
-no placeholders, and self-review. Ignore its save location, plan document
-and header; the table below says where each part goes.
-**REQUIRED SUB-SKILL:** simpleviz:simpleviz.
+## Before the tasks
 
-`<plan>` = the design's `YYYY-MM-DD-<topic>`.
+- Scope: a design with independent subsystems gets one plan per
+  subsystem; say so and plan the first.
+- File structure: list the files to create or modify and what each is
+  responsible for. One responsibility per file; follow the repo's
+  patterns.
 
-| writing-plans part | Here |
+## Tasks
+
+A task is the smallest unit with its own test cycle that a reviewer
+could reject on its own. Fold setup, configuration and docs into the
+task that needs them.
+
+`.blend/<plan>/tasks/NN-<slug>.md`:
+
+- `# Task N: <title>`, then **Goal** (one sentence).
+- **Files**: Create / Modify (with line ranges) / Test, exact paths.
+- **Interfaces**: Consumes and Produces — exact names, signatures and
+  types other tasks rely on; an implementer sees only this file.
+- Checkbox steps, one action each (2–5 minutes): write the failing test
+  (the code) → run it, expected failure → minimal implementation (the
+  code) → run it, expected pass → commit (the command).
+
+No placeholders: no "TBD", "add error handling", "similar to task N" or
+"write tests for the above". Every code step shows the code; every name
+a task uses is defined in some task.
+
+| Plan part | Where |
 | --- | --- |
-| Goal, Architecture, Spec | already in overview.md — don't repeat |
-| Tech Stack | overview.md `## Plan` |
-| Global Constraints | overview.md `## Global constraints` |
-| Review Focus | overview.md `## Review focus`; each line's test in the owning task file |
-| `### Task N` | `.blend/<plan>/tasks/NN-<slug>.md`, starting `# Task N: <title>` |
+| Goal, architecture, decisions | already in overview.md — don't repeat |
+| Tech stack | overview.md `## Plan` |
+| Global constraints (versions, naming, limits; exact values) | overview.md `## Global constraints` |
+| Review focus | overview.md `## Review focus`; each line's test in the owning task file |
 | Task order | edges in the plan graph |
+
+Review focus: up to five inputs or failure modes the design implies but
+no test exercises, most likely first, each with the behavior a user
+would expect.
 
 ## Plan graph
 
@@ -35,45 +59,45 @@ In `.blend/<plan>.edn`, per task:
   plan-slice elements the task builds: `"<plan>/modules.edn#<id>"`,
   `"<plan>/architecture.edn#<id>"`.
 - `:ref "<plan>/<view>.edn"` when the task needs a view no slice shows (a
-  migration flow, a folder layout) — draw it with `-t blend-plan-view`.
+  migration flow, a folder layout), in the plan-view shape.
 - edge `[:tA :tB] {:direction :-> :type "needs"}` only when B cannot start
   before A is done. A needless edge hides parallel work.
 - box tasks by the architecture component they mainly build
   (`:type "component"`).
 
 In the modules slice, set `:tasks ["N. <title>" …]` on each element a
-task touches. Every `new`, `changed` or `removed` slice element is touched
-by a task; every task pairs to at least one element.
+task touches. Every `new`, `changed` or `removed` slice element is
+touched by a task; every task pairs to at least one element.
 
 ## Executing this plan
 
-Append to overview.md, paths filled in (replace an existing `## Executing this plan` section instead of adding a second):
+Write into overview.md, paths filled in (replace an existing section):
 
 ```markdown
 ## Executing this plan
 
-Plan graph: `.blend/<plan>.edn`. Use superpowers:subagent-driven-development
-or superpowers:executing-plans. For superpowers' helper scripts, PLAN_FILE is
-the plan graph; skip `task-brief` and `task-start` — each task file is the
-task's brief. Task order follows the graph's edges;
-tasks without a path between them are independent. Each task's brief is
-its task file plus this overview and the views its node links to. Set the
-task node's `:state` as you go: `:in-progress` when started, `:done` once
-its review is clean, `:blocked` with `:reason "<why>"`. After the last
-task, load blend:project-views and run its "Sync after implementation"
-against this plan.
+Plan graph: `.blend/<plan>.edn`. Run it with blend:executing. Without
+blend: task order follows the graph's `needs` edges; tasks without a path
+between them are independent. Each task's brief is its task file plus
+this overview and the views its node links to. Set the task node's
+`:state`: `:in-progress` when started, `:done` once reviewed,
+`:blocked` with `:reason "<why>"`. After the last task, update
+`.blend/views/` (blend:persist, source plan).
 ```
 
 ## Self-review
 
-writing-plans' checklist, against overview.md and the plan views, plus:
-the edges have no cycle; every task file exists and its title matches its
-node; every file is clean when checked from the plan graph (served:
-`curl -s "$URL/api/errors?file=<path>"`). Fix inline, then commit the plan
-graph, the task files, the slices and overview.md together.
+Every design requirement maps to a task; names and signatures match
+across tasks; no placeholders; the edges have no cycle; every task file
+exists and its title matches its node; every file is clean from the
+served plan graph (`curl -s "$URL/api/errors?file=<path>"`). Fix inline,
+then commit the plan graph, task files, slices and overview.md together.
 
 ## Hand-off
 
-writing-plans' execution hand-off, naming the plan graph URL and
-`.blend/<plan>/tasks/` instead of a plan file. blend:brainstorming's
-involvement level decides whether you stop for it.
+Give the plan graph URL and `.blend/<plan>/tasks/`; ask the user to
+review and to pick inline or subagent-per-task, then load
+blend:executing. blend:brainstorming's involvement level decides whether
+you stop here.
+
+Adapted from superpowers:writing-plans by Jesse Vincent (MIT).
