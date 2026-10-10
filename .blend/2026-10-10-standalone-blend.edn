@@ -18,7 +18,7 @@
                :pair ["2026-10-10-standalone-blend/modules.edn#planning" "2026-10-10-standalone-blend/architecture.edn#planning"]}
          :t07 {:name "7. brainstorming" :type "task" :state :done :md-ref "2026-10-10-standalone-blend/tasks/07-brainstorming.md"
                :pair ["2026-10-10-standalone-blend/modules.edn#brainstorming" "2026-10-10-standalone-blend/architecture.edn#process" "2026-10-10-standalone-blend/architecture.edn#sp-brain"]}
-         :t08 {:name "8. Docs + version" :type "task" :state :new :md-ref "2026-10-10-standalone-blend/tasks/08-docs-version.md"
+         :t08 {:name "8. Docs + version" :type "task" :state :in-progress :md-ref "2026-10-10-standalone-blend/tasks/08-docs-version.md"
                :pair ["2026-10-10-standalone-blend/modules.edn#notices" "2026-10-10-standalone-blend/modules.edn#deduce" "2026-10-10-standalone-blend/modules.edn#claude-plugin" "2026-10-10-standalone-blend/modules.edn#codex-plugin" "2026-10-10-standalone-blend/modules.edn#superpowers"]}
          :t09 {:name "9. Outcome comparison" :type "task" :state :new :md-ref "2026-10-10-standalone-blend/tasks/09-outcome.md"
                :pair ["2026-10-10-standalone-blend/modules.edn#scenarios"]}}
