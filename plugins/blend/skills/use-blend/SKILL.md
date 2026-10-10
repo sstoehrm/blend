@@ -97,7 +97,7 @@ this turn and show its result. Without that, say what is unverified.
 One read-only reviewer (a subagent if the host has one) gets the
 requirements, the exact scope (a commit range; for uncommitted work the
 staged, unstaged and relevant untracked changes) and the reviewer prompt
-`reviewer-prompt.md` beside blend:executing's SKILL.md. No other review
+`skills/executing/reviewer-prompt.md` in the blend plugin (beside blend:executing's SKILL.md). No other review
 commands chained; broader audits need a user request.
 
 Receiving review: check each finding against the code before changing

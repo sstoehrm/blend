@@ -19,6 +19,8 @@ task's brief, overview.md gives the goal, constraints and review focus.
 3. Run the test suite. Failing before you start: report and ask (full
    auto: log it and continue).
 4. Resume: `:state :done` tasks are done; `git log` confirms.
+   `:in-progress`: check git log and the tree, continue from its first
+   unfinished step.
 5. Mode: inline, unless the user asked for subagents or the plan has
    5+ tasks and the host has a subagent tool. Say which.
 
@@ -57,7 +59,8 @@ Per task, one at a time — parallel implementers collide:
 5. Findings: the implementer fixes, the reviewer re-checks those
    findings only. Still open after 2 rounds: decide each (fix it
    yourself, accept, or park it), log it, go on.
-6. Set `:done`; commit the plan graph. Every task gets its reviewer,
+6. Set `:done`; commit the plan graph
+   (`git commit -m "chore(plan): task N done" -- .blend/<plan>.edn`). Every task gets its reviewer,
    the last one too; never mark `:done` before its review.
 
 ## Execution log
@@ -74,13 +77,14 @@ size. Don't copy views by hand — blend:persist does that.
 
 1. Whole-branch review: one reviewer, most capable model,
    `reviewer-prompt.md`, overview.md, the range from the branch base.
-   One fix pass, one re-check.
+   One fix pass; the reviewer re-checks those findings.
 2. Load blend:persist with source plan.
 3. Run the full suite and show its output.
 4. Offer: (1) merge into `<base>` locally, (2) push and open a PR,
    (3) keep the branch. Wait for the choice; full auto keeps it.
    - Merge: merge, run the suite on the result, then delete the branch
-     and remove the worktree if you created it.
+     and remove the worktree if you created it. Red after merge: stop,
+     report, keep the branch.
    - PR: `git push -u origin <branch>`, `gh pr create`; keep the worktree.
 
 Never force-push, merge on a red suite, or delete unmerged work without

@@ -33,7 +33,7 @@ listed here. Under full auto every stage is approved in advance.
 | Clarifying questions | one at a time | only those the repo can't answer that change the design; the rest become stated assumptions | none; assumptions go in overview.md |
 | Understanding, approaches, design | each its own stop | one message, one approval | no stop |
 | Design review (overview + views) | stop | stop | no stop |
-| Plan review + execution mode | stop | stop | no stop; subagent per task if available |
+| Plan review + execution mode | stop | stop | no stop; mode per blend:executing |
 | Worktree | ask | ask | create it before the first file |
 | Finish menu | stop | stop | keep the branch; never merge or push |
 
@@ -54,7 +54,8 @@ Classify before the first question and say it, so the user can override:
   files, tests), stop for a yes, implement with TDD and commit it, then
   always run blend:persist with source session, even when `.blend/views/` doesn't
   exist yet (persist creates it). Not optional, not skippable for size.
-  No plan files.
+  No plan files. Then report and offer blend:executing's Finish step 4
+  (merge / PR / keep); full auto keeps the branch and reports.
 - **Architectural** — new projects, subsystems, changed interfaces or
   structure: the process below.
 
