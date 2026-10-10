@@ -16,7 +16,7 @@
                :pair ["2026-10-10-standalone-blend/modules.edn#executing" "2026-10-10-standalone-blend/architecture.edn#executing" "2026-10-10-standalone-blend/architecture.edn#finish" "2026-10-10-standalone-blend/architecture.edn#sp-exec" "2026-10-10-standalone-blend/architecture.edn#sp-finish"]}
          :t06 {:name "6. planning" :type "task" :state :done :md-ref "2026-10-10-standalone-blend/tasks/06-planning.md"
                :pair ["2026-10-10-standalone-blend/modules.edn#planning" "2026-10-10-standalone-blend/architecture.edn#planning"]}
-         :t07 {:name "7. brainstorming" :type "task" :state :new :md-ref "2026-10-10-standalone-blend/tasks/07-brainstorming.md"
+         :t07 {:name "7. brainstorming" :type "task" :state :in-progress :md-ref "2026-10-10-standalone-blend/tasks/07-brainstorming.md"
                :pair ["2026-10-10-standalone-blend/modules.edn#brainstorming" "2026-10-10-standalone-blend/architecture.edn#process" "2026-10-10-standalone-blend/architecture.edn#sp-brain"]}
          :t08 {:name "8. Docs + version" :type "task" :state :new :md-ref "2026-10-10-standalone-blend/tasks/08-docs-version.md"
                :pair ["2026-10-10-standalone-blend/modules.edn#notices" "2026-10-10-standalone-blend/modules.edn#deduce" "2026-10-10-standalone-blend/modules.edn#claude-plugin" "2026-10-10-standalone-blend/modules.edn#codex-plugin" "2026-10-10-standalone-blend/modules.edn#superpowers"]}
