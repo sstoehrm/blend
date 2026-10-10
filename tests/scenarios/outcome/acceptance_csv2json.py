@@ -1,4 +1,4 @@
-import csv, io, json, os, subprocess, sys, tempfile
+import json, os, subprocess, sys, tempfile
 
 repo = sys.argv[1]
 cands = [[os.path.join(repo, "csv2json")], [sys.executable, "-m", "csv2json"],
@@ -26,7 +26,10 @@ checks = 0
 p = run([], "a,b\n1,2\n3,4\n")
 assert json.loads(p.stdout) == [{"a": "1", "b": "2"}, {"a": "3", "b": "4"}], p.stdout; checks += 1
 f = tempfile.NamedTemporaryFile("w", suffix=".csv", delete=False); f.write('n,q\nx,"a,b"\n'); f.close()
-p = run([f.name])
+try:
+    p = run([f.name])
+finally:
+    os.unlink(f.name)
 assert json.loads(p.stdout) == [{"n": "x", "q": "a,b"}], p.stdout; checks += 1
 p = run([], "a,b\n")
 assert json.loads(p.stdout) == [], p.stdout; checks += 1
