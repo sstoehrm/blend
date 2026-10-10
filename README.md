@@ -45,7 +45,7 @@ Brainstorming first asks how involved you want to be:
 | Level     | You get asked                                                              |
 | --------- | -------------------------------------------------------------------------- |
 | High      | Every question, each design step, design review, plan review |
-| Medium    | Only design-changing questions; one design review (overview + views), then plan review |
+| Medium    | Only design-changing questions; approve the design once in chat, then design review (overview + views), then plan review |
 | Full auto | Nothing; the agent decides, implements on a branch, and reports. Never merges or pushes |
 
 Name the level in your request ("full auto", "just decide") to skip the
@@ -132,7 +132,7 @@ select `use-blend` in the skill picker or ask: "Load Blend's use-blend skill
 and follow it for this task."
 
 To use an individual skill, ask for **Blend's brainstorming skill**,
-**Blend's planning skill** or **Blend's persist skill**. Select the Blend entry if another plugin
+**Blend's planning skill**, **Blend's executing skill**, **Blend's debugging skill** or **Blend's persist skill**. Select the Blend entry if another plugin
 exposes the same name. The skill files are shared by both hosts. `use-blend` conditionally loads a Codex reference for tool mappings;
 other hosts don't load that reference.
 

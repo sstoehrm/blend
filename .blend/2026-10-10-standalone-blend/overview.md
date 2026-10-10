@@ -213,6 +213,18 @@ Tech stack: markdown skills, POSIX sh, `jq`, the `claude` CLI headless
 5. no templates installed: brainstorming still writes valid views and
    plan graph — S11 (task 7).
 
+## Execution log
+
+- Task 1: tests/scenarios/ briefs run as shell commands by implementers (Ruling 4) and the ledger lives in an excluded .superpowers/ (Ruling 2) — the plan says so; nothing committed.
+- Task 2: S1 passes when no blend skill auto-runs and superpowers_uses=0 (Ruling 7) — headless -p treats the prompt as a go-ahead; caveat: the one-line offer is untested headless.
+- Task 4: S7/S7b not discriminating — the baseline also passed; no Skill call in green runs (skill presence only).
+- Task 7: S3 "both slices" met by the Judgment path (Ruling 8) — a <3-component CLI skips the architecture slice and says so; caveat: greenfield architecture slice untested.
+- Task 7: S11 uses a ~/.simpleviz copy without templates/ (Ruling 9) — an empty SIMPLEVIZ_HOME has no launcher.
+- Task 7: review Important 1+2 and Minor 1+2 fixed, not parked (Ruling 10) — Medium = one in-chat design approval + one design review; nothing lands on the user's branch.
+- Task 9: split into implementer, controller run, outcome writer (Ruling 11) — a subagent idling on a long run is fragile and costly.
+- Task 9: success criterion not met — 0.7.0 costs more ($0.43 vs $0.28 mean), see outcome.md.
+- Final: fix wave I1-I6, T3, T5, M1-M6 (Ruling 12); M7 to the outcome.md writer; M8, M9 left (M9 is the user's design choice).
+
 ## Executing this plan
 
 Plan graph: `.blend/2026-10-10-standalone-blend.edn`. This plan builds
