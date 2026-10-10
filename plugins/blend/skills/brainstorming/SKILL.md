@@ -18,8 +18,9 @@ has one. That message holds nothing else: no clarifying question, no
 options for the design, no files. Questions start after the answer.
 
 - **High** — every question and gate below.
-- **Medium** — only questions that change the design; one design review
-  (overview + views), then plan review.
+- **Medium** — only questions that change the design; one approval of the
+  whole design in chat, one design review (overview + views), then plan
+  review.
 - **Full auto** — you decide everything and run through implementation.
 
 Skip the question when the request names a level ("full auto", "just
@@ -50,17 +51,25 @@ Classify before the first question and say it, so the user can override:
   cheaply, report a recommendation. Anything built is throwaway. No files.
 - **Bounded** — a well-scoped change to a flow that already exists in
   this repo. Ask what matters, present a short design in chat (approach,
-  files, tests), stop for a yes, implement with TDD, then always run
-  blend:persist with source session, even when `.blend/views/` doesn't
+  files, tests), stop for a yes, implement with TDD and commit it, then
+  always run blend:persist with source session, even when `.blend/views/` doesn't
   exist yet (persist creates it). Not optional, not skippable for size.
   No plan files.
 - **Architectural** — new projects, subsystems, changed interfaces or
   structure: the process below.
 
+The spike's nod and the bounded design's yes are the "Understanding,
+approaches, design" row: full auto doesn't stop for them. Before
+implementing a bounded change, get off the default branch: create a
+worktree or branch per the Worktree row before writing any file.
+
 In doubt, take the heavier path. Complexity found mid-task upgrades the
 path; say so.
 
 ## Architectural process
+
+Off the default branch first: create a worktree or branch per the Worktree
+row before writing any file.
 
 1. **Refresh** — always run blend:persist with source git first (it creates
    missing views; greenfield gets empty ones), even for a tiny project.
@@ -77,9 +86,10 @@ path; say so.
    present and revise them as the design changes.
 6. **overview.md** — write it, self-review, commit.
 7. **Design review** — give the plan graph URL and the overview path.
-8. **Plan** — load blend:planning. Nothing else follows brainstorming.
-   Full auto then goes on to blend:executing; the design is never
-   implemented without the plan graph, task files and views refresh.
+8. **Plan** — load blend:planning — nothing else follows brainstorming;
+   planning hands off to blend:executing (full auto: without stopping).
+   The design is never implemented without the plan graph, task files
+   and views refresh.
 
 ## Plan views
 
