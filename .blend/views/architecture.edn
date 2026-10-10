@@ -1,14 +1,18 @@
-;; Project view: how blend works today — session start to finished branch.
+;; Project view: how blend works today — session start to finished branch (opt-in skills).
 {:nodes {:session     {:name "session start" :type "trigger"}
          :use-blend   {:name "use-blend" :type "router"
-                       :note "style, verification, dependency checks, phase → skill routing; routes planning to blend:planning; installs templates"}
+                       :note "style, verification, TDD + review rules; offers blend skills, never routes"
+                       :pair "modules.edn#use-blend"}
+         :offer       {:name "one-line offer" :type "step"
+                       :note "a blend skill runs on yes, or when the user names it"}
          :involvement {:name "involvement level" :type "step"
                        :note "high / medium / full auto, asked first"}
          :refresh     {:name "refresh project views" :type "step"
-                       :note "re-derive views/modules.edn; draw missing architecture parts the feature touches"}
-         :sp-brain    {:name "superpowers:brainstorming" :type "external"}
+                       :note "persist (git) since the marker"}
+         :process     {:name "design process" :type "step"
+                       :note "classify path, questions, approaches, design — blend's own"}
          :proj-views  {:name "project views" :type "artifact"
-                       :note ".blend/views/architecture.edn + modules.edn, always current"}
+                       :note ".blend/views/architecture.edn + modules.edn + system.md (purpose, constraints, decisions), always current"}
          :plan-views  {:name "plan views" :type "artifact"
                        :note ".blend/<date>-<topic>/architecture.edn, modules.edn, task-only views"}
          :overview    {:name "overview.md" :type "artifact"
@@ -16,34 +20,47 @@
          :plan-graph  {:name "plan graph" :type "artifact"
                        :note ".blend/<date>-<topic>.edn — entry point; overview + view nodes, then tasks"}
          :planning    {:name "blend:planning" :type "skill"
-                       :note "tasks + edges, tasks/NN-*.md, :tasks on module slice; gate 2"}
+                       :note "tasks + edges, tasks/NN-*.md, :tasks on module slice; writing-plans rules inline; gate 2; hands off to blend:executing"
+                       :pair "modules.edn#planning"}
          :task-files  {:name "task files" :type "artifact"
                        :note ".blend/<date>-<topic>/tasks/NN-<slug>.md"}
-         :sp-exec     {:name "superpowers execution" :type "external"
-                       :note "subagent-driven-development / executing-plans; reads the plan graph via overview.md's Executing this plan"}
+         :executing   {:name "blend:executing" :type "skill"
+                       :note "inline or subagent per task; task file = brief; final review"
+                       :pair "modules.edn#executing"}
          :sync        {:name "sync project views" :type "step"
-                       :note "re-derive modules, report unplanned changes, apply architecture slice, commit"}
-         :sp-finish   {:name "superpowers:finishing-a-development-branch" :type "external"}}
+                       :note "persist (plan): re-derive modules, report unplanned changes, apply architecture slice, commit"}
+         :finish      {:name "verify + finish" :type "step"
+                       :note "full suite with output, then merge / PR / keep"}
+         :persist-req {:name "persist on request" :type "step"
+                       :note "session or git range → project views + system.md"}
+         :debugging   {:name "blend:debugging" :type "skill"
+                       :note "reproduce, root cause, regression test, fix"
+                       :pair "modules.edn#debugging"}}
  :edges {[:session :use-blend]      {:direction :-> :name "SessionStart hook"}
-         [:use-blend :involvement]  {:direction :-> :name "new feature → blend:brainstorming"}
+         [:use-blend :offer]        {:direction :-> :name "feature, plan, bug, spec update"}
+         [:offer :involvement]      {:direction :-> :name "brainstorming"}
+         [:offer :debugging]        {:direction :-> :name "bug"}
+         [:offer :persist-req]      {:direction :-> :name "update the spec"}
          [:involvement :refresh]    {:direction :->}
-         [:refresh :proj-views]     {:direction :-> :name "derive / draw"}
-         [:refresh :sp-brain]       {:direction :->}
-         [:sp-brain :plan-views]    {:direction :-> :name "present design"}
-         [:sp-brain :overview]      {:direction :-> :name "write design"}
+         [:refresh :proj-views]     {:direction :-> :name "persist (git)"}
+         [:refresh :process]        {:direction :->}
+         [:process :plan-views]     {:direction :-> :name "present design"}
+         [:process :overview]       {:direction :-> :name "write design"}
          [:plan-views :proj-views]  {:direction :-> :name ":pair"}
          [:plan-graph :overview]    {:direction :-> :name ":md-ref"}
          [:plan-graph :plan-views]  {:direction :-> :name ":ref"}
          [:overview :planning]      {:direction :-> :name "approved design"}
          [:planning :plan-graph]    {:direction :-> :name "adds tasks"}
          [:planning :task-files]    {:direction :-> :name "writes"}
-         [:plan-graph :sp-exec]     {:direction :-> :name "approved plan"}
-         [:sp-exec :sync]           {:direction :->}
-         [:sync :proj-views]        {:direction :-> :name "update"}
-         [:sync :sp-finish]         {:direction :->}}
+         [:plan-graph :executing]   {:direction :-> :name "approved plan"}
+         [:task-files :executing]   {:direction :-> :name "briefs"}
+         [:executing :sync]         {:direction :->}
+         [:sync :proj-views]        {:direction :-> :name "persist (plan)"}
+         [:sync :finish]            {:direction :->}
+         [:persist-req :proj-views] {:direction :-> :name "update"}}
  :boxes {:brainstorm {:name "blend:brainstorming" :type "skill"
-                      :components #{:involvement :refresh :sp-brain :plan-views :overview}}
+                      :components #{:involvement :refresh :process :plan-views :overview}}
          :plan       {:name "plan (graph + task files)" :type "artifact"
                       :components #{:plan-graph :task-files}}
-         :finish     {:name "finishing" :type "step"
-                      :components #{:sync :sp-finish}}}}
+         :execute    {:name "blend:executing" :type "skill"
+                      :components #{:executing :sync :finish}}}}
