@@ -1,41 +1,48 @@
 ;; Plan view: modules this plan touches. :type is the change; :kind the module's own type.
-{:nodes {:use-blend     {:name "skills/use-blend" :type "changed" :kind "skill"
+{:nodes {:use-blend     {:name "skills/use-blend" :type "changed" :kind "skill" :tasks ["2. use-blend"]
                          :change "offers blend skills instead of routing; TDD, review, verification rules; no superpowers"
                          :pair "../views/modules.edn#use-blend"}
-         :codex-tools   {:name "use-blend/references/codex-tools.md" :type "changed" :kind "skill"
+         :codex-tools   {:name "use-blend/references/codex-tools.md" :type "changed" :kind "skill" :tasks ["2. use-blend"]
                          :change "superpowers install and guidance lines removed"
                          :pair "../views/modules.edn#codex-tools"}
-         :brainstorming {:name "skills/brainstorming" :type "changed" :kind "skill"
+         :brainstorming {:name "skills/brainstorming" :type "changed" :kind "skill" :tasks ["7. brainstorming"]
                          :change "self-contained process (adapted from superpowers:brainstorming); refresh via persist"
                          :pair "../views/modules.edn#brainstorming"}
-         :planning      {:name "skills/planning" :type "changed" :kind "skill"
+         :planning      {:name "skills/planning" :type "changed" :kind "skill" :tasks ["6. planning"]
                          :change "self-contained (writing-plans rules adapted inline); hands off to blend:executing"
                          :pair "../views/modules.edn#planning"}
-         :executing     {:name "skills/executing" :type "new" :kind "skill"
+         :executing     {:name "skills/executing" :type "new" :kind "skill" :tasks ["5. executing"]
                          :change "runs a plan graph inline or subagent per task; reviewer prompt; final review, persist, finishing"}
-         :debugging     {:name "skills/debugging" :type "new" :kind "skill"
+         :debugging     {:name "skills/debugging" :type "new" :kind "skill" :tasks ["4. debugging"]
                          :change "root cause before fix (adapted from superpowers:systematic-debugging)"}
-         :persist       {:name "skills/persist" :type "new" :kind "skill"
+         :persist       {:name "skills/persist" :type "new" :kind "skill" :tasks ["3. persist"]
                          :change "global spec from git range, session or finished plan; absorbs project-views"}
-         :project-views {:name "skills/project-views" :type "removed" :kind "skill"
+         :project-views {:name "skills/project-views" :type "removed" :kind "skill" :tasks ["3. persist"]
                          :change "merged into persist"
                          :pair "../views/modules.edn#project-views"}
-         :deduce        {:name "skills/deduce" :type "removed" :kind "skill"
+         :deduce        {:name "skills/deduce" :type "removed" :kind "skill" :tasks ["8. Docs + version"]
                          :change "removed"
                          :pair "../views/modules.edn#deduce"}
-         :notices       {:name "THIRD_PARTY_NOTICES.md" :type "new" :kind "doc"
+         :notices       {:name "THIRD_PARTY_NOTICES.md" :type "new" :kind "doc" :tasks ["8. Docs + version"]
                          :change "superpowers MIT license text and credit"}
-         :claude-plugin {:name ".claude-plugin/plugin.json" :type "changed" :kind "manifest"
+         :claude-plugin {:name ".claude-plugin/plugin.json" :type "changed" :kind "manifest" :tasks ["8. Docs + version"]
                          :change "version 0.7.0; description without superpowers"
                          :pair "../views/modules.edn#claude-plugin"}
-         :codex-plugin  {:name ".codex-plugin/plugin.json" :type "changed" :kind "manifest"
+         :codex-plugin  {:name ".codex-plugin/plugin.json" :type "changed" :kind "manifest" :tasks ["8. Docs + version"]
                          :change "version 0.7.0; descriptions without superpowers"
                          :pair "../views/modules.edn#codex-plugin"}
          :hook          {:name "hooks (hooks.json, install-templates.sh)" :type "context" :kind "hook"
                          :pair "../views/modules.edn#hook"}
-         :templates     {:name "plugins/blend/templates" :type "context" :kind "templates"
+         :templates     {:name "plugins/blend/templates" :type "changed" :kind "templates" :tasks ["3. persist"]
+                         :change "version 0.7.0; blend-modules names blend:persist"
                          :pair "../views/modules.edn#templates"}
-         :superpowers   {:name "superpowers" :type "removed" :kind "external"
+         :tests         {:name "tests/install-templates.test.sh" :type "changed" :kind "test"
+                         :change "expects template version 0.7.0" :tasks ["3. persist"]
+                         :pair "../views/modules.edn#tests"}
+         :scenarios     {:name "tests/scenarios" :type "new" :kind "test"
+                         :change "headless harness (new / old / mixed arms), fixtures, outcome comparison"
+                         :tasks ["1. Scenario harness" "9. Outcome comparison"]}
+         :superpowers   {:name "superpowers" :type "removed" :kind "external" :tasks ["2. use-blend" "6. planning" "7. brainstorming" "8. Docs + version"]
                          :change "no longer a dependency"
                          :pair "../views/modules.edn#superpowers"}
          :simpleviz     {:name "simpleviz" :type "context" :kind "external"
@@ -61,8 +68,11 @@
          [:brainstorming :simpleviz]     {:direction :-> :name "loads skill, runs CLI" :type "context"}
          [:planning :simpleviz]          {:direction :-> :name "loads skill, runs CLI" :type "context"}
          [:persist :simpleviz]           {:direction :-> :name "check" :type "new"}
+         [:tests :hook]                  {:direction :-> :name "tests" :type "context"}
+         [:scenarios :use-blend]         {:direction :-> :name "runs headless" :type "new"}
          [:deduce :simpleviz]            {:direction :-> :name "loads skill" :type "removed"}
          [:project-views :simpleviz]     {:direction :-> :name "init -t, check" :type "removed"}}
- :boxes {:skills    {:name "plugins/blend/skills" :type "context"
+ :boxes {:repo-tests {:name "tests" :type "context" :components #{:tests :scenarios}}
+         :skills    {:name "plugins/blend/skills" :type "context"
                      :components #{:use-blend :codex-tools :brainstorming :planning :executing :debugging :persist :project-views :deduce}}
          :externals {:name "other plugins" :type "context" :components #{:superpowers :simpleviz}}}}

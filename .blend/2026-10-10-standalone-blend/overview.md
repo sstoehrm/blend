@@ -63,7 +63,7 @@ overview.md and task files.
 
    | Source | Range | Architecture | system.md |
    | --- | --- | --- | --- |
-   | git | `<from>..HEAD`; default from the marker, else the whole history | update components the diff touches; draw missing ones it touches | decisions from commit messages and changed docs |
+   | git | `<from>..HEAD`; from the marker, else the user's range, else none — describe the code as it is now | update components the diff touches; draw missing ones it touches | decisions from commit messages and changed docs |
    | session | changes made in this conversation, committed or not | as git | decisions made in the conversation |
    | plan | a finished plan | apply the architecture slice (0.6.0 sync rules) | the overview's Decisions that still constrain future work |
 
@@ -169,3 +169,61 @@ written before the runs, tokens, turns, wall time.
   redundant; discard it there once this lands.
 - The outcome comparison costs about 12 end-to-end runs; it can shrink
   to 1 run per arm if that is too much.
+
+## Plan
+
+Tech stack: markdown skills, POSIX sh, `jq`, the `claude` CLI headless
+(`-p --settings --plugin-dir --output-format stream-json`), simpleviz
+≥ 0.32.0, Python 3 stdlib for fixtures. Nine tasks; after task 2, tasks
+3, 4 and 6 are independent. Task files: `tasks/01-harness.md` …
+`tasks/09-outcome.md`.
+
+## Global constraints
+
+- Line budgets (whole file): use-blend ≤ 120, brainstorming ≤ 150,
+  planning ≤ 120, executing ≤ 150, executing/reviewer-prompt.md ≤ 60,
+  debugging ≤ 80, persist ≤ 120.
+- Adapted files end with `Adapted from superpowers:<skill>[, <skill>…]
+  by Jesse Vincent (MIT).` — brainstorming, planning, executing,
+  reviewer-prompt.md, debugging. Nowhere else in `plugins/blend/` names
+  superpowers, except THIRD_PARTY_NOTICES.md.
+- Skill names: `blend:brainstorming`, `blend:planning`, `blend:executing`,
+  `blend:debugging`, `blend:persist`; persist sources `git`, `session`,
+  `plan`; persist commit message `docs: persist project views`.
+- Version 0.7.0; template line 1 `;; blend-template 0.7.0`.
+- Scenarios run through `tests/scenarios/run.sh`, model sonnet, prompts
+  verbatim from the task files, in temp dirs from `setup.sh`. Never
+  `pkill`/`killall`; stop only processes you started, by PID.
+- A failing scenario: tighten the skill text, re-run; after 2 re-runs
+  still failing, record it in the Execution log and decide.
+- `.blend/views/` is not edited by hand; persist (plan) updates it after
+  the last task.
+
+## Review focus
+
+1. persist git on a repo with no marker and a long history: describes the
+   code as it is and reads commit messages selectively, not every commit
+   — S8 (task 3).
+2. persist session with the user's uncommitted code: the code stays
+   uncommitted, only `.blend/views/` is committed — S9 (task 3).
+3. executing after an interruption: resumes at the first task not
+   `:done`, doesn't redo finished tasks — S5b (task 5).
+4. superpowers and blend both installed, user opts into blend: blend's
+   skill runs, not superpowers' — S1b (task 2).
+5. no templates installed: brainstorming still writes valid views and
+   plan graph — S11 (task 7).
+
+## Executing this plan
+
+Plan graph: `.blend/2026-10-10-standalone-blend.edn`. This plan builds
+blend:executing, so it runs on the tools installed today:
+superpowers:subagent-driven-development, with each task file as the
+task's brief (skip SDD's `task-brief` and `task-start` scripts; PLAN_FILE
+is the plan graph). Task order follows the graph's `needs` edges; tasks
+without a path between them are independent. Set the task node's
+`:state`: `:in-progress` when started, `:done` once its review is clean,
+`:blocked` with `:reason "<why>"`. Implementers run their task's
+scenarios themselves through `tests/scenarios/run.sh` (a shell command,
+not a subagent). After the last task, load this branch's
+`plugins/blend/skills/persist/SKILL.md` and persist this plan (source
+plan) into `.blend/views/`.
