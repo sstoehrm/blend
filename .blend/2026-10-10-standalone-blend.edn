@@ -12,7 +12,7 @@
                :pair ["2026-10-10-standalone-blend/modules.edn#persist" "2026-10-10-standalone-blend/modules.edn#project-views" "2026-10-10-standalone-blend/modules.edn#templates" "2026-10-10-standalone-blend/modules.edn#tests" "2026-10-10-standalone-blend/architecture.edn#refresh" "2026-10-10-standalone-blend/architecture.edn#sync" "2026-10-10-standalone-blend/architecture.edn#persist-req" "2026-10-10-standalone-blend/architecture.edn#proj-views"]}
          :t04 {:name "4. debugging" :type "task" :state :new :md-ref "2026-10-10-standalone-blend/tasks/04-debugging.md"
                :pair ["2026-10-10-standalone-blend/modules.edn#debugging" "2026-10-10-standalone-blend/architecture.edn#debugging"]}
-         :t05 {:name "5. executing" :type "task" :state :new :md-ref "2026-10-10-standalone-blend/tasks/05-executing.md"
+         :t05 {:name "5. executing" :type "task" :state :in-progress :md-ref "2026-10-10-standalone-blend/tasks/05-executing.md"
                :pair ["2026-10-10-standalone-blend/modules.edn#executing" "2026-10-10-standalone-blend/architecture.edn#executing" "2026-10-10-standalone-blend/architecture.edn#finish" "2026-10-10-standalone-blend/architecture.edn#sp-exec" "2026-10-10-standalone-blend/architecture.edn#sp-finish"]}
          :t06 {:name "6. planning" :type "task" :state :new :md-ref "2026-10-10-standalone-blend/tasks/06-planning.md"
                :pair ["2026-10-10-standalone-blend/modules.edn#planning" "2026-10-10-standalone-blend/architecture.edn#planning"]}
