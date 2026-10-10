@@ -1,0 +1,10 @@
+;; Plan graph — entry point: overview, views, then the tasks.
+{:nodes {:overview     {:name "Overview" :type "doc" :md-ref "2026-10-10-standalone-blend/overview.md"}
+         :architecture {:name "Architecture (plan)" :type "view" :ref "2026-10-10-standalone-blend/architecture.edn"}
+         :modules      {:name "Modules (plan)" :type "view" :ref "2026-10-10-standalone-blend/modules.edn"}
+         :proj-arch    {:name "Architecture (project)" :type "view" :ref "views/architecture.edn"}
+         :proj-modules {:name "Modules (project)" :type "view" :ref "views/modules.edn"}}
+ :edges {[:architecture :proj-arch] {:direction :-> :name "changes"}
+         [:modules :proj-modules]   {:direction :-> :name "changes"}}
+ :boxes {:design  {:name "Design" :type "design" :components #{:overview :architecture :modules}}
+         :project {:name "Project views" :type "project" :components #{:proj-arch :proj-modules}}}}
