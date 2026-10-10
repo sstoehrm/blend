@@ -1,0 +1,11 @@
+;; blend-template 0.6.0
+;; Plan graph: entry point. Design stage: no task nodes yet (blend:planning adds them).
+{:nodes {:overview     {:name "Overview" :type "doc" :md-ref "2026-10-09-csv-to-json/overview.md"}
+         :architecture {:name "Architecture (plan)" :type "view" :ref "2026-10-09-csv-to-json/architecture.edn"}
+         :modules      {:name "Modules (plan)" :type "view" :ref "2026-10-09-csv-to-json/modules.edn"}
+         :proj-arch    {:name "Architecture (project)" :type "view" :ref "views/architecture.edn"}
+         :proj-modules {:name "Modules (project)" :type "view" :ref "views/modules.edn"}}
+ :edges {[:architecture :proj-arch] {:direction :-> :name "changes"}
+         [:modules :proj-modules]   {:direction :-> :name "changes"}}
+ :boxes {:design  {:name "Design" :type "design" :components #{:overview :architecture :modules}}
+         :project {:name "Project views" :type "project" :components #{:proj-arch :proj-modules}}}}

@@ -1,0 +1,11 @@
+;; blend-template 0.6.0
+{:nodes {:cli {:name "CLI" :type "new" :kind "cli"
+               :change "parses args, opens input and output, reports errors"}
+         :converter {:name "Converter" :type "new" :kind "library"
+                     :change "turns CSV rows into JSON-ready dicts"}
+         :input {:name "CSV input (file or stdin)" :type "context" :kind "external"}
+         :output {:name "JSON output (file or stdout)" :type "context" :kind "external"}}
+ :edges {[:input :cli] {:direction :-> :type "new" :name "CSV text"}
+         [:cli :converter] {:direction :-> :type "new" :name "csv rows"}
+         [:cli :output] {:direction :-> :type "new" :name "JSON text"}}
+ :boxes {:tool {:name "csv2json" :type "new" :components #{:cli :converter}}}}

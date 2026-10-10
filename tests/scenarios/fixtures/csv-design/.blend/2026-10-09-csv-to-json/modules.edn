@@ -1,0 +1,10 @@
+;; blend-template 0.6.0
+{:nodes {:csv2json-cli {:name "csv2json.cli" :type "new" :kind "python"
+                        :change "argparse front end: reads file or stdin, writes JSON"}
+         :csv2json-convert {:name "csv2json.convert" :type "new" :kind "python"
+                            :change "pure function: CSV text rows to list of dicts"}
+         :csv2json-main {:name "csv2json.__main__" :type "new" :kind "python"
+                         :change "enables python -m csv2json"}}
+ :edges {[:csv2json-main :csv2json-cli] {:direction :-> :type "new"}
+         [:csv2json-cli :csv2json-convert] {:direction :-> :type "new"}}
+ :boxes {:pkg {:name "src/csv2json" :type "new" :components #{:csv2json-cli :csv2json-convert :csv2json-main}}}}

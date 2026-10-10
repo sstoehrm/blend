@@ -1,0 +1,26 @@
+;; blend-template 0.6.0
+;; Plan graph: entry point. Task nodes added by blend:planning.
+{:nodes {:overview     {:name "Overview" :type "doc" :md-ref "2026-10-09-csv-to-json/overview.md"}
+         :architecture {:name "Architecture (plan)" :type "view" :ref "2026-10-09-csv-to-json/architecture.edn"}
+         :modules      {:name "Modules (plan)" :type "view" :ref "2026-10-09-csv-to-json/modules.edn"}
+         :proj-arch    {:name "Architecture (project)" :type "view" :ref "views/architecture.edn"}
+         :proj-modules {:name "Modules (project)" :type "view" :ref "views/modules.edn"}
+         :t01 {:name "1. Project scaffold and converter" :type "task" :state :new
+               :md-ref "2026-10-09-csv-to-json/tasks/01-convert.md"
+               :pair ["2026-10-09-csv-to-json/modules.edn#csv2json-convert"
+                      "2026-10-09-csv-to-json/architecture.edn#converter"]}
+         :t02 {:name "2. Command-line front end" :type "task" :state :new
+               :md-ref "2026-10-09-csv-to-json/tasks/02-cli.md"
+               :pair ["2026-10-09-csv-to-json/modules.edn#csv2json-cli"
+                      "2026-10-09-csv-to-json/architecture.edn#cli"]}
+         :t03 {:name "3. Entry points" :type "task" :state :new
+               :md-ref "2026-10-09-csv-to-json/tasks/03-entry-points.md"
+               :pair ["2026-10-09-csv-to-json/modules.edn#csv2json-main"]}}
+ :edges {[:architecture :proj-arch] {:direction :-> :name "changes"}
+         [:modules :proj-modules]   {:direction :-> :name "changes"}
+         [:t01 :t02] {:direction :-> :type "needs"}
+         [:t02 :t03] {:direction :-> :type "needs"}}
+ :boxes {:design  {:name "Design" :type "design" :components #{:overview :architecture :modules}}
+         :project {:name "Project views" :type "project" :components #{:proj-arch :proj-modules}}
+         :c-converter {:name "Converter" :type "component" :components #{:t01}}
+         :c-cli       {:name "CLI" :type "component" :components #{:t02 :t03}}}}
