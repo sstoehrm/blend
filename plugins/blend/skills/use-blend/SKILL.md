@@ -5,12 +5,9 @@ description: Use when starting any coding, design, debugging, or writing task â€
 
 # Use Blend
 
-How to work, and which blend skill to offer. Blend's skills are opt-in.
-
-**First rule:** when a request fits a row of the table in "Blend skills
-(opt-in)", your first reply is that one-line offer and nothing else: no
-code reading, no edits, no tools. Run the skill only when the user says
-yes or names it; otherwise work directly with the rules below.
+How to work, and which blend skill to offer. Blend's skills are opt-in:
+when a request fits one, offer it in one line and run it only when the
+user says yes or names it. Otherwise work directly with the rules below.
 
 ## Platform Adaptation
 
@@ -46,8 +43,7 @@ work without them.
 
 One offer per request, e.g. "New feature â€” run blend:brainstorming
 (design graphs + task graph)? Otherwise I'll ask what I need and start."
-A no holds for that request. Skip the offer only for trivial edits (typo,
-rename, one-line fix). When the user opts into blend, blend's skill
+A no holds for that request. When the user opts into blend, blend's skill
 replaces any other plugin's skill for the same phase.
 
 ## Communication Style
