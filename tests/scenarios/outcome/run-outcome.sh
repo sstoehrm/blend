@@ -17,20 +17,26 @@ one() {
   res=$("$here/../run.sh" "$arm" "$w" "$prompt" "$pre")
   [ -n "$res" ] || res="ERROR no result"
   iserr=$(jq -r 'select(.type=="result") | "is_error=\(.is_error)"' "$pre.jsonl" 2>/dev/null | tail -1)
-  # score the worktree (main repo included) with most commits beyond the fixture commit
-  wt=$w best=-1; all=
+  # score the best worktree (main included): most commits beyond base, then dirty, then non-main
+  wt=$w best=-1; all=; bc=0
   for p in $(git -C "$w" worktree list --porcelain | awk '/^worktree /{sub(/^worktree /,""); print}'); do
     [ -d "$p" ] || continue
     all="$all $p"
     c=$(git -C "$p" rev-list --count "$base..HEAD" 2>/dev/null || echo 0)
-    if [ "$c" -gt "$best" ]; then best=$c; wt=$p; fi
+    d=0; [ -n "$(git -C "$p" status --porcelain 2>/dev/null)" ] && d=1
+    m=1; [ "$p" = "$w" ] && m=0
+    k=$((c * 4 + d * 2 + m))
+    if [ "$k" -gt "$best" ]; then best=$k; wt=$p; bc=$c; fi
   done
   $acc "$wt" > "$pre.acc" 2>&1; rc=$?
   if [ $rc -eq 0 ]; then score=PASS
   else score="FAIL: $(grep -v '^[[:space:]]*$' "$pre.acc" | tail -1 | sed 's/^FAIL:* *//')"; fi
+  # uncommitted work, read-only on the work dir
+  { git -C "$wt" diff "$base"; git -C "$wt" status --porcelain; } > "$pre.wip.diff" 2>&1
+  git -C "$wt" ls-files -z --others --exclude-standard | tar -C "$wt" --null -T - -cf "$pre.untracked.tar" 2>/dev/null
   git -C "$wt" bundle create "$pre.bundle" --all >/dev/null 2>&1 \
     || git -C "$wt" diff "$base" > "$pre.diff" 2>/dev/null
-  echo "$tag $res ${iserr:-is_error=?} $score w=$w wt=$wt commits=$best worktrees=[${all# }]" >> "$sum"
+  echo "$tag $res ${iserr:-is_error=?} $score w=$w wt=$wt commits=$bc worktrees=[${all# }]" >> "$sum"
 }
 
 for arm in old new; do i=1; while [ $i -le "$n" ]; do
