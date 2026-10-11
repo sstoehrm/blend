@@ -13,15 +13,15 @@ simpleviz:simpleviz for the EDN format.
 | `.blend/modules.edn` | own modules and their imports | derived from source, merged (below) |
 | `.blend/architecture.edn` | components, flows, subsystems | drawn; updated where code changed |
 
-Source, said before starting: **git** — `<marker>..HEAD`, marker = the
-`;; persisted-through: <sha>` first line of modules.edn; or **session** —
-`<marker>..HEAD` plus this conversation's uncommitted changes. No marker,
-or not an ancestor of HEAD: the range is the whole tree. Skip commits
-that only touch `.blend/`.
+Source, said before starting: **git** — `<last>..HEAD`, last = `git log
+-1 --grep='^docs: persist blend graphs' --format=%H`; or **session** —
+`<last>..HEAD` plus this conversation's uncommitted changes. No such
+commit: the range is the whole tree. Skip commits that only touch
+`.blend/`.
 
-**Old layout** (`.blend/views/`): `git mv .blend/views/*.edn .blend/`;
-system.md's `<!-- persisted-through: <sha> -->` becomes the marker, then
-`git rm` it. Old plan folders stay; their `../views/` pairs will warn.
+**Old layout** (`.blend/views/`): `git mv .blend/views/*.edn .blend/`,
+`git rm .blend/views/system.md`; drop a `;; persisted-through:` line.
+Old plan folders stay; their `../views/` pairs will warn.
 
 ## Modules: derive and merge
 
@@ -50,10 +50,9 @@ worker, external; edges = flows with `:name`; boxes = subsystems), from
 
 ## Check, report, commit
 
-1. modules.edn's first line becomes `;; persisted-through: <sha>`, sha =
-   `git rev-parse HEAD` before your commit.
-2. `simpleviz check` on both files prints `ok`.
-3. Report one line per change; nothing changed: say so, no commit.
-4. Commit only `.blend/`:
+1. `simpleviz check` on both files prints `ok`.
+2. Report one line per change; nothing changed: say so, no commit.
+3. Commit only `.blend/`, always with this subject — it is the next
+   run's start:
    `git add .blend && git commit -m "docs: persist blend graphs" -- .blend`.
    The pathspec keeps the user's staged code out.

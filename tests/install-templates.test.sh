@@ -16,16 +16,16 @@ check "no simpleviz home: nothing created" '[ ! -e "$tmp/none" ]'
 # 2. installed, no templates folder: all three copied
 mkdir -p "$tmp/h2"
 SIMPLEVIZ_HOME="$tmp/h2" sh "$script"
-for t in blend-build blend-architecture blend-modules; do
+for t in blend-plan blend-architecture blend-modules; do
   check "copies $t" 'cmp -s "$src/$t.edn" "$tmp/h2/templates/$t.edn"'
 done
 
 check "silent" '[ -z "$(SIMPLEVIZ_HOME=$tmp/h2 sh "$script")" ]'
 
 # 3. same version, edited by the user: kept
-printf '\n;; my edit\n' >> "$tmp/h2/templates/blend-build.edn"
+printf '\n;; my edit\n' >> "$tmp/h2/templates/blend-plan.edn"
 SIMPLEVIZ_HOME="$tmp/h2" sh "$script"
-check "same version edit kept" 'grep -q "my edit" "$tmp/h2/templates/blend-build.edn"'
+check "same version edit kept" 'grep -q "my edit" "$tmp/h2/templates/blend-plan.edn"'
 
 # 4. other version: replaced
 printf ';; blend-template 0.0.1\n{}\n' > "$tmp/h2/templates/blend-modules.edn"

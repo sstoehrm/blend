@@ -6,9 +6,8 @@ description: Use when the user wants to think through an idea or feature with bl
 # Brainstorming (blend)
 
 A conversation that leaves a record. The user leads; you collect, ask,
-propose and push back. Whatever settles goes into `.blend/` right away,
-so the next session — or blend:build — starts from it. No product code,
-no scaffolding, no installs.
+propose and push back. Whatever settles goes into `.blend/`, the
+project's spec, right away. No product code, scaffolding or installs.
 
 ```
 .blend/
@@ -57,4 +56,4 @@ Say in one line what you wrote ("features/due-dates.md: overdue rule").
 
 When the user pauses, wraps up or asks: commit only `.blend/` —
 `git add .blend && git commit -m "docs: brainstorm <topic>" -- .blend`.
-When they want it built, offer blend:build with the feature files.
+Offer blend:build when they want it built.

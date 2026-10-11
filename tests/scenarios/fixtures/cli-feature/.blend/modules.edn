@@ -1,4 +1,3 @@
-;; persisted-through: 0000000000000000000000000000000000000000
 {:nodes {:todo      {:name "todo" :type "todo"}
          :test-todo {:name "test_todo" :type "test_todo"}}
  :edges {[:test-todo :todo] {:direction :-> :type "requires"}}}

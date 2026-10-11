@@ -18,6 +18,6 @@ for s in use-blend/SKILL.md:70 brainstorming/SKILL.md:60 build/SKILL.md:80 build
 [ "$(ls plugins/blend/skills)" = "$(printf 'brainstorming\nbuild\npersist\nuse-blend')" ] || bad "unexpected skill set: $(ls plugins/blend/skills | tr '\n' ' ')"
 for n in planning executing debugging deduce project-views; do
   ! grep -rq "blend:$n\|skills/$n" README.md plugins/blend || bad "blend:$n still referenced"; done
-! grep -rq "blend-plan-view\|blend-plan\b" README.md plugins/blend || bad "old template referenced"
+! grep -rq "blend-plan-view\|blend-build\b\|\.blend/builds\|builds/YYYY" README.md plugins/blend || bad "old template or build-graph path referenced"
 [ $fail -eq 0 ] && echo PASS
 exit $fail

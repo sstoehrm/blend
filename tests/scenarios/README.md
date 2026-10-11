@@ -19,10 +19,11 @@ check (exit 1 on any FAIL):
 
 | Scenario | Fixture | Checks |
 | --- | --- | --- |
-| `brainstorm` | `cli-small` | feature file written and linked to the graphs (`:state :new` or `Touches:`), graphs check ok, nothing outside `.blend/` changed, no build graph |
-| `build` | `cli-feature` | own branch, default branch unmoved, build graph all `:done`, tests pass, due-date behavior works, reviewer subagent and persist ran, marker advanced, graphs ok |
-| `persist-merge` | `persist-merge` | valid marker + a commit adding `app.export`: planned (`:state :new`) nodes survive, new module added, marker advanced, staged user file not committed |
-| `persist-migrate` | `persist-migrate` | `.blend/views/` moved to `.blend/`, system.md removed, old plan folder kept, marker line, staged file not committed |
+| `brainstorm` | `cli-small` | feature file written and linked to the graphs (`:state :new` or `Touches:`), graphs check ok, nothing outside `.blend/` changed |
+| `build` | `cli-feature` + history: `todos.md` built (`blend: built todos`), `due-dates.md` added after | own branch, default branch unmoved, due-date behavior works, plan gitignored / never committed / deleted, `blend: built` commit, reviewer subagent ran, graphs check ok |
+| `build-empty` | `cli-feature` + `blend: built` at HEAD | empty spec diff: no code changed, no new `blend: built` commit |
+| `persist-merge` | `persist-merge` + a persist commit, then a commit adding `app.export` | planned (`:state :new`) nodes survive, new module added, persist commit, staged user file not committed |
+| `persist-migrate` | `persist-migrate` | `.blend/views/` moved to `.blend/`, system.md removed, no marker line, old plan folder kept, staged file not committed |
 
 `run.sh` honors `MODEL` (default `sonnet`) and `BLEND_OLD`; other env passes
 through (e.g. `SIMPLEVIZ_HOME`). It writes `<out>.jsonl` and `<out>.txt` and
@@ -32,8 +33,8 @@ prints `<arm> turns=N in=N out=N cost=X superpowers_uses=N`.
 
 Fixtures:
 - `cli-small`: small Python todo CLI with a test.
-- `cli-feature`: cli-small plus `.blend/features/due-dates.md` and graphs with a placeholder marker.
-- `persist-merge`: Python/JS tree with flat `.blend/` graphs holding a planned `app-cache` module and `cache` component; scenario.sh adds the marker and an `app/export.py` commit.
+- `cli-feature`: cli-small plus graphs and two features: `todos.md` (built) and `due-dates.md` (not built).
+- `persist-merge`: Python/JS tree with flat `.blend/` graphs holding a planned `app-cache` module and `cache` component; scenario.sh adds a persist commit and an `app/export.py` commit.
 - `persist-migrate`: the same code with the old `.blend/views/` layout, system.md and an old plan folder.
 - `failing-test`: Python `mean()` with a failing unittest.
 - `blackboard`: clone of `${BLACKBOARD_REPO:-$HOME/repos/private/smpl-blackboard}` with history.

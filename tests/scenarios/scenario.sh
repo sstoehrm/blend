@@ -1,7 +1,7 @@
 #!/bin/sh
 # Run one named blend scenario headless and check its result.
 # Usage: tests/scenarios/scenario.sh <name> <out-dir> [arm]   (arm defaults to new)
-# Names: brainstorm, build, persist-merge, persist-migrate
+# Names: brainstorm, build, build-empty, persist-merge, persist-migrate
 # Prints the run.sh summary line, then one "ok"/"FAIL" line per check.
 set -u
 here=$(cd "$(dirname "$0")" && pwd)
@@ -11,7 +11,12 @@ case $name in
   brainstorm) fx=cli-small
     p="Use blend:brainstorming. I want todos to get optional due dates, and overdue ones should stand out in the list. I have to leave now — collect what we have so I can pick it up later." ;;
   build) fx=cli-feature
-    p="Use blend:build for .blend/features/due-dates.md." ;;
+    p="Use blend:build." ;;
+  build-empty) fx=cli-feature
+    p="Use blend:build." ;;
+  build-empty)
+    check "no code changed" '[ -z "$(git diff --name-only '"$base"' -- . ":!.blend" ":!.gitignore")" ] && [ -z "$(git status --porcelain --untracked-files=all | grep -v " \.blend/\| \.gitignore$")" ]'
+    check "no new build commit" '! git log --format=%s '"$base"'..HEAD | grep -q "^blend: built"' ;;
   persist-merge) fx=persist-merge
     p="Use blend:persist with source git." ;;
   persist-migrate) fx=persist-migrate
@@ -21,15 +26,20 @@ esac
 w=$("$here/setup.sh" "$fx") || exit 1
 base=$(git -C "$w" rev-parse HEAD)
 default=$(git -C "$w" branch --show-current)
-# persist-merge: a valid marker, then a commit adding app.export, so the <marker>..HEAD path runs
-if [ "$name" = persist-merge ]; then
-  g() { git -C "$w" -c user.name=fixture -c user.email=fixture@example.com "$@"; }
-  { echo ";; persisted-through: $base"; cat "$w/.blend/modules.edn"; } > "$w/m.tmp" && mv "$w/m.tmp" "$w/.blend/modules.edn"
-  g commit -qam "marker"
-  printf 'from . import util\n' > "$w/app/export.py"; echo 'from . import export' >> "$w/app/main.py"
-  g add -A && g commit -qm "add export"
-  base=$(git -C "$w" rev-parse HEAD)
-fi
+g() { git -C "$w" -c user.name=fixture -c user.email=fixture@example.com "$@"; }
+case $name in
+  # a persist commit, then a commit adding app.export, so the <last>..HEAD path runs
+  persist-merge) g commit -q --allow-empty -m "docs: persist blend graphs"
+    printf 'from . import util\n' > "$w/app/export.py"; echo 'from . import export' >> "$w/app/main.py"
+    g add -A && g commit -qm "add export" ;;
+  # todos.md is built; due-dates.md is added after the last build, so it is the spec
+  build) g rm -q .blend/features/due-dates.md && g commit -qm "todos"
+    g commit -q --allow-empty -m "blend: built todos"
+    g checkout -q "$base" -- .blend/features/due-dates.md && g commit -qm "docs: brainstorm due dates" ;;
+  # everything is built: the spec diff is empty
+  build-empty) g commit -q --allow-empty -m "blend: built due-dates" ;;
+esac
+base=$(git -C "$w" rev-parse HEAD)
 # persist scenarios: an unrelated staged file must stay out of persist's commit
 case $name in persist-*) echo "user work" > "$w/notes.txt"; git -C "$w" add notes.txt ;; esac
 printf '%s\n' "$p" > "$pre.prompt"
@@ -61,23 +71,25 @@ case $name in
     echo "build tree $w"
     check "not on $default" '[ "$(git branch --show-current)" != "'"$default"'" ]'
     check "$default not moved" '[ "$(git rev-parse '"$default"')" = "'"$base"'" ]'
-    check "build graph, all done" 'ls .blend/builds/*.edn && ! grep -q ":state :\(new\|in-progress\|blocked\)" .blend/builds/*.edn && grep -q ":state :done" .blend/builds/*.edn'
+    check "plan gitignored, not committed, deleted" 'git check-ignore -q .blend/plan.edn && ! git log --format= --name-only | grep -q "plan.edn" && [ ! -e .blend/plan.edn ]'
+    check "no build graphs" '[ ! -e .blend/builds ]'
+    check "built commit" 'git log --format=%s '"$base"'..HEAD | grep -q "^blend: built"'
     check "tests pass" 'python3 -m unittest -q'
     check "due date stored and listed" 'd=$(mktemp -d) && cp todo.py "$d" && cd "$d" && python3 todo.py add pay rent --due 2000-01-01 && python3 todo.py list | grep "pay rent" | grep -q "2000-01-01"'
     check "overdue flagged" 'd=$(mktemp -d) && cp todo.py "$d" && cd "$d" && python3 todo.py add pay rent --due 2000-01-01 && python3 todo.py list | grep -q OVERDUE'
     check "future not overdue" 'd=$(mktemp -d) && cp todo.py "$d" && cd "$d" && python3 todo.py add later --due 2999-01-01 && ! python3 todo.py list | grep -q OVERDUE'
     check "bad date rejected" 'd=$(mktemp -d) && cp todo.py "$d" && cd "$d" && ! python3 todo.py add x --due 2000-13-45 && [ "$(python3 todo.py list | wc -l)" -eq 0 ]'
     check "graphs check ok" 'graphs_ok'
-    check "marker advanced" '! head -n 1 .blend/modules.edn | grep -q "^;; persisted-through: 0000000"'
     check "reviewer subagent ran" 'tools "'"$pre"'" | grep -qi "^Agent.*review"'
-    check "persist ran" 'tools "'"$pre"'" | grep -q "^Skill.*blend:persist\|^Read.*persist/SKILL.md"'
     check "work committed" '[ -z "$(git status --porcelain --untracked-files=no)" ]' ;;
+  build-empty)
+    check "no code changed" '[ -z "$(git diff --name-only '"$base"' -- . ":!.blend" ":!.gitignore")" ] && [ -z "$(git status --porcelain --untracked-files=all | grep -v " \.blend/\| \.gitignore$")" ]'
+    check "no new build commit" '! git log --format=%s '"$base"'..HEAD | grep -q "^blend: built"' ;;
   persist-merge)
     check "planned module kept" '[ "$(edn .blend/modules.edn "[:nodes :app-cache :state]")" = ":new" ]'
     check "planned component kept" '[ "$(edn .blend/architecture.edn "[:nodes :cache :state]")" = ":new" ]'
-    check "marker advanced" 'head -n 1 .blend/modules.edn | grep -q "'"$base"'\|$(git rev-parse --short '"$base"')"'
+    check "persist commit" 'git log --format=%s '"$base"'..HEAD | grep -qx "docs: persist blend graphs"'
     check "new module derived" 'grep -q "app-export" .blend/modules.edn'
-    check "marker line" 'head -n 1 .blend/modules.edn | grep -q "^;; persisted-through: [0-9a-f]\{7,\}"'
     check "graphs check ok" 'graphs_ok'
     check "staged file not committed" '! committed | grep -qx notes.txt && git diff --cached --name-only | grep -qx notes.txt'
     check "only .blend committed" '[ -z "$(committed | grep -v "^\.blend/")" ]' ;;
@@ -86,7 +98,8 @@ case $name in
     check "system.md removed" '[ ! -e .blend/views/system.md ]'
     check "old plan folder kept" '[ -d .blend/2026-10-09-csv ]'
     check "new module derived" 'grep -q "app-export" .blend/modules.edn'
-    check "marker line" 'head -n 1 .blend/modules.edn | grep -q "^;; persisted-through: [0-9a-f]\{7,\}"'
+    check "persist commit" 'git log --format=%s '"$base"'..HEAD | grep -qx "docs: persist blend graphs"'
+    check "no marker line" '! grep -rq "persisted-through" .blend/*.edn'
     check "graphs check ok" 'graphs_ok'
     check "staged file not committed" '! committed | grep -qx notes.txt && git diff --cached --name-only | grep -qx notes.txt'
     check "only .blend committed" '[ -z "$(committed | grep -v "^\.blend/")" ]' ;;
