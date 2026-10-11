@@ -17,12 +17,13 @@ tool names; apply these mappings when following them.
 
 ## Tools
 
-- **Subagents:** `spawn_subagent` (`prompt`, `description`, `model`).
+- **Subagents:** `spawn_subagent` (`prompt`, `description`, `background`).
   Only the top-level session spawns; a subagent can't spawn its own.
-- **Model tiers:** pass `model` per blend:build's table — cheapest
-  `grok-4.5`, mid `grok-4.6`, strong `grok-4.7`, strongest `grok-4.7`
-  (no stronger Grok model). If `spawn_subagent` has no `model` argument
-  (subagent model inheritance is on), subagents inherit the session's
-  model; say so in the report.
+- **Model tiers:** Grok hides `spawn_subagent`'s `model` argument when
+  every available model is an xAI model, so subagents run on the
+  session's model and blend:build's tier table can't be applied per call.
+  Pass `model` only if the argument exists; otherwise say in the report
+  that subagents inherited the session model. Per-type pins live in
+  `~/.grok/config.toml` under `[subagents.models]` (the user's choice).
 - **Web:** `web_fetch` is off unless `GROK_WEB_FETCH=1`; use `web_search`
   for current docs when it is.

@@ -194,8 +194,10 @@ plus the Grok reference (`skills/use-blend/references/grok-tools.md`) to
 `~/.grok/rules/blend.md`, which Grok loads in every session. The file is
 written when the first session starts (interactive) or ends (headless),
 so use-blend applies from the next session on. Uninstalling blend leaves
-the file; delete it by hand. Subagent model tiers map to Grok models in
-the Grok reference.
+the file; delete it by hand. Grok hides the subagent `model` argument
+when only xAI models are available, so build's model tiers don't apply
+there: subagents run on the session's model unless you pin types under
+`[subagents.models]` in `~/.grok/config.toml`.
 
 ### Claude Code
 
