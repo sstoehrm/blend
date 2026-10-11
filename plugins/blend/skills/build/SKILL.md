@@ -18,7 +18,8 @@ decide, and note it.
 
 - Plain request: write a short `.blend/features/<slug>.md` first
   (intent, behaviour, decisions you made).
-- `.blend/views/` exists, or the graphs are missing: run blend:persist.
+- `.blend/views/` exists, or the graphs are missing: run blend:persist —
+  it creates them.
 - Read the feature files, the graph nodes they touch (`:state :new`
   ones, `Touches:` lines) and the code around them.
 - On the default branch: `git switch -c <slug>`. Uncommitted changes, or
@@ -58,10 +59,12 @@ settle goes in the feature file under `## Build notes`: `- <decision> —
 
 ## 4. Finish
 
+All four steps, on every build — one task or ten:
+
 1. **Review** — one reviewer subagent, the strongest model, with
    `reviewer-prompt.md`, the feature files and the range from the branch
    base. Fix what holds in one pass; the reviewer re-checks only those
-   findings. Without a subagent tool, review it yourself and say so.
+   findings. Only a host without a subagent tool reviews inline (say so).
 2. **Graphs** — load blend:persist with source git; it clears
    `:state :new` on what now exists.
 3. **Suite** — run it and show the output.
