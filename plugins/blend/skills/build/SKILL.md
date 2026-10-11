@@ -16,16 +16,18 @@ decide, and note it.
 
 ## 1. Set up
 
-- Plain request: write a short `.blend/features/<slug>.md` first
-  (intent, behaviour, decisions you made).
-- `.blend/views/` exists, or the graphs are missing: run blend:persist —
-  it creates them.
-- Read the feature files, the graph nodes they touch (`:state :new`
-  ones, `Touches:` lines) and the code around them.
-- On the default branch: `git switch -c <slug>`. Uncommitted changes, or
-  the user asked: `git worktree add ../<repo>-<slug> -b <slug>` and work
-  there.
-- Run the test suite. Already red: note it and go on.
+1. **Branch** first — nothing is committed on the default branch. Not
+   on it: stay on the current branch. On it: `git switch -c <slug>`
+   (uncommitted `.blend/` changes come along). Uncommitted changes
+   outside `.blend/`, or the user asked: `git worktree add
+   ../<repo>-<slug> -b <slug>`, copy `.blend/` changes over, work there.
+2. Plain request: write a short `.blend/features/<slug>.md` (intent,
+   behaviour, decisions you made). Commit `.blend/` with a pathspec.
+3. `.blend/views/` exists, or the graphs are missing: run blend:persist —
+   it creates them.
+4. Read the feature files, the graph nodes they touch (`:state :new`
+   ones, `Touches:` lines), the code around them; run the test suite
+   (already red: note it, go on).
 
 ## 2. Plan
 
@@ -35,8 +37,9 @@ and `[:tA :tB] {:direction :-> :type "needs"}` when B needs A. A task is
 one test cycle that could be reviewed on its own; one task is fine.
 `simpleviz init <file> -t blend-build` is a shortcut. Commit it.
 
-Resume: a build graph for this feature exists → `:done` tasks are done
-(`git log` confirms); continue at the first that isn't.
+Resume: a branch `<slug>` or a `builds/*-<slug>.edn` exists → switch to
+it; `:done` tasks are done (`git log` confirms); continue at the first
+that isn't.
 
 ## 3. Implement
 
@@ -45,12 +48,10 @@ Take tasks in order, one at a time:
 1. Set `:state :in-progress`.
 2. TDD: failing test, see it fail, minimal code, see it pass. Run the
    suite.
-3. Commit, set `:state :done`, commit the build graph with it.
+3. Set `:state :done`; commit code and build graph together.
 
-Many tasks or a large codebase: a subagent per task may do steps 2–3 —
-give it the feature file, the task's `:text`, names earlier tasks
-produced, and "TDD, commit, don't dispatch subagents, report status and
-concerns". One at a time.
+Many tasks or a large codebase: a subagent per task may do steps 2–3,
+one at a time, with the feature file and the task's `:text`.
 
 A task that can't pass as planned: change the plan (edit, split or add
 tasks) rather than forcing it. Every decision the feature file didn't
@@ -61,9 +62,8 @@ settle goes in the feature file under `## Build notes`: `- <decision> —
 
 All four steps, on every build — one task or ten:
 
-1. **Review** — one reviewer subagent, the strongest model, with
-   `reviewer-prompt.md`, the feature files and the range from the branch
-   base. Fix what holds in one pass; the reviewer re-checks only those
+1. **Review** — one reviewer subagent with `reviewer-prompt.md`, the
+   feature files and the range since the build started. Fix what holds in one pass; the reviewer re-checks only those
    findings. Only a host without a subagent tool reviews inline (say so).
 2. **Graphs** — load blend:persist with source git; it clears
    `:state :new` on what now exists.

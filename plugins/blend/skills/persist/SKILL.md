@@ -14,10 +14,10 @@ simpleviz:simpleviz for the EDN format.
 | `.blend/architecture.edn` | components, flows, subsystems | drawn; updated where code changed |
 
 Source, said before starting: **git** — `<marker>..HEAD`, marker = the
-`;; persisted-through: <sha>` first line of modules.edn (missing, or not
-an ancestor of HEAD: describe the code as it is now); or **session** —
-what this conversation changed, committed or not. Skip commits that only
-touch `.blend/`.
+`;; persisted-through: <sha>` first line of modules.edn; or **session** —
+`<marker>..HEAD` plus this conversation's uncommitted changes. No marker,
+or not an ancestor of HEAD: the range is the whole tree. Skip commits
+that only touch `.blend/`.
 
 **Old layout** (`.blend/views/`): `git mv .blend/views/*.edn .blend/`;
 system.md's `<!-- persisted-through: <sha> -->` becomes the marker, then
@@ -25,10 +25,8 @@ system.md's `<!-- persisted-through: <sha> -->` becomes the marker, then
 
 ## Modules: derive and merge
 
-1. Module unit and imports per language: Clojure `ns` + `:require`,
-   Python module + `import`/`from`, JS/TS file + `import`/`require`, Go
-   package + `import`, Rust `mod` + `use crate::`, Lua/Fennel file +
-   `require`, C/C++ file + `#include "…"`. Own modules only.
+1. Grep the language's module unit and imports (Clojure `ns` +
+   `:require`, Python `import`, JS `import`, …). Own modules only.
 2. Node id = module name made EDN-safe (`app-io-reader`), `:name` as in
    code, `:type` = top-level package. Edge per import
    `[:a :b] {:direction :-> :type "requires"}`. Box per directory
@@ -41,13 +39,14 @@ system.md's `<!-- persisted-through: <sha> -->` becomes the marker, then
 
 ## Architecture: update
 
-From `git diff --stat <range>` (session: plus `git status`): update the
-components whose code changed what they do or talk to, add new ones,
-remove deleted ones, keep `:pair "modules.edn#<id>"` current; built
-`:state :new` elements lose `:state` and `:md-ref`. Leave the rest. Missing file: draw the main
-components (`:type` service, store, ui, cli, library, worker, external;
-edges = flows with `:name`; boxes = subsystems). Templates:
-`simpleviz init <file> -t blend-architecture` / `-t blend-modules`.
+Update in place, never redraw. From `git diff --stat <range>` (whole
+tree: the code as it is), update the components whose code changed what
+they do or talk to, add new ones, remove deleted ones, keep
+`:pair "modules.edn#<id>"` current. `:state :new` elements stay; once
+built, they lose `:state` and `:md-ref`. Leave the rest. Missing file:
+draw the main components (`:type` service, store, ui, cli, library,
+worker, external; edges = flows with `:name`; boxes = subsystems), from
+`simpleviz init <file> -t blend-architecture` if you like.
 
 ## Check, report, commit
 

@@ -43,6 +43,13 @@ mkdir -p "$tmp/h6/templates"; echo '{}' > "$tmp/h6/templates/web.edn"
 SIMPLEVIZ_HOME="$tmp/h6" sh "$script"
 check "user template kept" '[ "$(cat "$tmp/h6/templates/web.edn")" = "{}" ]'
 
+# 6b. templates blend no longer ships are removed; user files named blend-* without the marker stay
+printf ';; blend-template 0.7.0\n{}\n' > "$tmp/h6/templates/blend-plan-view.edn"
+echo '{}' > "$tmp/h6/templates/blend-mine.edn"
+SIMPLEVIZ_HOME="$tmp/h6" sh "$script"
+check "stale blend template removed" '[ ! -e "$tmp/h6/templates/blend-plan-view.edn" ]'
+check "unmarked blend-* kept" '[ -f "$tmp/h6/templates/blend-mine.edn" ]'
+
 # 7. every template parses and checks clean
 for t in "$src"/blend-*.edn; do
   check "simpleviz check $(basename "$t")" 'simpleviz check "$t" >/dev/null'

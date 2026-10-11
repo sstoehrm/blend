@@ -25,13 +25,5 @@ this reference's directory) to `${SIMPLEVIZ_HOME:-~/.simpleviz}/templates/`.
 
 ## Tool Mapping
 
-- **AskUserQuestion / multiSelect:** use the available question tool in the
-  current mode. Otherwise ask in chat and wait for the answer. If multiple
-  selections aren't supported, present numbered choices and ask for the
-  selected numbers.
-- **Explore / reviewer subagents:** use available subagent tools; `Explore`
-  describes a read-only task, not a required agent type. Without delegation,
-  perform separate exploration and review passes directly and disclose that
-  the review wasn't independent. Never claim a subagent review occurred
-  when it didn't.
-- **WebFetch / WebSearch:** use the available web fetch/search tools.
+- **Reviewer subagent:** use an available subagent tool. Without one,
+  review in a separate pass and say the review wasn't independent.
