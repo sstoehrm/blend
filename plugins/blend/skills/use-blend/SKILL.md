@@ -56,8 +56,8 @@ missing give the fix and wait:
 
 ## Review
 
-One read-only reviewer (a subagent if the host has one; mid tier, strong
-for large or risky diffs — tiers in blend:build) gets the
+One read-only reviewer (a subagent if the host has one, strong tier —
+see blend:build) gets the
 requirements, the exact scope (a commit range; uncommitted work: staged,
 unstaged and relevant untracked changes) and blend's
 `skills/build/reviewer-prompt.md`. Receiving review: check each finding

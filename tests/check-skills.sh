@@ -11,7 +11,7 @@ for t in plugins/blend/templates/blend-*.edn; do
 stray=$(grep -rIn -i superpowers plugins/blend .claude-plugin | grep -v -e THIRD_PARTY_NOTICES.md -e ':Adapted from superpowers')
 [ -z "$stray" ] || bad "superpowers outside attribution: $stray"
 grep -q "Copyright (c) 2025 Jesse Vincent" plugins/blend/THIRD_PARTY_NOTICES.md || bad "MIT notice missing"
-for s in use-blend/SKILL.md:70 brainstorming/SKILL.md:60 build/SKILL.md:92 build/reviewer-prompt.md:30 persist/SKILL.md:60; do
+for s in use-blend/SKILL.md:70 brainstorming/SKILL.md:60 build/SKILL.md:100 build/reviewer-prompt.md:30 persist/SKILL.md:60; do
   f=plugins/blend/skills/${s%%:*} max=${s##*:}
   [ -f "$f" ] || { bad "$f missing"; continue; }
   n=$(wc -l < "$f"); [ "$n" -le "$max" ] || bad "$f: $n lines > $max"; done

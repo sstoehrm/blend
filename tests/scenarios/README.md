@@ -20,7 +20,7 @@ check (exit 1 on any FAIL):
 | Scenario | Fixture | Checks |
 | --- | --- | --- |
 | `brainstorm` | `cli-small` | feature file written and linked to the graphs (`:state :new` or `Touches:`), graphs check ok, nothing outside `.blend/` changed |
-| `build` | `cli-feature` + history: `todos.md` built (`blend: built todos`), `due-dates.md` added after | own branch, default branch unmoved, due-date behavior works, plan is `.blend/plan.md`, gitignored / never committed / deleted, `blend: built` commit, reviewer subagent ran with a named model, graphs check ok |
+| `build` | `cli-feature` + history: `todos.md` built (`blend: built todos`), `due-dates.md` added after | own branch, default branch unmoved, due-date behavior works, plan is `.blend/plan.md`, gitignored / never committed / deleted, `blend: built` commit, strongest only for plan review or advisor (the 2-task fixture is below the plan-review threshold), code review on strong, every subagent names a model, graphs check ok |
 | `build-empty` | `cli-feature` + `blend: built` at HEAD | empty spec diff: no code changed, no new `blend: built` commit |
 | `persist-merge` | `persist-merge` + a persist commit, then a commit adding `app.export` | planned (`:state :new`) nodes survive, new module added, persist commit, staged user file not committed |
 | `persist-migrate` | `persist-migrate` | `.blend/views/` moved to `.blend/`, system.md removed, no marker line, old plan folder kept, staged file not committed |
