@@ -13,19 +13,19 @@ SIMPLEVIZ_HOME="$tmp/none" sh "$script"; rc=$?
 check "no simpleviz home: exit 0" '[ $rc -eq 0 ]'
 check "no simpleviz home: nothing created" '[ ! -e "$tmp/none" ]'
 
-# 2. installed, no templates folder: all four copied
+# 2. installed, no templates folder: all three copied
 mkdir -p "$tmp/h2"
 SIMPLEVIZ_HOME="$tmp/h2" sh "$script"
-for t in blend-plan blend-architecture blend-modules blend-plan-view; do
+for t in blend-build blend-architecture blend-modules; do
   check "copies $t" 'cmp -s "$src/$t.edn" "$tmp/h2/templates/$t.edn"'
 done
 
 check "silent" '[ -z "$(SIMPLEVIZ_HOME=$tmp/h2 sh "$script")" ]'
 
 # 3. same version, edited by the user: kept
-printf '\n;; my edit\n' >> "$tmp/h2/templates/blend-plan.edn"
+printf '\n;; my edit\n' >> "$tmp/h2/templates/blend-build.edn"
 SIMPLEVIZ_HOME="$tmp/h2" sh "$script"
-check "same version edit kept" 'grep -q "my edit" "$tmp/h2/templates/blend-plan.edn"'
+check "same version edit kept" 'grep -q "my edit" "$tmp/h2/templates/blend-build.edn"'
 
 # 4. other version: replaced
 printf ';; blend-template 0.0.1\n{}\n' > "$tmp/h2/templates/blend-modules.edn"
@@ -43,6 +43,13 @@ mkdir -p "$tmp/h6/templates"; echo '{}' > "$tmp/h6/templates/web.edn"
 SIMPLEVIZ_HOME="$tmp/h6" sh "$script"
 check "user template kept" '[ "$(cat "$tmp/h6/templates/web.edn")" = "{}" ]'
 
+# 6b. templates blend no longer ships are removed; user files named blend-* without the marker stay
+printf ';; blend-template 0.7.0\n{}\n' > "$tmp/h6/templates/blend-plan-view.edn"
+echo '{}' > "$tmp/h6/templates/blend-mine.edn"
+SIMPLEVIZ_HOME="$tmp/h6" sh "$script"
+check "stale blend template removed" '[ ! -e "$tmp/h6/templates/blend-plan-view.edn" ]'
+check "unmarked blend-* kept" '[ -f "$tmp/h6/templates/blend-mine.edn" ]'
+
 # 7. every template parses and checks clean
 for t in "$src"/blend-*.edn; do
   check "simpleviz check $(basename "$t")" 'simpleviz check "$t" >/dev/null'
@@ -50,6 +57,6 @@ done
 
 # 8. every template starts with the version line
 for t in "$src"/blend-*.edn; do
-  check "version line $(basename "$t")" '[ "$(head -n 1 "$t")" = ";; blend-template 0.6.0" ]'
+  check "version line $(basename "$t")" '[ "$(head -n 1 "$t")" = ";; blend-template 0.8.0" ]'
 done
 exit $fail

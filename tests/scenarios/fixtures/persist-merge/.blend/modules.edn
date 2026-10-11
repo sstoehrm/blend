@@ -1,0 +1,14 @@
+{:nodes {:app-main {:name "app.main" :type "app"}
+         :app-util {:name "app.util" :type "app"}
+         :app-io-reader {:name "app.io.reader" :type "app"}
+         :app-cache {:name "app.cache" :type "app" :state :new :md-ref "features/cache.md"}
+         :lib-api {:name "lib/api.js" :type "lib"}
+         :web-page {:name "web/page.js" :type "web"}}
+ :edges {[:app-main :app-util] {:direction :-> :type "requires"}
+         [:app-main :app-io-reader] {:direction :-> :type "requires"}
+         [:app-main :app-cache] {:direction :-> :type "requires"}
+         [:app-io-reader :app-util] {:direction :-> :type "requires"}
+         [:web-page :lib-api] {:direction :-> :type "requires"}}
+ :boxes {:app {:name "app" :type "dir" :components #{:app-main :app-util :app-io-reader :app-cache}}
+         :lib {:name "lib" :type "dir" :components #{:lib-api}}
+         :web {:name "web" :type "dir" :components #{:web-page}}}}

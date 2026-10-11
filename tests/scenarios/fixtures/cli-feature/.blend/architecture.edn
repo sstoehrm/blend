@@ -1,0 +1,3 @@
+{:nodes {:todo-cli   {:name "todo CLI" :type "cli" :pair "modules.edn#todo"}
+         :todos-json {:name "todos.json" :type "store"}}
+ :edges {[:todo-cli :todos-json] {:direction :-> :name "read / write"}}}

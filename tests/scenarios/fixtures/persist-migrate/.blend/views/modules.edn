@@ -1,0 +1,12 @@
+{:nodes {:app-main {:label "app.main"}
+         :app-util {:label "app.util"}
+         :app-io-reader {:label "app.io.reader"}
+         :lib-api {:label "lib/api.js"}
+         :web-page {:label "web/page.js"}}
+ :edges {[:app-main :app-util] {}
+         [:app-main :app-io-reader] {}
+         [:app-io-reader :app-util] {}
+         [:web-page :lib-api] {}}
+ :boxes {:app {:label "app" :nodes [:app-main :app-util :app-io-reader]}
+         :lib {:label "lib" :nodes [:lib-api]}
+         :web {:label "web" :nodes [:web-page]}}}

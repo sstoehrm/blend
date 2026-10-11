@@ -1,96 +1,69 @@
 # blend
 
-A Claude Code and Codex plugin that blends existing skills into one opinionated
-workflow: [superpowers](https://github.com/obra/superpowers) drives the
-process, [simpleviz](https://github.com/sstoehrm/simpleviz) makes designs
-visible, and a session-start hook wires it all together. Packaged as a
-plugin marketplace.
+A Claude Code and Codex plugin: a standalone set of opt-in workflow skills.
+[simpleviz](https://github.com/sstoehrm/simpleviz) makes designs visible, and
+a session-start hook wires it all together; no other workflow plugin is
+needed. Packaged as a plugin marketplace.
+
+Parts of build, review and the TDD/debugging rules are adapted from
+[superpowers](https://github.com/obra/superpowers) (MIT); see
+`plugins/blend/THIRD_PARTY_NOTICES.md`.
 
 ## Skills
 
-| Skill              | What it does                                                                                                                                       |
-| ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| use-blend           | Injected into every session via SessionStart hook. Communication style, verification habits, dependency checks, and the phase → skill routing table. The hook also installs blend's simpleviz templates. |
-| blend:brainstorming | Wraps superpowers:brainstorming: asks how involved you want to be (high, medium, full auto), refreshes the project views, draws the design as plan views with a plan graph as entry point, and writes `overview.md` instead of a spec. |
-| blend:planning      | Replaces superpowers:writing-plans: adds the tasks to the plan graph (dependencies show what can run in parallel), writes one task file per task, and tells execution how to run the plan. |
-| blend:project-views | Keeps `.blend/views/architecture.edn` and `.blend/views/modules.edn` current: derives the module graph from code, draws architecture, syncs both after implementation and reports unplanned changes. |
-| blend:deduce       | Deduces and maintains a concept graph — a superficial architecture view of a project — from code, plans, or specs. Iterative: user approves concepts, a reviewer subagent validates every element against evidence. Work in progress: not part of the workflow yet, invoke it directly. Writes `.blend/concept.edn` and `.blend/concept-hash` (the commit the graph was validated against; scopes the next update). |
+| Skill               | What it does |
+| ------------------- | ------------ |
+| use-blend           | Injected into every session via SessionStart hook: communication style, verification, TDD, debugging and review rules, dependency checks. Offers the other skills when a request fits; they run only when you say yes or name them. The hook also installs blend's simpleviz templates. |
+| blend:brainstorming | A free conversation about an idea. Whatever settles is written into `.blend/` right away: a markdown file per feature, plus planned nodes (`:state :new`) in the architecture and module graphs. No levels, gates or fixed steps. |
+| blend:build         | Plans and implements in one full-auto run: a branch, a small task graph in `.blend/builds/`, TDD per task, one whole-branch review, then blend:persist when the repo has graphs. Keeps the branch; never merges or pushes unasked. |
+| blend:persist       | Brings code into the graphs — `modules.edn` derived from imports and merged (planned modules survive), `architecture.edn` updated where code changed. Source is a git range or the current session. Migrates the old `.blend/views/` layout. |
 
 ## The workflow
 
 ```
-idea ──▶ blend:brainstorming ──▶ overview.md + plan views ──▶ blend:planning ──▶ plan graph + task files ──▶ implementation ──▶ sync project views
-              │                         ▲                                                                                        │
-              ▼                         └──── .blend/views (architecture, modules) ◀─────────────────────────────────────────────┘
-      superpowers:brainstorming
+idea ⇄ blend:brainstorming ⇄ .blend/{features/*.md, architecture.edn, modules.edn}
+                                         │
+                                   blend:build → branch, tests, review → blend:persist (if graphs exist)
 ```
 
-There is no spec or plan document. Brainstorming refreshes the project
-views, then draws what the feature changes as plan views — a slice of the
-architecture and of the module graph, marked new / changed / removed /
-context — and writes a short `overview.md` (goal, decisions, non-goals,
-success criteria). You review those. blend:planning adds the tasks to the
-plan graph: edges show order, tasks without a path between them can run
-in parallel, and each task links to its task file and to the modules and
-components it touches. After implementation the module graph is
-re-derived from the code and anything the plan did not predict is
-reported.
+Brainstorm as long and as often as you like; each session starts from
+what is in `.blend/`. Features are free markdown — intent, behaviour,
+examples, open questions, whatever fits. The graphs show the structure,
+with not-yet-built parts marked and linked to their feature. When a
+feature is ready, blend:build runs without asking and reports.
 
-Brainstorming first asks how involved you want to be:
-
-| Level     | You get asked                                                              |
-| --------- | -------------------------------------------------------------------------- |
-| High      | Everything superpowers asks: each question, each design section, design review, plan review |
-| Medium    | Only design-changing questions; one design review (overview + views), then plan review |
-| Full auto | Nothing; the agent decides, implements on a branch, and reports. Never merges or pushes |
-
-Name the level in your request ("full auto", "just decide") to skip the
-question.
-
-Artifacts land in the target project:
+Artifacts in the target project:
 
 ```
 .blend/
-├── views/architecture.edn             # project: components and flows, always current
-├── views/modules.edn                  # project: every module and its imports, derived from code
-├── YYYY-MM-DD-<topic>.edn             # plan graph — the entry point; serve this
-└── YYYY-MM-DD-<topic>/
-    ├── overview.md                    # goal, decisions, non-goals, success criteria, how to execute
-    ├── architecture.edn               # what the plan changes in the architecture
-    ├── modules.edn                    # which modules the plan touches, and by which task
-    └── tasks/NN-<slug>.md             # one brief per task: files, TDD steps, acceptance
+├── architecture.edn            # components and flows (serve this)
+├── modules.edn                 # modules and imports, derived; ;; persisted-through: <sha>
+├── features/<slug>.md          # one per feature, free markdown
+└── builds/YYYY-MM-DD-<slug>.edn  # task graph of one build: progress and resume
 ```
 
-Templates: `simpleviz init <file> -t blend-plan | blend-plan-view | blend-architecture | blend-modules`.
+Templates: `simpleviz init <file> -t blend-architecture | blend-modules | blend-build`.
 
 ## Code review
 
-Blend uses **superpowers:requesting-code-review** for working changes and
-PRs, then **superpowers:receiving-code-review** to handle feedback. One
-read-only reviewer checks the change against its requirements, including
-correctness, relevant security issues, and unnecessary complexity. Review
-fixes where needed; reuse an existing review when the diff is unchanged.
+Blend reviews with its own reviewer prompt
+(`plugins/blend/skills/build/reviewer-prompt.md`). One read-only
+reviewer checks the change against its requirements, including
+correctness, relevant security issues, and unnecessary complexity.
 Built-in review, simplify, and security-review commands aren't chained
 automatically.
-
-| Skill | Fit for Blend |
-| --- | --- |
-| [Superpowers requesting-code-review](https://github.com/obra/superpowers/blob/main/skills/requesting-code-review/SKILL.md) | Default: general code review with one reviewer, already included in Blend's dependencies. Its [reviewer template](https://github.com/obra/superpowers/blob/main/skills/requesting-code-review/code-reviewer.md) prohibits nested reviewers. |
-| [Ponytail review](https://github.com/DietrichGebert/ponytail/blob/main/skills/ponytail-review/SKILL.md) | Useful for a requested over-engineering review. Explicitly excludes correctness, security, and performance, so it cannot replace general code review. Optional; no new dependency. |
 
 ## Dependencies
 
 | Dependency         | Claude Code install                                                                       |
 | ------------------ | ----------------------------------------------------------------------------------------- |
-| superpowers plugin | `/plugin install superpowers@claude-plugins-official`                                     |
 | simpleviz plugin   | `/plugin install simpleviz@simpleviz`                                                     |
 | simpleviz launcher (≥ 0.32.0) | `curl -fsSL https://raw.githubusercontent.com/sstoehrm/simpleviz/main/install.sh \| bash` |
 | babashka           | https://github.com/babashka/babashka#installation                                         |
 
 use-blend checks these lazily and tells you the fix when one is missing.
 
-In Codex, install **superpowers** through the plugin browser or follow its
-[Codex setup instructions](https://github.com/obra/superpowers). Install the
+In Codex, install the
 **simpleviz skill** using Codex's skill installer: provide
 `https://github.com/sstoehrm/simpleviz` and select the directory containing
 its `SKILL.md`. The simpleviz launcher and babashka are required in both
@@ -107,10 +80,13 @@ plugins/blend/                      # the "blend" plugin
 ├── .codex-plugin/plugin.json
 ├── hooks/hooks.json                # SessionStart: injects use-blend, installs templates
 ├── hooks/install-templates.sh      # copies templates/ into ~/.simpleviz/templates
-├── templates/blend-*.edn           # simpleviz templates (init -t blend-plan …)
+├── templates/blend-*.edn           # simpleviz templates (init -t blend-build …)
+├── THIRD_PARTY_NOTICES.md          # MIT notice for text adapted from superpowers
 └── skills/
-    └── <skill-name>/SKILL.md       # one directory per skill
+    └── {use-blend,brainstorming,build,persist}/SKILL.md
 tests/install-templates.test.sh     # run: sh tests/install-templates.test.sh
+tests/check-skills.sh               # line budgets, no stale references
+tests/scenarios/                    # headless skill scenarios: tests/scenarios/run.sh
 ```
 
 ## Usage
@@ -132,10 +108,8 @@ select `use-blend` in the skill picker or ask: "Load Blend's use-blend skill
 and follow it for this task."
 
 To use an individual skill, ask for **Blend's brainstorming skill**,
-**Blend's planning skill** or **Blend's project-views skill**. Select the Blend entry if another plugin
-exposes the same name. The skill files are shared by both hosts. Following
-[Superpowers' platform adaptation pattern](https://github.com/obra/superpowers/blob/main/skills/using-superpowers/SKILL.md),
-`use-blend` conditionally loads a Codex reference for tool mappings;
+**Blend's build skill** or **Blend's persist skill**. Select the Blend entry if another plugin
+exposes the same name. The skill files are shared by both hosts. `use-blend` conditionally loads a Codex reference for tool mappings;
 other hosts don't load that reference.
 
 #### Updating
@@ -238,8 +212,9 @@ Instructions shared by Claude Code and Codex. Keep host-specific tool
 mappings in a reference loaded conditionally from use-blend.
 ```
 
-Follow superpowers:writing-skills: test the skill with fresh-context
-subagents before deploying. Validate before committing:
+Test the skill with headless scenarios — `tests/scenarios/run.sh` (see
+`tests/scenarios/README.md`): a baseline run without the change that
+fails, a run with it that passes. Validate before committing:
 
 ```bash
 claude plugin validate .
