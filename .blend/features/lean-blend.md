@@ -3,8 +3,7 @@
 Do less, leave more freedom. Brainstorming is a conversation whose results
 land in feature files and the two graphs; building is one full-auto step.
 
-Touches: architecture#brainstorm, architecture#build, architecture#persist,
-modules#brainstorming, modules#build, modules#persist, modules#use-blend
+Touches: architecture#brainstorm, architecture#build, architecture#persist, modules#brainstorming, modules#build, modules#persist, modules#use-blend
 
 ## Decisions
 - Features are free markdown, one file per feature; no features graph.

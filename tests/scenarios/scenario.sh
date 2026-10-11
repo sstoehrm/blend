@@ -42,7 +42,9 @@ committed() { git log --format= --name-only "$base..HEAD"; }
 tools() { jq -r 'select(.type=="assistant") | .message.content[]? | select(.type=="tool_use") | "\(.name) \(.input|tostring)"' "$1.jsonl"; }
 # edn <file> <get-in path>: prints the value, e.g. edn .blend/modules.edn '[:nodes :app-cache :state]'
 edn() { bb -e "(prn (get-in (clojure.edn/read-string (slurp \"$1\")) $2))"; }
-graphs_ok() { for f in .blend/architecture.edn .blend/modules.edn; do simpleviz check "$f" | grep -qx ok || return 1; done; }
+# simpleviz check flags missing :pair targets but not :md-ref, so check those here
+graphs_ok() { for f in .blend/architecture.edn .blend/modules.edn; do simpleviz check "$f" | grep -qx ok || return 1; done
+  for m in $(grep -ho ':md-ref "[^"]*"' .blend/*.edn | sed 's/:md-ref "\(.*\)"/\1/'); do [ -f ".blend/$m" ] || return 1; done; }
 
 case $name in
   brainstorm)
