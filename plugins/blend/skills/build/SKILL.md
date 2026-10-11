@@ -53,19 +53,31 @@ a build branch: plan again from the spec, minus what the branch did.
 
 Tasks in order, one at a time: TDD — failing test, see it fail, minimal
 code, see it pass; run the suite; commit; tick it `[x]` (and its
-`:state`). Large builds: a subagent per task may do the TDD and commit,
-given the feature file and the task line. A task that can't pass as
-planned: change the plan. Decisions the spec didn't settle go in the
-feature file under `## Build notes`: `- <decision> — <why>`.
+`:state`). Large builds: one subagent per task, never two at once, with
+the feature file and the task line. A task that can't pass as planned:
+change the plan. Decisions the spec didn't settle: feature file,
+`## Build notes`, `- <decision> — <why>`.
+
+## Subagent models
+
+Always name the model (unnamed inherits the session's): cheapest (Haiku),
+mid (Sonnet), strong (Opus), strongest (Fable, only when asked).
+
+| Role | Tier |
+| --- | --- |
+| Exploration, search | cheapest |
+| Implementer, the task line names the exact change | cheapest |
+| Implementer, needs judgement or touches several files | mid |
+| Reviewer | mid; strong for large or risky diffs (security, data, concurrency) |
 
 ## 5. Finish
 
 Every build, one task or ten:
 
-1. **Review** — one reviewer subagent with `reviewer-prompt.md`, the
-   spec diff and the range since the build started. Fix what holds in
-   one pass; the reviewer re-checks only those findings. Only a host
-   without a subagent tool reviews inline (say so).
+1. **Review** — one reviewer subagent (model per the table) with
+   `reviewer-prompt.md`, the spec diff and the range since the build
+   started. Fix what holds in one pass; the reviewer re-checks only those
+   findings. Only a host without a subagent tool reviews inline (say so).
 2. **Graphs** — the build built `:state :new` nodes or added, removed
    or rewired modules or components: load blend:persist with source git.
    Otherwise say the graphs still match; a later persist catches up.

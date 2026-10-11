@@ -85,6 +85,7 @@ case $name in
     check "bad date rejected" 'd=$(mktemp -d) && cp todo.py "$d" && cd "$d" && ! python3 todo.py add x --due 2000-13-45 && [ "$(python3 todo.py list | wc -l)" -eq 0 ]'
     check "graphs check ok" 'graphs_ok'
     check "reviewer subagent ran" 'tools "'"$pre"'" | grep -qi "^Agent.*review"'
+    check "every subagent names a model" '[ -z "$(jq -r '"'"'select(.type=="assistant") | .message.content[]? | select(.type=="tool_use" and .name=="Agent") | select(.input.model == null) | .id'"'"' "'"$pre"'.jsonl")" ]'
     check "work committed" '[ -z "$(git status --porcelain --untracked-files=no)" ]' ;;
   build-empty)
     check "no code changed" '[ -z "$(git diff --name-only '"$base"' -- . ":!.blend" ":!.gitignore")" ] && [ -z "$(git status --porcelain --untracked-files=all | grep -v " \.blend/\| \.gitignore$")" ]'
