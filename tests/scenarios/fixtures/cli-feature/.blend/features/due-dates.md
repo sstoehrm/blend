@@ -8,3 +8,5 @@ Todos can carry a due date so overdue ones stand out.
   is before today and the todo is not done.
 - A malformed date exits non-zero with an error and stores nothing.
 - Todos without a due date list as before.
+
+Touches: architecture#todo-cli, modules#todo

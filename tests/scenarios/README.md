@@ -20,7 +20,7 @@ check (exit 1 on any FAIL):
 | Scenario | Fixture | Checks |
 | --- | --- | --- |
 | `brainstorm` | `cli-small` | feature file written and linked to the graphs (`:state :new` or `Touches:`), graphs check ok, nothing outside `.blend/` changed, no build graph |
-| `build` | `cli-feature` | own branch, default branch unmoved, build graph all `:done`, tests pass, due-date behavior works, reviewer subagent and persist ran, graphs ok |
+| `build` | `cli-feature` | own branch, default branch unmoved, build graph all `:done`, tests pass, due-date behavior works, reviewer subagent and persist ran, marker advanced, graphs ok |
 | `persist-merge` | `persist-merge` | valid marker + a commit adding `app.export`: planned (`:state :new`) nodes survive, new module added, marker advanced, staged user file not committed |
 | `persist-migrate` | `persist-migrate` | `.blend/views/` moved to `.blend/`, system.md removed, old plan folder kept, marker line, staged file not committed |
 
@@ -32,7 +32,7 @@ prints `<arm> turns=N in=N out=N cost=X superpowers_uses=N`.
 
 Fixtures:
 - `cli-small`: small Python todo CLI with a test.
-- `cli-feature`: cli-small plus `.blend/features/due-dates.md`.
+- `cli-feature`: cli-small plus `.blend/features/due-dates.md` and graphs with a placeholder marker.
 - `persist-merge`: Python/JS tree with flat `.blend/` graphs holding a planned `app-cache` module and `cache` component; scenario.sh adds the marker and an `app/export.py` commit.
 - `persist-migrate`: the same code with the old `.blend/views/` layout, system.md and an old plan folder.
 - `failing-test`: Python `mean()` with a failing unittest.

@@ -65,7 +65,8 @@ case $name in
     check "overdue flagged" 'd=$(mktemp -d) && cp todo.py "$d" && cd "$d" && python3 todo.py add pay rent --due 2000-01-01 && python3 todo.py list | grep -q OVERDUE'
     check "future not overdue" 'd=$(mktemp -d) && cp todo.py "$d" && cd "$d" && python3 todo.py add later --due 2999-01-01 && ! python3 todo.py list | grep -q OVERDUE'
     check "bad date rejected" 'd=$(mktemp -d) && cp todo.py "$d" && cd "$d" && ! python3 todo.py add x --due 2000-13-45 && [ "$(python3 todo.py list | wc -l)" -eq 0 ]'
-    check "graphs exist and check ok" 'graphs_ok'
+    check "graphs check ok" 'graphs_ok'
+    check "marker advanced" '! head -n 1 .blend/modules.edn | grep -q "^;; persisted-through: 0000000"'
     check "reviewer subagent ran" 'tools "'"$pre"'" | grep -qi "^Agent.*review"'
     check "persist ran" 'tools "'"$pre"'" | grep -q "^Skill.*blend:persist\|^Read.*persist/SKILL.md"'
     check "work committed" '[ -z "$(git status --porcelain --untracked-files=no)" ]' ;;

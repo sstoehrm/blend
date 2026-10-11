@@ -15,7 +15,7 @@ Parts of build, review and the TDD/debugging rules are adapted from
 | ------------------- | ------------ |
 | use-blend           | Injected into every session via SessionStart hook: communication style, verification, TDD, debugging and review rules, dependency checks. Offers the other skills when a request fits; they run only when you say yes or name them. The hook also installs blend's simpleviz templates. |
 | blend:brainstorming | A free conversation about an idea. Whatever settles is written into `.blend/` right away: a markdown file per feature, plus planned nodes (`:state :new`) in the architecture and module graphs. No levels, gates or fixed steps. |
-| blend:build         | Plans and implements in one full-auto run: a branch, a small task graph in `.blend/builds/`, TDD per task, one whole-branch review, then blend:persist. Keeps the branch; never merges or pushes unasked. |
+| blend:build         | Plans and implements in one full-auto run: a branch, a small task graph in `.blend/builds/`, TDD per task, one whole-branch review, then blend:persist when the repo has graphs. Keeps the branch; never merges or pushes unasked. |
 | blend:persist       | Brings code into the graphs — `modules.edn` derived from imports and merged (planned modules survive), `architecture.edn` updated where code changed. Source is a git range or the current session. Migrates the old `.blend/views/` layout. |
 
 ## The workflow
@@ -23,7 +23,7 @@ Parts of build, review and the TDD/debugging rules are adapted from
 ```
 idea ⇄ blend:brainstorming ⇄ .blend/{features/*.md, architecture.edn, modules.edn}
                                          │
-                                   blend:build → branch, tests, review → blend:persist
+                                   blend:build → branch, tests, review → blend:persist (if graphs exist)
 ```
 
 Brainstorm as long and as often as you like; each session starts from

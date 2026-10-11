@@ -23,8 +23,7 @@ decide, and note it.
    ../<repo>-<slug> -b <slug>`, copy `.blend/` changes over, work there.
 2. Plain request: write a short `.blend/features/<slug>.md` (intent,
    behaviour, decisions you made). Commit `.blend/` with a pathspec.
-3. `.blend/views/` exists, or the graphs are missing: run blend:persist —
-   it creates them.
+3. `.blend/views/` exists: run blend:persist to migrate it.
 4. Read the feature files, the graph nodes they touch (`:state :new`
    ones, `Touches:` lines), the code around them; run the test suite
    (already red: note it, go on).
@@ -60,13 +59,15 @@ settle goes in the feature file under `## Build notes`: `- <decision> —
 
 ## 4. Finish
 
-All four steps, on every build — one task or ten:
+Every build, one task or ten:
 
 1. **Review** — one reviewer subagent with `reviewer-prompt.md`, the
-   feature files and the range since the build started. Fix what holds in one pass; the reviewer re-checks only those
-   findings. Only a host without a subagent tool reviews inline (say so).
-2. **Graphs** — load blend:persist with source git; it clears
-   `:state :new` on what now exists.
+   feature files and the range since the build started. Fix what holds
+   in one pass; the reviewer re-checks only those findings. Only a host
+   without a subagent tool reviews inline (say so).
+2. **Graphs** — `.blend/architecture.edn` or `modules.edn` exists: load
+   blend:persist with source git (it clears `:state :new` on what now
+   exists). Neither exists: skip, and offer persist in the report.
 3. **Suite** — run it and show the output.
 4. **Report** — what was built, the build notes, the review result, the
    branch. Keep the branch: no merge or push unless the user asks.
