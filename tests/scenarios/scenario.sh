@@ -49,6 +49,8 @@ echo "workdir $w"
 fail=0
 check() { if (cd "$w" && eval "$2") >/dev/null 2>&1; then echo "ok   $1"; else echo "FAIL $1"; fail=1; fi; }
 committed() { git log --format= --name-only "$base..HEAD"; }
+# a simpleviz server still running in this workdir
+own_servers() { for p in $(pgrep -f "simpleviz/bb.edn"); do [ "$(readlink "/proc/$p/cwd")" = "$(pwd -P)" ] && return 0; done; return 1; }
 tools() { jq -r 'select(.type=="assistant") | .message.content[]? | select(.type=="tool_use") | "\(.name) \(.input|tostring)"' "$1.jsonl"; }
 # edn <file> <get-in path>: prints the value, e.g. edn .blend/modules.edn '[:nodes :app-cache :state]'
 edn() { bb -e "(prn (get-in (clojure.edn/read-string (slurp \"$1\")) $2))"; }
@@ -71,7 +73,9 @@ case $name in
     echo "build tree $w"
     check "not on $default" '[ "$(git branch --show-current)" != "'"$default"'" ]'
     check "$default not moved" '[ "$(git rev-parse '"$default"')" = "'"$base"'" ]'
-    check "plan gitignored, not committed, deleted" 'git check-ignore -q .blend/plan.edn && ! git log --format= --name-only | grep -q "plan.edn" && [ ! -e .blend/plan.edn ]'
+    check "plan gitignored, not committed, deleted" 'git check-ignore -q .blend/plan.md && git check-ignore -q .blend/plan.edn && ! git log --format= --name-only | grep -q "\.blend/plan\." && [ ! -e .blend/plan.md ] && [ ! -e .blend/plan.edn ]'
+    check "plan server stopped" '! own_servers'
+    check "plan was markdown" 'tools "'"$pre"'" | grep -q "\.blend/plan\.md"'
     check "no build graphs" '[ ! -e .blend/builds ]'
     check "built commit" 'git log --format=%s '"$base"'..HEAD | grep -q "^blend: built"'
     check "tests pass" 'python3 -m unittest -q'

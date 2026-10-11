@@ -24,7 +24,7 @@ missing give the fix and wait:
 | Dependency | Check | Fix |
 | --- | --- | --- |
 | simpleviz skill | in the skill list | `/plugin install simpleviz@simpleviz` ([simpleviz](https://github.com/sstoehrm/simpleviz)) |
-| simpleviz launcher | `simpleviz --version` ≥ v0.32.0 | `curl -fsSL https://raw.githubusercontent.com/sstoehrm/simpleviz/main/install.sh \| bash`; older: `simpleviz update` |
+| simpleviz launcher | `simpleviz --version` ≥ v0.34.0 | `curl -fsSL https://raw.githubusercontent.com/sstoehrm/simpleviz/main/install.sh \| bash`; older: `simpleviz update` |
 | babashka | `command -v bb` | https://github.com/babashka/babashka#installation |
 
 ## Style

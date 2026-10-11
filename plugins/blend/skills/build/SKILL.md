@@ -7,20 +7,18 @@ description: Use when blend's spec (.blend features, architecture and module gra
 
 `.blend/` is the spec: `features/*.md`, `architecture.edn`, `modules.edn`.
 Build implements what changed in it since the last build, without
-stopping to ask. **REQUIRED SUB-SKILL:** simpleviz:simpleviz.
-
-Stop and ask only for destructive or security-sensitive actions, side
-effects outside the repo (push, publish, installs), or a spec so unclear
-that every path is a guess. Everything else: decide, and note it.
+stopping to ask — except for destructive or security-sensitive actions,
+side effects outside the repo (push, publish, installs), or a spec so
+unclear that every path is a guess. **REQUIRED SUB-SKILL:**
+simpleviz:simpleviz.
 
 ## 1. Branch
 
-Nothing is committed on the default branch. Not on it: stay on the
-current branch. On it: `git switch -c <slug>` (uncommitted `.blend/`
-changes come along). Uncommitted changes outside `.blend/`, or the user
-asked: `git worktree add ../<repo>-<slug> -b <slug>`, copy `.blend/`
-changes over, work there. `.blend/views/` exists: run blend:persist to
-migrate it.
+Never commit on the default branch: on it, `git switch -c <slug>`
+(uncommitted `.blend/` changes come along); otherwise stay. Uncommitted
+changes outside `.blend/`, or the user asked: `git worktree add
+../<repo>-<slug> -b <slug>`, copy `.blend/` changes over, work there.
+`.blend/views/` exists: run blend:persist to migrate it.
 
 ## 2. Spec
 
@@ -36,27 +34,29 @@ migrate it.
 
 ## 3. Plan
 
-`.blend/plan.edn` — local, never committed: make sure `.gitignore` lists
-`.blend/plan.edn` (add the line and commit `.gitignore` if not). One
-node per task, `:tN {:name "N. <title>" :type "task" :state :new :text
-"<one-line brief>"}`, and `[:tA :tB] {:direction :-> :type "needs"}`
-when B needs A. A task is one test cycle that could be reviewed alone;
-one task is fine. Template: `simpleviz init .blend/plan.edn -t blend-plan`.
+`.blend/plan.md` — local, never committed (`.gitignore` lists
+`.blend/plan.*`; add and commit the line if missing). Markdown that
+simpleviz serves, linking into the spec:
 
-Resume: `.blend/plan.edn` exists → `:done` tasks are done (`git log`
-confirms); go on from the first that isn't. A build branch without a
-plan: plan again from the spec, minus what the branch already did.
+- **Spec** — links to what the diff touches: `[x](features/x.md)`, `[architecture](architecture.edn)`.
+- **Tasks** — `- [ ] N. <title> — <brief>`, in order; each one test cycle.
+- Not a straight line: also `.blend/plan.edn` (`-t blend-plan`), linked.
+
+`simpleviz check .blend/plan.md` is clean. Serve it, keeping the PID:
+`simpleviz .blend/plan.md --no-open > .blend/plan.log 2>&1 & echo $!`;
+give the URL from plan.log.
+
+Resume: `[x]` tasks in plan.md are done (`git log` confirms). No plan on
+a build branch: plan again from the spec, minus what the branch did.
 
 ## 4. Implement
 
-Tasks in order, one at a time: set `:state :in-progress`; TDD — failing
-test, see it fail, minimal code, see it pass; run the suite; commit;
-set `:state :done`. Large builds: a subagent per task may do the TDD and
-commit, one at a time, given the feature file and the task's `:text`.
-
-A task that can't pass as planned: change the plan rather than forcing
-it. Decisions the spec didn't settle go in the feature file under
-`## Build notes`: `- <decision> — <why>`.
+Tasks in order, one at a time: TDD — failing test, see it fail, minimal
+code, see it pass; run the suite; commit; tick it `[x]` (and its
+`:state`). Large builds: a subagent per task may do the TDD and commit,
+given the feature file and the task line. A task that can't pass as
+planned: change the plan. Decisions the spec didn't settle go in the
+feature file under `## Build notes`: `- <decision> — <why>`.
 
 ## 5. Finish
 
@@ -70,11 +70,11 @@ Every build, one task or ten:
    or rewired modules or components: load blend:persist with source git.
    Otherwise say the graphs still match; a later persist catches up.
 3. **Suite** — run it and show the output.
-4. **Sync** — commit any `.blend/` changes, then
-   `git commit --allow-empty -m "blend: built <slug>"` (the next build's
-   base); delete `.blend/plan.edn`.
-5. **Report** — what was built, the build notes, the review result, the
-   branch. Keep the branch: no merge or push unless the user asks.
+4. **Sync** — commit `.blend/` changes, then `git commit --allow-empty
+   -m "blend: built <slug>"` (the next base); `kill <PID>` — never by
+   pattern; delete `.blend/plan.*`.
+5. **Report** — what was built, build notes, review result, branch. No
+   merge or push unless the user asks.
 
 Adapted from superpowers:subagent-driven-development and executing-plans
 by Jesse Vincent (MIT).

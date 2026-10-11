@@ -15,7 +15,7 @@ Parts of build, review and the TDD/debugging rules are adapted from
 | ------------------- | ------------ |
 | use-blend           | Injected into every session via SessionStart hook: communication style, verification, TDD, debugging and review rules, dependency checks. Offers the other skills when a request fits; they run only when you say yes or name them. The hook also installs blend's simpleviz templates. |
 | blend:brainstorming | A free conversation about an idea. Whatever settles is written into `.blend/` right away: a markdown file per feature, plus planned nodes (`:state :new`) in the architecture and module graphs. No levels, gates or fixed steps. |
-| blend:build         | Implements what changed in `.blend/` since the last build (`git diff <last "blend: built" commit> -- .blend` is the spec), in one full-auto run: a branch, a local plan in `.blend/plan.edn` (gitignored), TDD per task, one whole-branch review, blend:persist when the structure changed, then an empty `blend: built <slug>` commit as the next base. Keeps the branch; never merges or pushes unasked. |
+| blend:build         | Implements what changed in `.blend/` since the last build (`git diff <last "blend: built" commit> -- .blend` is the spec), in one full-auto run: a branch, a local plan in `.blend/plan.md` — served by simpleviz, linking the changed features and graphs, plus a task graph when the order isn't a straight line (gitignored), TDD per task, one whole-branch review, blend:persist when the structure changed, then an empty `blend: built <slug>` commit as the next base. Keeps the branch; never merges or pushes unasked. |
 | blend:persist       | Brings code into the graphs — `modules.edn` derived from imports and merged (planned modules survive), `architecture.edn` updated where code changed. Source is the range since its last commit, or the current session. Migrates the old `.blend/views/` layout. |
 
 ## The workflow
@@ -41,7 +41,7 @@ Artifacts in the target project:
 ├── architecture.edn            # components and flows (serve this)
 ├── modules.edn                 # modules and imports, derived from code
 ├── features/<slug>.md          # one per feature, free markdown
-└── plan.edn                    # current build's tasks; gitignored, deleted when done
+└── plan.md (+ plan.edn)        # current build's plan; gitignored, deleted when done
 ```
 
 Templates: `simpleviz init <file> -t blend-architecture | blend-modules | blend-plan`.
@@ -60,7 +60,7 @@ automatically.
 | Dependency         | Claude Code install                                                                       |
 | ------------------ | ----------------------------------------------------------------------------------------- |
 | simpleviz plugin   | `/plugin install simpleviz@simpleviz`                                                     |
-| simpleviz launcher (≥ 0.32.0) | `curl -fsSL https://raw.githubusercontent.com/sstoehrm/simpleviz/main/install.sh \| bash` |
+| simpleviz launcher (≥ 0.34.0) | `curl -fsSL https://raw.githubusercontent.com/sstoehrm/simpleviz/main/install.sh \| bash` |
 | babashka           | https://github.com/babashka/babashka#installation                                         |
 
 use-blend checks these lazily and tells you the fix when one is missing.
