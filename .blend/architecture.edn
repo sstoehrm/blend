@@ -1,0 +1,34 @@
+;; How blend works: opt-in skills around features and two living graphs.
+{:nodes {:session   {:name "session start" :type "trigger"}
+         :use-blend {:name "use-blend" :type "library"
+                     :text "style, verification, TDD, debugging, review; one-line offers"
+                     :pair "modules.edn#use-blend"}
+         :brainstorm {:name "blend:brainstorming" :type "worker"
+                      :text "free conversation; writes what settles"
+                      :pair "modules.edn#brainstorming"}
+         :features  {:name "features/*.md" :type "store"
+                     :text "one free markdown file per feature"}
+         :graphs    {:name "architecture.edn + modules.edn" :type "store"
+                     :text "planned parts :state :new, linked to their feature"}
+         :build     {:name "blend:build" :type "worker"
+                     :text "branch, task graph, TDD, one review — full auto"
+                     :pair "modules.edn#build"}
+         :builds    {:name "builds/*.edn" :type "store"
+                     :text "task graph per build: progress, resume"}
+         :persist   {:name "blend:persist" :type "worker"
+                     :text "derive + merge modules, update architecture, migrate"
+                     :pair "modules.edn#persist"}
+         :code      {:name "code + git" :type "external"}}
+ :edges {[:session :use-blend]    {:direction :-> :name "SessionStart hook"}
+         [:use-blend :brainstorm] {:direction :-> :name "offer"}
+         [:use-blend :build]      {:direction :-> :name "offer"}
+         [:use-blend :persist]    {:direction :-> :name "offer"}
+         [:brainstorm :features]  {:direction :-> :name "writes"}
+         [:brainstorm :graphs]    {:direction :-> :name "planned nodes"}
+         [:features :build]       {:direction :-> :name "input"}
+         [:build :builds]         {:direction :-> :name "writes"}
+         [:build :code]           {:direction :-> :name "commits on a branch"}
+         [:build :persist]        {:direction :-> :name "finish"}
+         [:code :persist]         {:direction :-> :name "git range / session"}
+         [:persist :graphs]       {:direction :-> :name "merge"}}
+ :boxes {:blend {:name ".blend/" :type "subsystem" :components #{:features :graphs :builds}}}}

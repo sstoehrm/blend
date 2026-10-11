@@ -1,0 +1,40 @@
+;; persisted-through: 53336a4602d13fd9171271747c9afef27f16af5a
+;; blend's modules and what references what. Derived from the repo by blend:persist.
+{:nodes {:hook          {:name "hooks (hooks.json, install-templates.sh)" :type "hook"}
+         :templates     {:name "plugins/blend/templates" :type "templates"}
+         :tests         {:name "tests/install-templates.test.sh" :type "test"}
+         :check-skills  {:name "tests/check-skills.sh" :type "test"}
+         :scenarios     {:name "tests/scenarios" :type "test"}
+         :use-blend     {:name "skills/use-blend" :type "skill"}
+         :codex-tools   {:name "use-blend/references/codex-tools.md" :type "skill"}
+         :brainstorming {:name "skills/brainstorming" :type "skill"}
+         :build         {:name "skills/build" :type "skill"}
+         :persist       {:name "skills/persist" :type "skill"}
+         :notices       {:name "THIRD_PARTY_NOTICES.md" :type "doc"}
+         :claude-plugin {:name ".claude-plugin/plugin.json" :type "manifest"}
+         :codex-plugin  {:name ".codex-plugin/plugin.json" :type "manifest"}
+         :simpleviz     {:name "simpleviz" :type "external"}}
+ :edges {[:hook :use-blend]            {:direction :-> :name "injects" :type "requires"}
+         [:hook :templates]            {:direction :-> :name "installs" :type "requires"}
+         [:use-blend :codex-tools]     {:direction :-> :name "loads on Codex" :type "requires"}
+         [:use-blend :brainstorming]   {:direction :-> :name "offers" :type "requires"}
+         [:use-blend :build]           {:direction :-> :name "offers; reviewer prompt" :type "requires"}
+         [:use-blend :persist]         {:direction :-> :name "offers" :type "requires"}
+         [:brainstorming :persist]     {:direction :-> :name "migrate / derive at start" :type "requires"}
+         [:brainstorming :build]       {:direction :-> :name "offers at the end" :type "requires"}
+         [:brainstorming :simpleviz]   {:direction :-> :name "loads skill, serves" :type "requires"}
+         [:build :persist]             {:direction :-> :name "setup + finish (git)" :type "requires"}
+         [:build :simpleviz]           {:direction :-> :name "loads skill" :type "requires"}
+         [:persist :simpleviz]         {:direction :-> :name "loads skill, check" :type "requires"}
+         [:codex-tools :templates]     {:direction :-> :name "copy fallback" :type "requires"}
+         [:tests :hook]                {:direction :-> :name "tests" :type "requires"}
+         [:check-skills :use-blend]    {:direction :-> :name "budgets, references" :type "requires"}
+         [:scenarios :use-blend]       {:direction :-> :name "runs headless" :type "requires"}
+         [:claude-plugin :hook]        {:direction :-> :name "ships" :type "requires"}
+         [:codex-plugin :hook]         {:direction :-> :name "ships" :type "requires"}}
+ :boxes {:skills     {:name "plugins/blend/skills" :type "dir"
+                      :components #{:use-blend :codex-tools :brainstorming :build :persist}}
+         :plugin     {:name "plugins/blend" :type "dir"
+                      :components #{:skills :templates :hook :notices :claude-plugin :codex-plugin}}
+         :repo-tests {:name "tests" :type "dir" :components #{:tests :check-skills :scenarios}}
+         :externals  {:name "other plugins" :type "dir" :components #{:simpleviz}}}}
