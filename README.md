@@ -5,7 +5,7 @@ A Claude Code and Codex plugin: a standalone set of opt-in workflow skills.
 a session-start hook wires it all together; no other workflow plugin is
 needed. Packaged as a plugin marketplace.
 
-Parts of brainstorming, planning, executing and debugging are adapted from
+Parts of build, review and the TDD/debugging rules are adapted from
 [superpowers](https://github.com/obra/superpowers) (MIT); see
 `plugins/blend/THIRD_PARTY_NOTICES.md`.
 
@@ -13,70 +13,45 @@ Parts of brainstorming, planning, executing and debugging are adapted from
 
 | Skill               | What it does |
 | ------------------- | ------------ |
-| use-blend           | Injected into every session via SessionStart hook. Always loaded: communication style, verification, TDD and review rules, dependency checks. Offers the other skills when a request fits one; they run only when you say yes or name them. The hook also installs blend's simpleviz templates. |
-| blend:brainstorming | Asks how involved you want to be (high, medium, full auto), refreshes the project views, draws the design as plan views with a plan graph as entry point, and writes `overview.md` instead of a spec. |
-| blend:planning      | Adds the tasks to the plan graph (dependencies show what can run in parallel), writes one task file per task, and adds plan notes to `overview.md`. |
-| blend:executing     | Runs a plan graph task by task, inline or with a subagent per task, tracks `:state` in the graph, reviews with blend's reviewer prompt, and finishes with a whole-branch review and blend:persist. |
-| blend:debugging     | Root cause before any fix: reproduce, check what changed, trace, test one hypothesis at a time, then fix with a failing test first. |
-| blend:persist       | Keeps `.blend/views/` current — `modules.edn` derived from code, `architecture.edn` drawn and checked, `system.md` written from commits, sessions and plans. Source is a git range, the current session, or a finished plan. |
+| use-blend           | Injected into every session via SessionStart hook: communication style, verification, TDD, debugging and review rules, dependency checks. Offers the other skills when a request fits; they run only when you say yes or name them. The hook also installs blend's simpleviz templates. |
+| blend:brainstorming | A free conversation about an idea. Whatever settles is written into `.blend/` right away: a markdown file per feature, plus planned nodes (`:state :new`) in the architecture and module graphs. No levels, gates or fixed steps. |
+| blend:build         | Plans and implements in one full-auto run: a branch, a small task graph in `.blend/builds/`, TDD per task, one whole-branch review, then blend:persist. Keeps the branch; never merges or pushes unasked. |
+| blend:persist       | Brings code into the graphs — `modules.edn` derived from imports and merged (planned modules survive), `architecture.edn` updated where code changed. Source is a git range or the current session. Migrates the old `.blend/views/` layout. |
 
 ## The workflow
 
 ```
-idea → (offer) → blend:brainstorming → overview.md + plan views → blend:planning → plan graph + task files → blend:executing → blend:persist → .blend/views
+idea ⇄ blend:brainstorming ⇄ .blend/{features/*.md, architecture.edn, modules.edn}
+                                         │
+                                   blend:build → branch, tests, review → blend:persist
 ```
 
-Everything is opt-in: use-blend offers a skill when a request fits, and
-you say yes or name it. blend:persist also runs on request, for a session
-or a git range.
+Brainstorm as long and as often as you like; each session starts from
+what is in `.blend/`. Features are free markdown — intent, behaviour,
+examples, open questions, whatever fits. The graphs show the structure,
+with not-yet-built parts marked and linked to their feature. When a
+feature is ready, blend:build runs without asking and reports.
 
-There is no spec or plan document. Brainstorming refreshes the project
-views, then draws what the feature changes as plan views — a slice of the
-architecture and of the module graph, marked new / changed / removed /
-context — and writes a short `overview.md` (goal, decisions, non-goals,
-success criteria). You review those. blend:planning adds the tasks to the
-plan graph: edges show order, tasks without a path between them can run
-in parallel, and each task links to its task file and to the modules and
-components it touches. After implementation blend:persist re-derives the
-module graph from the code and reports anything the plan did not predict.
-
-Brainstorming first asks how involved you want to be:
-
-| Level     | You get asked                                                              |
-| --------- | -------------------------------------------------------------------------- |
-| High      | Every question, each design step, design review, plan review |
-| Medium    | Only design-changing questions; approve the design once in chat, then design review (overview + views), then plan review |
-| Full auto | Nothing; the agent decides, implements on a branch, and reports. Never merges or pushes |
-
-Name the level in your request ("full auto", "just decide") to skip the
-question.
-
-Artifacts land in the target project:
+Artifacts in the target project:
 
 ```
 .blend/
-├── views/architecture.edn             # project: components and flows, always current
-├── views/modules.edn                  # project: every module and its imports, derived from code
-├── views/system.md                    # project: purpose, constraints, decisions
-├── YYYY-MM-DD-<topic>.edn             # plan graph — the entry point; serve this
-└── YYYY-MM-DD-<topic>/
-    ├── overview.md                    # goal, decisions, non-goals, success criteria, how to execute
-    ├── architecture.edn               # what the plan changes in the architecture
-    ├── modules.edn                    # which modules the plan touches, and by which task
-    └── tasks/NN-<slug>.md             # one brief per task: files, TDD steps, acceptance
+├── architecture.edn            # components and flows (serve this)
+├── modules.edn                 # modules and imports, derived; ;; persisted-through: <sha>
+├── features/<slug>.md          # one per feature, free markdown
+└── builds/YYYY-MM-DD-<slug>.edn  # task graph of one build: progress and resume
 ```
 
-Templates: `simpleviz init <file> -t blend-plan | blend-plan-view | blend-architecture | blend-modules`.
+Templates: `simpleviz init <file> -t blend-architecture | blend-modules | blend-build`.
 
 ## Code review
 
 Blend reviews with its own reviewer prompt
-(`plugins/blend/skills/executing/reviewer-prompt.md`). One read-only
+(`plugins/blend/skills/build/reviewer-prompt.md`). One read-only
 reviewer checks the change against its requirements, including
 correctness, relevant security issues, and unnecessary complexity.
-Review fixes where needed; reuse an existing review when the diff is
-unchanged. Built-in review, simplify, and security-review commands aren't
-chained automatically.
+Built-in review, simplify, and security-review commands aren't chained
+automatically.
 
 ## Dependencies
 
@@ -105,11 +80,12 @@ plugins/blend/                      # the "blend" plugin
 ├── .codex-plugin/plugin.json
 ├── hooks/hooks.json                # SessionStart: injects use-blend, installs templates
 ├── hooks/install-templates.sh      # copies templates/ into ~/.simpleviz/templates
-├── templates/blend-*.edn           # simpleviz templates (init -t blend-plan …)
+├── templates/blend-*.edn           # simpleviz templates (init -t blend-build …)
 ├── THIRD_PARTY_NOTICES.md          # MIT notice for text adapted from superpowers
 └── skills/
-    └── {use-blend,brainstorming,planning,executing,debugging,persist}/SKILL.md
+    └── {use-blend,brainstorming,build,persist}/SKILL.md
 tests/install-templates.test.sh     # run: sh tests/install-templates.test.sh
+tests/check-skills.sh               # line budgets, no stale references
 tests/scenarios/                    # headless skill scenarios: tests/scenarios/run.sh
 ```
 
@@ -132,7 +108,7 @@ select `use-blend` in the skill picker or ask: "Load Blend's use-blend skill
 and follow it for this task."
 
 To use an individual skill, ask for **Blend's brainstorming skill**,
-**Blend's planning skill**, **Blend's executing skill**, **Blend's debugging skill** or **Blend's persist skill**. Select the Blend entry if another plugin
+**Blend's build skill** or **Blend's persist skill**. Select the Blend entry if another plugin
 exposes the same name. The skill files are shared by both hosts. `use-blend` conditionally loads a Codex reference for tool mappings;
 other hosts don't load that reference.
 

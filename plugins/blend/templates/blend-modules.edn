@@ -1,11 +1,12 @@
-;; blend-template 0.7.0
+;; blend-template 0.8.0
 ;; Editing this template? Bump the version above (and tests/install-templates.test.sh), or installs keep the old copy.
 ;; Project view: every own module and which modules it imports
-;; (.blend/views/modules.edn). Derived from source by blend:persist;
-;; do not edit by hand, it is overwritten on the next derive.
+;; (.blend/modules.edn). Derived from source by blend:persist and merged;
+;; first line of the real file: ;; persisted-through: <sha>.
+;; Planned modules (blend:brainstorming) carry :state :new and
+;; :md-ref "features/<slug>.md" until they exist in code.
 ;; Node id = module name made EDN-safe; :name = the name as written in code;
-;; :type = top-level package or directory. External libraries only when a
-;; plan adds one (:type "external").
+;; :type = top-level package or directory.
 ;; Edge [:a :b] {:direction :-> :type "requires"}: a imports b.
 ;; Boxes = directories / packages (:type "dir"), nested as the tree nests.
 {:nodes {:app-core {:name "app.core" :type "app"}

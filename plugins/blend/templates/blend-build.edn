@@ -1,0 +1,11 @@
+;; blend-template 0.8.0
+;; Editing this template? Bump the version above (and tests/install-templates.test.sh), or installs keep the old copy.
+;; Build graph: the tasks of one blend:build run (.blend/builds/YYYY-MM-DD-<slug>.edn).
+;; One node per task: :tN {:name "N. <title>" :type "task" :state :new :text "<one-line brief>"}
+;; :state is :new, :in-progress, :done or :blocked (+ :reason "<why>").
+;; Edge [:tA :tB] {:direction :-> :type "needs"}: B needs A done first.
+{:nodes {:t1 {:name "1. Example task" :type "task" :state :new
+              :text "what this task builds and how it is tested"}
+         :t2 {:name "2. Example task" :type "task" :state :new
+              :text "what this task builds and how it is tested"}}
+ :edges {[:t1 :t2] {:direction :-> :type "needs"}}}

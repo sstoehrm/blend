@@ -28,7 +28,7 @@ this reference's directory) to `${SIMPLEVIZ_HOME:-~/.simpleviz}/templates/`.
 - **AskUserQuestion / multiSelect:** use the available question tool in the
   current mode. Otherwise ask in chat and wait for the answer. If multiple
   selections aren't supported, present numbered choices and ask for the
-  selected numbers. Preserve the user review gates.
+  selected numbers.
 - **Explore / reviewer subagents:** use available subagent tools; `Explore`
   describes a read-only task, not a required agent type. Without delegation,
   perform separate exploration and review passes directly and disclose that
