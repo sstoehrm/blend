@@ -16,7 +16,8 @@ in one line and run it only when the user says yes or names it.
 
 A no holds for that request. Blend skills that name each other load
 each other without asking. Codex: read
-[references/codex-tools.md](references/codex-tools.md) first.
+[references/codex-tools.md](references/codex-tools.md) first; Grok:
+[references/grok-tools.md](references/grok-tools.md).
 
 The skills need simpleviz; check right before the first use, and if one is
 missing give the fix and wait:
