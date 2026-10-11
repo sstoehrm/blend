@@ -1,71 +1,71 @@
 # blend
 
-A Claude Code and Codex plugin that blends existing skills into one opinionated
-workflow: [superpowers](https://github.com/obra/superpowers) drives the
-process, [simpleviz](https://github.com/sstoehrm/simpleviz) makes designs
-visible, and a session-start hook wires it all together. Packaged as a
-plugin marketplace.
+A Claude Code and Codex plugin: a standalone set of opt-in workflow skills.
+[simpleviz](https://github.com/sstoehrm/simpleviz) makes designs visible, and
+a session-start hook wires it all together; no other workflow plugin is
+needed. Packaged as a plugin marketplace.
+
+Parts of build, review and the TDD/debugging rules are adapted from
+[superpowers](https://github.com/obra/superpowers) (MIT); see
+`plugins/blend/THIRD_PARTY_NOTICES.md`.
 
 ## Skills
 
-| Skill              | What it does                                                                                                                                       |
-| ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| use-blend          | Injected into every session via SessionStart hook. Communication style, verification habits, dependency checks, and the phase → skill routing table. |
-| blend:brainstorming | Wraps superpowers:brainstorming: draws the design as a live simpleviz figure while presenting it, keeps figure and spec in sync, then draws the plan's tasks as a progress graph linked to the figure. |
-| blend:deduce       | Deduces and maintains a concept graph — a superficial architecture view of a project — from code, plans, or specs. Iterative: user approves concepts, a reviewer subagent validates every element against evidence. Work in progress: not part of the workflow yet, invoke it directly. Writes `.blend/concept.edn` and `.blend/concept-hash` (the commit the graph was validated against; scopes the next update). |
+| Skill               | What it does |
+| ------------------- | ------------ |
+| use-blend           | Injected into every session via SessionStart hook: communication style, verification, TDD, debugging and review rules, dependency checks. Offers the other skills when a request fits; they run only when you say yes or name them. The hook also installs blend's simpleviz templates. |
+| blend:brainstorming | A free conversation about an idea. Whatever settles is written into `.blend/` right away: a markdown file per feature, plus planned nodes (`:state :new`) in the architecture and module graphs. No levels, gates or fixed steps. |
+| blend:build         | Implements what changed in `.blend/` since the last build (`git diff <last "blend: built" commit> -- .blend` is the spec), in one full-auto run: a branch, a local plan in `.blend/plan.md` — served by simpleviz, linking the changed features and graphs, plus a task graph when the order isn't a straight line (gitignored), TDD per task (subagents get a named model tier: cheapest / mid / strong / strongest), one whole-branch review, blend:persist when the structure changed, then an empty `blend: built <slug>` commit as the next base. Keeps the branch; never merges or pushes unasked. |
+| blend:persist       | Brings code into the graphs — `modules.edn` derived from imports and merged (planned modules survive), `architecture.edn` updated where code changed. Source is the range since its last commit, or the current session. Migrates the old `.blend/views/` layout. |
 
 ## The workflow
 
 ```
-idea ──▶ blend:brainstorming ──▶ spec + figure ──▶ writing-plans ──▶ plan + task graph ──▶ implementation
-              │
-              ▼
-      superpowers:brainstorming
+idea ⇄ blend:brainstorming ⇄ .blend/{features/*.md, architecture.edn, modules.edn}
+                                         │
+                                   blend:build → spec diff → local plan → branch, tests, review → blend:persist (if structure changed)
 ```
 
-Brainstorming produces a spec document plus a simpleviz figure of the
-design. superpowers:writing-plans turns the spec into a plan, and
-blend:brainstorming adds a task graph beside the figure: tasks, their
-order, and progress, with each component box linking to the figure. The
-plan header tells implementation to keep the task states current; review
-follows.
+`.blend/` is the project's continuous spec — the only thing blend keeps.
+Brainstorm as long and as often as you like; each session starts from
+what is in it. Features are free markdown — intent, behaviour, examples,
+open questions, whatever fits. The graphs show the structure, with
+not-yet-built parts marked and linked to their feature. When you want
+the code to catch up, blend:build takes the spec's diff since the last
+build, plans it in a local file and implements it without asking.
 
-Artifacts land in the target project:
+Artifacts in the target project:
 
 ```
 .blend/
-├── specs/YYYY-MM-DD-<topic>.edn        # design figure per spec
-└── specs/YYYY-MM-DD-<topic>-tasks.edn  # plan tasks + progress, boxes :ref the figure
+├── architecture.edn            # components and flows (serve this)
+├── modules.edn                 # modules and imports, derived from code
+├── features/<slug>.md          # one per feature, free markdown
+└── plan.md (+ plan.edn)        # current build's plan; gitignored, deleted when done
 ```
+
+Templates: `simpleviz init <file> -t blend-architecture | blend-modules | blend-plan`.
 
 ## Code review
 
-Blend uses **superpowers:requesting-code-review** for working changes and
-PRs, then **superpowers:receiving-code-review** to handle feedback. One
-read-only reviewer checks the change against its requirements, including
-correctness, relevant security issues, and unnecessary complexity. Review
-fixes where needed; reuse an existing review when the diff is unchanged.
+Blend reviews with its own reviewer prompt
+(`plugins/blend/skills/build/reviewer-prompt.md`). One read-only
+reviewer checks the change against its requirements, including
+correctness, relevant security issues, and unnecessary complexity.
 Built-in review, simplify, and security-review commands aren't chained
 automatically.
-
-| Skill | Fit for Blend |
-| --- | --- |
-| [Superpowers requesting-code-review](https://github.com/obra/superpowers/blob/main/skills/requesting-code-review/SKILL.md) | Default: general code review with one reviewer, already included in Blend's dependencies. Its [reviewer template](https://github.com/obra/superpowers/blob/main/skills/requesting-code-review/code-reviewer.md) prohibits nested reviewers. |
-| [Ponytail review](https://github.com/DietrichGebert/ponytail/blob/main/skills/ponytail-review/SKILL.md) | Useful for a requested over-engineering review. Explicitly excludes correctness, security, and performance, so it cannot replace general code review. Optional; no new dependency. |
 
 ## Dependencies
 
 | Dependency         | Claude Code install                                                                       |
 | ------------------ | ----------------------------------------------------------------------------------------- |
-| superpowers plugin | `/plugin install superpowers@claude-plugins-official`                                     |
 | simpleviz plugin   | `/plugin install simpleviz@simpleviz`                                                     |
-| simpleviz launcher | `curl -fsSL https://raw.githubusercontent.com/sstoehrm/simpleviz/main/install.sh \| bash` |
+| simpleviz launcher (≥ 0.34.0) | `curl -fsSL https://raw.githubusercontent.com/sstoehrm/simpleviz/main/install.sh \| bash` |
 | babashka           | https://github.com/babashka/babashka#installation                                         |
 
 use-blend checks these lazily and tells you the fix when one is missing.
 
-In Codex, install **superpowers** through the plugin browser or follow its
-[Codex setup instructions](https://github.com/obra/superpowers). Install the
+In Codex, install the
 **simpleviz skill** using Codex's skill installer: provide
 `https://github.com/sstoehrm/simpleviz` and select the directory containing
 its `SKILL.md`. The simpleviz launcher and babashka are required in both
@@ -80,9 +80,15 @@ available to Codex.
 plugins/blend/                      # the "blend" plugin
 ├── .claude-plugin/plugin.json
 ├── .codex-plugin/plugin.json
-├── hooks/hooks.json                # SessionStart: injects use-blend
+├── hooks/hooks.json                # SessionStart: injects use-blend, installs templates
+├── hooks/install-templates.sh      # copies templates/ into ~/.simpleviz/templates
+├── templates/blend-*.edn           # simpleviz templates (init -t blend-plan …)
+├── THIRD_PARTY_NOTICES.md          # MIT notice for text adapted from superpowers
 └── skills/
-    └── <skill-name>/SKILL.md       # one directory per skill
+    └── {use-blend,brainstorming,build,persist}/SKILL.md
+tests/install-templates.test.sh     # run: sh tests/install-templates.test.sh
+tests/check-skills.sh               # line budgets, no stale references
+tests/scenarios/                    # headless skill scenarios: tests/scenarios/run.sh
 ```
 
 ## Usage
@@ -103,11 +109,9 @@ startup, resume, clear, and compaction. If hooks are disabled or not trusted,
 select `use-blend` in the skill picker or ask: "Load Blend's use-blend skill
 and follow it for this task."
 
-To use an individual skill, ask for **Blend's brainstorming skill** or
-**Blend's deduce skill**. Select the Blend entry if another plugin exposes
-the same name. The skill files are shared by both hosts. Following
-[Superpowers' platform adaptation pattern](https://github.com/obra/superpowers/blob/main/skills/using-superpowers/SKILL.md),
-`use-blend` conditionally loads a Codex reference for tool mappings;
+To use an individual skill, ask for **Blend's brainstorming skill**,
+**Blend's build skill** or **Blend's persist skill**. Select the Blend entry if another plugin
+exposes the same name. The skill files are shared by both hosts. `use-blend` conditionally loads a Codex reference for tool mappings;
 other hosts don't load that reference.
 
 #### Updating
@@ -210,8 +214,9 @@ Instructions shared by Claude Code and Codex. Keep host-specific tool
 mappings in a reference loaded conditionally from use-blend.
 ```
 
-Follow superpowers:writing-skills: test the skill with fresh-context
-subagents before deploying. Validate before committing:
+Test the skill with headless scenarios — `tests/scenarios/run.sh` (see
+`tests/scenarios/README.md`): a baseline run without the change that
+fails, a run with it that passes. Validate before committing:
 
 ```bash
 claude plugin validate .

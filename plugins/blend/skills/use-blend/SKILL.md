@@ -1,107 +1,68 @@
 ---
 name: use-blend
-description: Use when starting any coding, design, debugging, or writing task — before clarifying questions, exploration, or implementation. Establishes communication style, verification habits, and which skill to route each phase of work through.
+description: Use when starting any coding, design, debugging, or writing task — sets communication style, verification, TDD, debugging and review habits, and offers blend's opt-in skills when a request fits one.
 ---
 
 # Use Blend
 
-How to work and which skill to route each phase through. Blend skills blend
-multiple skills into one workflow. Always prefer the most specific available
-skill over improvising; if a referenced skill is not installed on this
-machine, apply its core principle inline instead.
+How to work. Blend's skills are opt-in: when a request fits one, offer it
+in one line and run it only when the user says yes or names it.
 
-Where this overlaps with superpowers' using-superpowers routing, this skill
-supersedes it: brainstorming always goes through blend:brainstorming (which
-itself loads superpowers:brainstorming), never superpowers:brainstorming
-directly.
+| Request | Offer |
+| --- | --- |
+| An idea, a feature to think through, "let's talk about …" | blend:brainstorming — collect it into feature files and the graphs |
+| "Build it", spec changes ready to implement | blend:build — implements what changed in `.blend/` since the last build, in one full-auto run |
+| "Update the graphs", work done outside blend | blend:persist |
 
-## Platform Adaptation
+A no holds for that request. Blend skills that name each other load
+each other without asking. Codex: read
+[references/codex-tools.md](references/codex-tools.md) first.
 
-If your host appears here, read its reference before following the workflow:
+The skills need simpleviz; check right before the first use, and if one is
+missing give the fix and wait:
 
-- Codex: [references/codex-tools.md](references/codex-tools.md)
+| Dependency | Check | Fix |
+| --- | --- | --- |
+| simpleviz skill | in the skill list | `/plugin install simpleviz@simpleviz` ([simpleviz](https://github.com/sstoehrm/simpleviz)) |
+| simpleviz launcher | `simpleviz --version` ≥ v0.34.0 | `curl -fsSL https://raw.githubusercontent.com/sstoehrm/simpleviz/main/install.sh \| bash`; older: `simpleviz update` |
+| babashka | `command -v bb` | https://github.com/babashka/babashka#installation |
 
-## Dependencies
+## Style
 
-Check lazily — verify a dependency right before the first phase that needs
-it, not at session start. If one is missing, give the user the fix below
-and wait; fall back to inline principles only if they decline to install.
+- Concise and direct. No filler praise, hedging or sycophancy.
+- Explanations: max 3 paragraphs. Tables for comparisons.
+- Disagree openly. Ambiguous or over-built request: say so and present
+  the readings — never pick one silently.
 
-| Dependency         | Check                             | Fix                                                                                                                  |
-| ------------------ | --------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| superpowers skills | superpowers skills in the skill list | `/plugin install superpowers@claude-plugins-official`, or the current host's installation method from [superpowers](https://github.com/obra/superpowers). |
-| simpleviz skill    | simpleviz skill in the skill list | `/plugin install simpleviz@simpleviz`, or the current host's installation method from [simpleviz](https://github.com/sstoehrm/simpleviz). |
-| simpleviz launcher | `simpleviz --version`             | `curl -fsSL https://raw.githubusercontent.com/sstoehrm/simpleviz/main/install.sh \| bash`; later: `simpleviz update` |
-| babashka           | `command -v bb`                   | https://github.com/babashka/babashka#installation                                                                    |
+## Working
 
-## Communication Style
+- **Verify, don't know.** Fetch current docs for unfamiliar APIs, look up
+  the newest version before pinning one, grep before claiming anything
+  about the codebase.
+- **Minimal code.** Not needed → reuse → stdlib → platform → installed
+  dependency → new code; stop at the first that holds. Every changed line
+  traces to the request. Never simplify away validation at trust
+  boundaries, data-loss handling, security or accessibility.
+- **TDD** for code with behavior: failing test, see it fail for the right
+  reason, minimal code, see it pass, refactor while green.
+- **Debugging:** reproduce first, as a failing test when possible. Find
+  the root cause before changing code — read the error, trace the bad
+  value back to where it starts, one hypothesis at a time. Fix the cause,
+  not the symptom; the reproducing test stays. Three failed fixes: stop
+  and question the approach.
+- **Done means shown.** Before saying done, fixed or passing, run the
+  command that proves it and show the result; otherwise say what is
+  unverified.
 
-- Concise and direct. No filler praise, no hedging, no sycophancy. Dry wit
-  is fine; snark is not.
-- Explanations: max 3 paragraphs. If the explanation is longer than the
-  code, cut the explanation, not the code.
-- Always use tables for comparisons.
-- Disagree openly. If the request is over-built or ambiguous, say so and
-  present the interpretations — never pick one silently.
+## Review
 
-## Verifying Knowledge
+One read-only reviewer (a subagent if the host has one, strong tier —
+see blend:build) gets the
+requirements, the exact scope (a commit range; uncommitted work: staged,
+unstaged and relevant untracked changes) and blend's
+`skills/build/reviewer-prompt.md`. Receiving review: check each finding
+against the code; fix what holds, push back with evidence on what
+doesn't. Re-run affected tests after fixing.
 
-Never "know" — always verify:
-
-- Unfamiliar APIs/libraries: fetch current docs (WebFetch/WebSearch or the
-  host's equivalent web tools) before writing code against them. Training
-  memory is stale by default.
-- Dependencies: look up the newest version online before pinning or
-  recommending one.
-- Claims about this codebase: grep/read first, assert second.
-
-## Minimal Code
-
-1. **Think before coding.** State assumptions explicitly. Multiple
-   interpretations → present them. Unclear → stop and ask.
-2. **Simplicity ladder** — stop at the first rung that holds:
-   not needed at all (YAGNI) → reuse what's already in the repo → stdlib →
-   native platform feature → already-installed dependency → one line →
-   minimal new code. No abstractions for single-use code, no speculative
-   flexibility.
-3. **Surgical changes.** Every changed line traces to the request. Match
-   existing style. Remove only orphans your own change created.
-4. **Goal-driven execution.** Turn every task into verifiable success
-   criteria ("fix the bug" → "write a failing test, make it pass") and loop
-   until verified. Never claim done without running the check.
-
-Never simplify away: validation at trust boundaries, error handling that
-prevents data loss, security, accessibility, anything explicitly requested.
-
-## Code Review
-
-Use superpowers:requesting-code-review for both working changes and PRs.
-Give one read-only reviewer the requirements and exact review scope. For
-uncommitted work, include staged, unstaged, and relevant untracked changes;
-commit SHAs alone omit them. Inspect surrounding code as needed to verify
-findings.
-
-Cover correctness, regressions, requirements, concrete security issues,
-and unnecessary complexity in that pass. Report actionable findings with
-evidence and severity; style preferences aren't blockers. Do not
-automatically chain built-in review, simplification, or security-review
-commands. Broader audits require a user request or a concrete unresolved
-finding.
-
-Handle feedback through superpowers:receiving-code-review. Recheck fixes
-and affected behavior; reuse a completed code review while its diff remains
-unchanged instead of starting another full review at each workflow step.
-
-## Workflow → Skill Routing
-
-| Phase                   | Route through                                                                                                                         | Loop until                               |
-| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------- |
-| New feature / idea      | blend:brainstorming (loads superpowers:brainstorming, adds spec figure and task graph)                                                | design agreed with user                  |
-| Writing/editing a skill | superpowers:writing-skills                                                                                                            | subagent tests pass                      |
-| Design + mock-ups       | blend:brainstorming, then artifact-design / dataviz for the mock-up                                                                   | reviewer satisfied                       |
-| Spec                    | superpowers:writing-plans                                                                                                             | reviewer satisfied                       |
-| Implementation plan     | plan mode + superpowers:writing-plans                                                                                                 | reviewer satisfied                       |
-| Implementation          | superpowers:executing-plans or subagent-driven-development, with test-driven-development                                              | tests green, per-task review clean       |
-| Bug / failing test      | superpowers:systematic-debugging                                                                                                      | root cause found, regression test passes |
-| Code review             | superpowers:requesting-code-review; superpowers:receiving-code-review for feedback                                                    | no blocking findings                     |
-| Finishing               | superpowers:verification-before-completion, then finishing-a-development-branch                                                       | evidence shown, not asserted             |
+Adapted from superpowers:test-driven-development, systematic-debugging
+and requesting-code-review by Jesse Vincent (MIT).

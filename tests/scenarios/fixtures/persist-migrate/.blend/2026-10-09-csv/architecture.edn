@@ -1,0 +1,4 @@
+{:nodes {:app {:name "App" :type "changed" :kind "service" :change "exports CSV" :pair "../views/architecture.edn#app"}
+         :exporter {:name "CSV exporter" :type "new" :kind "library" :change "writes CSV"}
+         :store {:name "Store" :type "removed" :kind "store" :pair "../views/architecture.edn#store"}}
+ :edges {[:app :exporter] {:direction :-> :name "export rows" :type "new"}}}
