@@ -1,12 +1,20 @@
 #!/bin/sh
 # Usage: BLEND_OLD=<abs 0.6.0 plugins/blend dir> tests/scenarios/outcome/run-outcome.sh <runs-per-arm> <out-dir>
+# ARMS="new" runs only this repo's blend (BLEND_OLD is then not needed).
 set -u
 here=$(cd "$(dirname "$0")" && pwd); n=$1 out=$2
+case " ${ARMS:-old new} " in *" old "*)
 case ${BLEND_OLD:-} in /*) [ -d "$BLEND_OLD" ] || { echo "BLEND_OLD is not a directory" >&2; exit 2; } ;;
-  *) echo "set BLEND_OLD to an absolute 0.6.0 plugins/blend dir" >&2; exit 2 ;; esac
+  *) echo "set BLEND_OLD to an absolute 0.6.0 plugins/blend dir" >&2; exit 2 ;; esac ;; esac
 mkdir -p "$out"; out=$(cd "$out" && pwd); : > "$out/summary.txt"; sum=$out/summary.txt
-printf 'Load blend:brainstorming. Full auto. Build a Python CLI csv2json that converts a CSV file (argument) or stdin to a JSON array of objects on stdout, header row = keys; a missing file exits non-zero with an error message. It must run from the repo root as python3 csv2json.py [file] or python3 -m csv2json [file].\n' > "$out/green.txt"
-printf 'Load blend:brainstorming. Full auto. Tasks get an optional due date; overdue tasks are flagged in the API and in the UI.\n' > "$out/brown.txt"
+green='Build a Python CLI csv2json that converts a CSV file (argument) or stdin to a JSON array of objects on stdout, header row = keys; a missing file exits non-zero with an error message. It must run from the repo root as python3 csv2json.py [file] or python3 -m csv2json [file].'
+brown='Tasks get an optional due date; overdue tasks are flagged in the API and in the UI.'
+# old (0.6.0) went through brainstorming at full auto; new (0.8.0) has one full-auto skill
+for arm in old new; do
+  case $arm in old) pfx='Load blend:brainstorming. Full auto.' ;; new) pfx='Use blend:build.' ;; esac
+  printf '%s %s\n' "$pfx" "$green" > "$out/green-$arm.txt"
+  printf '%s %s\n' "$pfx" "$brown" > "$out/brown-$arm.txt"
+done
 
 # one <fixture> <setup-fixture> <prompt> <arm> <i>; acceptance command in $acc
 one() {
@@ -39,8 +47,8 @@ one() {
   echo "$tag $res ${iserr:-is_error=?} $score w=$w wt=$wt commits=$bc worktrees=[${all# }]" >> "$sum"
 }
 
-for arm in old new; do i=1; while [ $i -le "$n" ]; do
-  acc="python3 $here/acceptance_csv2json.py"; one green empty "$out/green.txt" $arm $i
-  acc="sh $here/acceptance_blackboard.sh";    one brown blackboard "$out/brown.txt" $arm $i
+for arm in ${ARMS:-old new}; do i=1; while [ $i -le "$n" ]; do
+  acc="python3 $here/acceptance_csv2json.py"; one green empty "$out/green-$arm.txt" $arm $i
+  acc="sh $here/acceptance_blackboard.sh";    one brown blackboard "$out/brown-$arm.txt" $arm $i
   i=$((i+1)); done; done
 cat "$sum"
