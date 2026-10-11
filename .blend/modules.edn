@@ -1,4 +1,4 @@
-;; persisted-through: 53336a4602d13fd9171271747c9afef27f16af5a
+;; persisted-through: b800599dfacc79c79691f882ecdcdc21f0777b36
 ;; blend's modules and what references what. Derived from the repo by blend:persist.
 {:nodes {:hook          {:name "hooks (hooks.json, install-templates.sh)" :type "hook"}
          :templates     {:name "plugins/blend/templates" :type "templates"}
@@ -23,7 +23,7 @@
          [:brainstorming :persist]     {:direction :-> :name "migrate / derive at start" :type "requires"}
          [:brainstorming :build]       {:direction :-> :name "offers at the end" :type "requires"}
          [:brainstorming :simpleviz]   {:direction :-> :name "loads skill, serves" :type "requires"}
-         [:build :persist]             {:direction :-> :name "setup + finish (git)" :type "requires"}
+         [:build :persist]             {:direction :-> :name "finish, if graphs exist; migrate" :type "requires"}
          [:build :simpleviz]           {:direction :-> :name "loads skill" :type "requires"}
          [:persist :simpleviz]         {:direction :-> :name "loads skill, check" :type "requires"}
          [:codex-tools :templates]     {:direction :-> :name "copy fallback" :type "requires"}

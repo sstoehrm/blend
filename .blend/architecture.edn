@@ -28,7 +28,7 @@
          [:features :build]       {:direction :-> :name "input"}
          [:build :builds]         {:direction :-> :name "writes"}
          [:build :code]           {:direction :-> :name "commits on a branch"}
-         [:build :persist]        {:direction :-> :name "finish"}
+         [:build :persist]        {:direction :-> :name "finish, if graphs exist"}
          [:code :persist]         {:direction :-> :name "git range / session"}
          [:persist :graphs]       {:direction :-> :name "merge"}}
  :boxes {:blend {:name ".blend/" :type "subsystem" :components #{:features :graphs :builds}}}}
