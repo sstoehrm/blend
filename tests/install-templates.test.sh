@@ -57,6 +57,6 @@ done
 
 # 8. every template starts with the version line
 for t in "$src"/blend-*.edn; do
-  check "version line $(basename "$t")" '[ "$(head -n 1 "$t")" = ";; blend-template 0.8.0" ]'
+  check "version line $(basename "$t")" '[ "$(head -n 1 "$t")" = ";; blend-template 0.9.0" ]'
 done
 exit $fail
