@@ -1,4 +1,8 @@
-# Cache
+# Features
+
+## Cache
+
+Status: planned
 
 Keep parsed rows in memory so repeated reads are fast.
 

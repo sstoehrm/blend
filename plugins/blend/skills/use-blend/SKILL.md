@@ -10,7 +10,7 @@ in one line and run it only when the user says yes or names it.
 
 | Request | Offer |
 | --- | --- |
-| An idea, a feature to think through, "let's talk about …" | blend:brainstorming — collect it into feature files and the graphs |
+| An idea, a feature to think through, "let's talk about …" | blend:brainstorming — collect it into features.md and the graphs |
 | "Build it", spec changes ready to implement | blend:build — implements what changed in `.blend/` since the last build, in one full-auto run |
 | "Update the graphs", work done outside blend | blend:persist |
 

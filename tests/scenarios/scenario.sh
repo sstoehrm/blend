@@ -32,10 +32,10 @@ case $name in
   persist-merge) g commit -q --allow-empty -m "docs: persist blend graphs"
     printf 'from . import util\n' > "$w/app/export.py"; echo 'from . import export' >> "$w/app/main.py"
     g add -A && g commit -qm "add export" ;;
-  # todos.md is built; due-dates.md is added after the last build, so it is the spec
-  build) g rm -q .blend/features/due-dates.md && g commit -qm "todos"
+  # Todos is built; the Due dates section is added after the last build, so it is the spec
+  build) sed -i '/^## Due dates/,$d' "$w/.blend/features.md" && g commit -qam "todos"
     g commit -q --allow-empty -m "blend: built todos"
-    g checkout -q "$base" -- .blend/features/due-dates.md && g commit -qm "docs: brainstorm due dates" ;;
+    g checkout -q "$base" -- .blend/features.md && g commit -qm "docs: brainstorm due dates" ;;
   # everything is built: the spec diff is empty
   build-empty) g commit -q --allow-empty -m "blend: built due-dates" ;;
 esac
@@ -57,13 +57,22 @@ tools() { jq -r 'select(.type=="assistant") | .message.content[]? | select(.type
 # edn <file> <get-in path>: prints the value, e.g. edn .blend/modules.edn '[:nodes :app-cache :state]'
 edn() { bb -e "(prn (get-in (clojure.edn/read-string (slurp \"$1\")) $2))"; }
 # simpleviz check flags missing :pair targets but not :md-ref, so check those here
-graphs_ok() { for f in .blend/architecture.edn .blend/modules.edn; do simpleviz check "$f" | grep -qx ok || return 1; done
+graphs_ok() { for f in .blend/architecture.edn .blend/modules.edn .blend/intro.md .blend/features.md; do
+    [ -f "$f" ] || continue; simpleviz check "$f" | grep -qx ok || return 1; done
   for m in $(grep -ho ':md-ref "[^"]*"' .blend/*.edn | sed 's/:md-ref "\(.*\)"/\1/'); do [ -f ".blend/$m" ] || return 1; done; }
+# status <heading>: the Status: value of that features.md section
+status() { awk -v h="## $1" '$0==h{f=1;next} /^## /{f=0} f&&/^Status:/{print $2; exit}' .blend/features.md; }
+intro_ok() { simpleviz check .blend/intro.md | grep -qx ok && for l in architecture.edn modules.edn features.md; do grep -q "($l)" .blend/intro.md || return 1; done; }
 
 case $name in
   brainstorm)
-    check "feature file written" 'grep -qil due .blend/features/*.md'
-    check "feature linked to graphs" 'grep -q ":state :new" .blend/architecture.edn .blend/modules.edn || grep -q "^Touches:.*#" .blend/features/*.md'
+    check "feature section written, planned" 'h=$(grep -i "^## .*due" .blend/features.md | head -1 | cut -c4-) && [ "$(status "$h")" = planned ]'
+    check "feature linked to graphs" 'grep -q ":state :new" .blend/architecture.edn .blend/modules.edn || grep -q "^Touches:.*#" .blend/features.md'
+    check "intro links the rest" 'intro_ok'
+    check "persist ran first" 'git log --format=%s '"$base"'..HEAD | grep -qx "docs: persist blend graphs"'
+    check "existing feature built" 'grep "^Status: built" .blend/features.md'
+    check "brainstorm committed" 'git log --format=%s '"$base"'..HEAD | grep -q "^docs: brainstorm"'
+    check "no features folder" '[ ! -e .blend/features ]'
     check "graphs check ok" 'graphs_ok'
     check "nothing outside .blend changed" '[ -z "$( { git diff --name-only '"$base"'; git ls-files --others --exclude-standard; } | grep -v "^\.blend/")" ]'
     check "no build graph" '[ ! -e .blend/builds ]'
@@ -85,6 +94,7 @@ case $name in
     check "overdue flagged" 'd=$(mktemp -d) && cp todo.py "$d" && cd "$d" && python3 todo.py add pay rent --due 2000-01-01 && python3 todo.py list | grep -q OVERDUE'
     check "future not overdue" 'd=$(mktemp -d) && cp todo.py "$d" && cd "$d" && python3 todo.py add later --due 2999-01-01 && ! python3 todo.py list | grep -q OVERDUE'
     check "bad date rejected" 'd=$(mktemp -d) && cp todo.py "$d" && cd "$d" && ! python3 todo.py add x --due 2000-13-45 && [ "$(python3 todo.py list | wc -l)" -eq 0 ]'
+    check "due dates marked built" '[ "$(status "Due dates")" = built ]'
     check "graphs check ok" 'graphs_ok'
     check "reviewer subagent ran" 'tools "'"$pre"'" | grep -qi "^Agent.*review"'
     check "strongest only for plan review or advisor" '! agents "'"$pre"'" | grep "^fable " | grep -vqi "plan\|advis"'
@@ -99,6 +109,8 @@ case $name in
     check "planned component kept" '[ "$(edn .blend/architecture.edn "[:nodes :cache :state]")" = ":new" ]'
     check "persist commit" 'git log --format=%s '"$base"'..HEAD | grep -qx "docs: persist blend graphs"'
     check "new module derived" 'grep -q "app-export" .blend/modules.edn'
+    check "planned feature kept" '[ "$(status Cache)" = planned ]'
+    check "intro written, links the rest" 'intro_ok'
     check "graphs check ok" 'graphs_ok'
     check "staged file not committed" '! committed | grep -qx notes.txt && git diff --cached --name-only | grep -qx notes.txt'
     check "only .blend committed" '[ -z "$(committed | grep -v "^\.blend/")" ]' ;;
@@ -109,6 +121,8 @@ case $name in
     check "new module derived" 'grep -q "app-export" .blend/modules.edn'
     check "persist commit" 'git log --format=%s '"$base"'..HEAD | grep -qx "docs: persist blend graphs"'
     check "no marker line" '! grep -rq "persisted-through" .blend/*.edn'
+    check "features folder folded in" '[ ! -e .blend/features ] && [ "$(status Reader)" = built ] && ! grep -q "md-ref \"features/" .blend/*.edn'
+    check "intro written, links the rest" 'intro_ok'
     check "graphs check ok" 'graphs_ok'
     check "staged file not committed" '! committed | grep -qx notes.txt && git diff --cached --name-only | grep -qx notes.txt'
     check "only .blend committed" '[ -z "$(committed | grep -v "^\.blend/")" ]' ;;
