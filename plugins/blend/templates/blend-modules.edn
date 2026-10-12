@@ -1,4 +1,4 @@
-;; blend-template 0.9.0
+;; blend-template 0.10.0
 ;; Editing this template? Bump the version above (and tests/install-templates.test.sh), or installs keep the old copy.
 ;; Project view: every own module and which modules it imports
 ;; (.blend/modules.edn). Derived from source by blend:persist and merged.

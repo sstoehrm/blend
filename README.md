@@ -1,6 +1,6 @@
 # blend
 
-A Claude Code and Codex plugin: a standalone set of opt-in workflow skills.
+A Claude Code, Codex and Grok Build plugin: a standalone set of opt-in workflow skills.
 [simpleviz](https://github.com/sstoehrm/simpleviz) makes designs visible, and
 a session-start hook wires it all together; no other workflow plugin is
 needed. Packaged as a plugin marketplace.
@@ -73,7 +73,8 @@ In Codex, install the
 `https://github.com/sstoehrm/simpleviz` and select the directory containing
 its `SKILL.md`. The simpleviz launcher and babashka are required in both
 hosts. A Claude Code plugin installation alone doesn't make its skills
-available to Codex.
+available to Codex. Grok Build picks up Claude Code plugins, simpleviz
+included.
 
 ## Structure
 
@@ -85,11 +86,13 @@ plugins/blend/                      # the "blend" plugin
 ├── .codex-plugin/plugin.json
 ├── hooks/hooks.json                # SessionStart: injects use-blend, installs templates
 ├── hooks/install-templates.sh      # copies templates/ into ~/.simpleviz/templates
+├── hooks/install-grok-rules.sh     # Grok only: writes use-blend to ~/.grok/rules/blend.md
 ├── templates/blend-*.edn           # simpleviz templates (init -t blend-plan …)
 ├── THIRD_PARTY_NOTICES.md          # MIT notice for text adapted from superpowers
 └── skills/
     └── {use-blend,brainstorming,build,persist}/SKILL.md
 tests/install-templates.test.sh     # run: sh tests/install-templates.test.sh
+tests/install-grok-rules.test.sh    # run: sh tests/install-grok-rules.test.sh
 tests/check-skills.sh               # line budgets, no stale references
 tests/scenarios/                    # headless skill scenarios: tests/scenarios/run.sh
 ```
@@ -173,6 +176,31 @@ unchanged.
 Codex packaging and hook behavior follow the official
 [plugin documentation](https://developers.openai.com/codex/plugins/build)
 and [hook documentation](https://learn.chatgpt.com/docs/hooks).
+
+### Grok Build
+
+Grok Build reads blend's Claude Code manifest as is. Install it from
+GitHub:
+
+```bash
+grok plugin install sstoehrm/blend#plugins/blend --trust
+```
+
+Or add the repo as a marketplace (`grok plugin marketplace add
+sstoehrm/blend`) and install blend from `/plugins`. Update with
+`grok plugin update blend`. If blend is installed in Claude Code, Grok
+also picks that copy up.
+
+Grok ignores SessionStart hook output, so use-blend can't be injected the
+way Claude Code does it. Instead, blend's session hooks write use-blend
+plus the Grok reference (`skills/use-blend/references/grok-tools.md`) to
+`~/.grok/rules/blend.md`, which Grok loads in every session. The file is
+written when the first session starts (interactive) or ends (headless),
+so use-blend applies from the next session on. Uninstalling blend leaves
+the file; delete it by hand. Grok hides the subagent `model` argument
+when only xAI models are available, so build's model tiers don't apply
+there: subagents run on the session's model unless you pin types under
+`[subagents.models]` in `~/.grok/config.toml`.
 
 ### Claude Code
 
