@@ -1,6 +1,6 @@
 ---
 name: brainstorming
-description: Use when the user wants to think through an idea or feature with blend — collecting, discussing and refining it, with what settles written into .blend feature files and the architecture and module graphs.
+description: Use when the user wants to think through an idea or feature with blend — collecting, discussing and refining it, with what settles written into .blend/features.md and the architecture and module graphs.
 ---
 
 # Brainstorming (blend)
@@ -11,20 +11,21 @@ project's spec, right away. No product code, scaffolding or installs.
 
 ```
 .blend/
+  intro.md             what the project is; links the rest (serve this)
+  features.md          every feature, a ## section each
   architecture.edn     components, flows, subsystems (simpleviz)
   modules.edn          modules and imports, derived by blend:persist
-  features/<slug>.md   one file per feature, free markdown
 ```
 
 **REQUIRED SUB-SKILL:** simpleviz:simpleviz for the EDN format.
 
 ## Start
 
-1. `.blend/views/` exists, or architecture.edn or modules.edn is missing:
-   run blend:persist first (it migrates and derives).
-2. Read the title and first lines of each feature file, and both graphs.
-3. Serve `simpleviz .blend/architecture.edn --no-open` in the background;
-   give the user the URL.
+1. `.blend/views/` or `.blend/features/` exists, or one of the four files
+   is missing: load blend:persist first, never write them yourself.
+2. Read intro.md, the headings and statuses in features.md, both graphs.
+3. Serve `simpleviz .blend/intro.md --no-open` in the background; give
+   the user the URL — the graphs open beside the text.
 
 ## Talking
 
@@ -37,20 +38,20 @@ whenever it helps.
 
 As soon as something settles, not at the end:
 
-- **Feature file** `.blend/features/<slug>.md`: free markdown, whatever
-  shape fits. Useful parts: intent, behaviour and examples, open
-  questions, and a `Touches:` line naming the graph ids it changes
-  (`architecture#<id>`, `modules#<id>`). Edit existing features rather
-  than starting duplicates.
+- **Feature** — a section in `.blend/features.md`: `## <Name>`,
+  `Status: planned`, then free markdown, whatever shape fits. Useful
+  parts: intent, behaviour and examples, open questions, and a
+  `Touches:` line naming the graph ids it changes (`architecture#<id>`,
+  `modules#<id>`). Edit existing sections rather than adding duplicates.
 - **Graphs**: add or change nodes, edges and boxes the feature implies.
   Elements that don't exist in code yet get `:state :new` and
-  `:md-ref "features/<slug>.md"`. Changes to existing elements: edit
-  them, and name them in the feature's `Touches:` line.
-- Check: `curl -s "$URL/api/errors?file=architecture.edn"` (and
-  `modules.edn`) prints no warnings. While the server runs, take
-  simpleviz's lock before writing a file the user may have open.
+  `:md-ref "features.md"`. Changes to existing elements: edit them,
+  and name them in the feature's `Touches:` line.
+- Check: `curl -s "$URL/api/errors?file=<f>"` for each file you wrote
+  prints no warnings. While the server runs, take simpleviz's lock
+  before writing a file the user may have open.
 
-Say in one line what you wrote ("features/due-dates.md: overdue rule").
+Say in one line what you wrote ("features.md, Due dates: overdue rule").
 
 ## Ending
 

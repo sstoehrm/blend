@@ -14,23 +14,25 @@ Parts of build, review and the TDD/debugging rules are adapted from
 | Skill               | What it does |
 | ------------------- | ------------ |
 | use-blend           | Injected into every session via SessionStart hook: communication style, verification, TDD, debugging and review rules, dependency checks. Offers the other skills when a request fits; they run only when you say yes or name them. The hook also installs blend's simpleviz templates. |
-| blend:brainstorming | A free conversation about an idea. Whatever settles is written into `.blend/` right away: a markdown file per feature, plus planned nodes (`:state :new`) in the architecture and module graphs. No levels, gates or fixed steps. |
-| blend:build         | Implements what changed in `.blend/` since the last build (`git diff <last "blend: built" commit> -- .blend` is the spec), in one full-auto run: a branch, a local plan in `.blend/plan.md` — served by simpleviz, linking the changed features and graphs, plus a task graph when the order isn't a straight line (gitignored), TDD per task (subagents get a named model tier: cheapest / mid / strong / strongest), one whole-branch review, blend:persist when the structure changed, then an empty `blend: built <slug>` commit as the next base. Keeps the branch; never merges or pushes unasked. |
-| blend:persist       | Brings code into the graphs — `modules.edn` derived from imports and merged (planned modules survive), `architecture.edn` updated where code changed. Source is the range since its last commit, or the current session. Migrates the old `.blend/views/` layout. |
+| blend:brainstorming | A free conversation about an idea. Whatever settles is written into `.blend/` right away: a section per feature in `features.md`, plus planned nodes (`:state :new`) in the architecture and module graphs. No levels, gates or fixed steps. |
+| blend:build         | Implements what changed in `.blend/` since the last build (`git diff <last "blend: built" commit>` of `features.md` and the graphs is the spec), in one full-auto run: a branch, a local plan in `.blend/plan.md` — served by simpleviz, linking the changed features and graphs, plus a task graph when the order isn't a straight line (gitignored), TDD per task (subagents get a named model tier: cheapest / mid / strong / strongest), one whole-branch review, blend:persist when the structure changed, its features marked built, then an empty `blend: built <slug>` commit as the next base. Keeps the branch; never merges or pushes unasked. |
+| blend:persist       | Brings code into the spec — `modules.edn` derived from imports and merged (planned modules survive), `architecture.edn` updated where code changed, built features added to `features.md` and planned ones flipped to built, `intro.md` written and kept current. Source is the range since its last commit, or the current session. Migrates the old `.blend/views/` and `.blend/features/` layouts. |
 
 ## The workflow
 
 ```
-idea ⇄ blend:brainstorming ⇄ .blend/{features/*.md, architecture.edn, modules.edn}
+idea ⇄ blend:brainstorming ⇄ .blend/{intro.md, features.md, architecture.edn, modules.edn}
                                          │
                                    blend:build → spec diff → local plan → branch, tests, review → blend:persist (if structure changed)
 ```
 
 `.blend/` is the project's continuous spec — the only thing blend keeps.
 Brainstorm as long and as often as you like; each session starts from
-what is in it. Features are free markdown — intent, behaviour, examples,
-open questions, whatever fits. The graphs show the structure, with
-not-yet-built parts marked and linked to their feature. When you want
+what is in it. `intro.md` says what the project is and links the rest;
+serve it and each graph opens beside the text. Features are sections of
+`features.md`, planned or built, in free markdown — intent, behaviour,
+examples, open questions, whatever fits. The graphs show the structure,
+with not-yet-built parts marked and linked to `features.md`. When you want
 the code to catch up, blend:build takes the spec's diff since the last
 build, plans it in a local file and implements it without asking.
 
@@ -38,9 +40,10 @@ Artifacts in the target project:
 
 ```
 .blend/
-├── architecture.edn            # components and flows (serve this)
+├── intro.md                    # what the project is; links the rest (serve this)
+├── features.md                 # every feature, a ## section each, planned or built
+├── architecture.edn            # components and flows
 ├── modules.edn                 # modules and imports, derived from code
-├── features/<slug>.md          # one per feature, free markdown
 └── plan.md (+ plan.edn)        # current build's plan; gitignored, deleted when done
 ```
 

@@ -1,4 +1,4 @@
 {:nodes {:app {:name "App" :type "service" :pair "modules.edn#app-main"}
-         :cache {:name "Cache" :type "store" :state :new :md-ref "features/cache.md"}
+         :cache {:name "Cache" :type "store" :state :new :md-ref "features.md"}
          :web {:name "Web page" :type "ui" :pair "modules.edn#web-page"}}
  :edges {[:app :cache] {:direction :-> :name "reads / writes"}}}
