@@ -1,6 +1,6 @@
 {
   "name": "blend",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "description": "Sören's workflow skills — brainstorm features into simpleviz graphs, then build them in one run",
   "author": {
     "name": "Sören Stöhrmann"
@@ -9,7 +9,7 @@
   "interface": {
     "displayName": "Blend",
     "shortDescription": "Features, living graphs, one-step builds",
-    "longDescription": "Opt-in skills: brainstorm features into markdown files and simpleviz architecture and module graphs, build them in one full-auto run, and keep the graphs in sync with the code.",
+    "longDescription": "Opt-in skills: brainstorm features into markdown files and simpleviz architecture and module graphs, build them in one full-auto run, keep the graphs in sync with the code, and turn them into an onboarding deck.",
     "developerName": "Sören Stöhrmann",
     "category": "Developer Tools",
     "capabilities": ["Read", "Write"],

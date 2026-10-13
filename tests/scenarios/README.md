@@ -23,6 +23,7 @@ check (exit 1 on any FAIL):
 | `build` | `cli-feature` + history: Todos built (`blend: built todos`), the Due dates section added after | own branch, default branch unmoved, due-date behavior works, Due dates marked built, plan is `.blend/plan.md`, gitignored / never committed / deleted, `blend: built` commit, strongest only for plan review or advisor (the 2-task fixture is below the plan-review threshold), code review on strong, every subagent names a model, graphs check ok |
 | `build-empty` | `cli-feature` + `blend: built` at HEAD | empty spec diff: no code changed, no new `blend: built` commit |
 | `persist-merge` | `persist-merge` + a persist commit, then a commit adding `app.export` | planned (`:state :new`) nodes and the planned Cache feature survive, new module added, `intro.md` written and linked, persist commit, staged user file not committed |
+| `onboarding` | `cli-feature` + a staged file | `.blend/onboarding.md` checks ok, has slides with `architecture.edn` and `modules.edn` beside them (no `#id` links), presents Todos (built) and Due dates (planned), `docs: onboarding deck` commit holding only the deck, staged file not committed, the four spec files untouched |
 | `persist-migrate` | `persist-migrate` | `.blend/views/` moved to `.blend/`, system.md removed, `.blend/features/` folded into `features.md` (Reader built), `intro.md` written, no marker line, old plan folder kept, staged file not committed |
 
 `run.sh` honors `MODEL` (default `sonnet`) and `BLEND_OLD`; other env passes
