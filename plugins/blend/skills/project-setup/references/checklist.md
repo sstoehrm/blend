@@ -7,12 +7,12 @@ given.
 
 | Item | Present when | Fix |
 | --- | --- | --- |
-| Vulnerability gate | CI builds an SBOM, scans it, and fails on the KEV/EPSS policy | [vuln-gate.md](vuln-gate.md) |
+| Vulnerability gate | CI builds an SBOM, scans it with OSV-Scanner, and fails on the KEV/EPSS policy | [vuln-gate.md](vuln-gate.md); Trivy in use counts as missing |
 | Dependency updates | `.github/dependabot.yml` or `renovate.json` covers every detected stack, CI config included | see SKILL.md, Stacks and update tools |
 | Required checks | a ruleset (or protected branch) on the default branch requires PRs, the gate and the tests as status checks, and blocks force pushes | GitHub: Settings → Rules → Rulesets; GitLab: protected branches + "Pipelines must succeed". Without it the gate is only a report |
 | Secret scanning | GitHub secret scanning and push protection on, or gitleaks in CI (and pre-commit); GitLab: Secret Detection template | private GitHub repos may need Secret Protection; gitleaks works everywhere |
 | SAST | CodeQL (default setup) or GitLab SAST for the supported languages | Clojure has no CodeQL support: clj-kondo in CI is the floor |
-| Workflow hygiene | workflows set least-privilege `permissions:` (default `contents: read`), pin third-party actions to full commit SHAs, never check out PR code under `pull_request_target` | the update tool keeps SHA pins current |
+| Workflow hygiene | workflows set least-privilege `permissions:` (default `contents: read`), pin third-party actions to full commit SHAs, never check out PR code under `pull_request_target`; tools downloaded in CI are pinned and checksum-verified | the update tool keeps SHA pins current |
 | Tests in CI | every PR runs the test suite | — |
 
 ## Legal
