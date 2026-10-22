@@ -17,6 +17,7 @@ Parts of build, review and the TDD/debugging rules are adapted from
 | blend:brainstorming | A free conversation about an idea. Whatever settles is written into `.blend/` right away: a section per feature in `features.md`, plus planned nodes (`:state :new`) in the architecture and module graphs. No levels, gates or fixed steps. |
 | blend:build         | Implements what changed in `.blend/` since the last build (`git diff <last "blend: built" commit>` of `features.md` and the graphs is the spec), in one full-auto run: a branch, a local plan in `.blend/plan.md` — served by simpleviz, linking the changed features and graphs, plus a task graph when the order isn't a straight line (gitignored), TDD per task (subagents get a named model tier: cheapest / mid / strong / strongest), one whole-branch review, blend:persist when the structure changed, its features marked built, then an empty `blend: built <slug>` commit as the next base. Keeps the branch; never merges or pushes unasked. |
 | blend:persist       | Brings code into the spec — `modules.edn` derived from imports and merged (planned modules survive), `architecture.edn` updated where code changed, built features added to `features.md` and planned ones flipped to built, `intro.md` written and kept current. Source is the range since its last commit, or the current session. Migrates the old `.blend/views/` and `.blend/features/` layouts. |
+| blend:project-setup | A checklist run against the current repo: vulnerability gate in CI (SBOM, scan, KEV/EPSS policy), Dependabot or Renovate, required checks, secret scanning, SAST, workflow hygiene, code and data licenses, third-party notices, privacy, SECURITY.md and repo basics. Reports present/missing first, then adds only what you pick. Use it on every new project. |
 
 ## The workflow
 
@@ -95,7 +96,7 @@ plugins/blend/                      # the "blend" plugin
 ├── templates/blend-*.edn           # simpleviz templates (init -t blend-plan …)
 ├── THIRD_PARTY_NOTICES.md          # MIT notice for text adapted from superpowers
 └── skills/
-    └── {use-blend,brainstorming,build,persist}/SKILL.md
+    └── {use-blend,brainstorming,build,persist,project-setup}/SKILL.md
 tests/install-templates.test.sh     # run: sh tests/install-templates.test.sh
 tests/install-grok-rules.test.sh    # run: sh tests/install-grok-rules.test.sh
 tests/check-skills.sh               # line budgets, no stale references
@@ -121,7 +122,7 @@ select `use-blend` in the skill picker or ask: "Load Blend's use-blend skill
 and follow it for this task."
 
 To use an individual skill, ask for **Blend's brainstorming skill**,
-**Blend's build skill** or **Blend's persist skill**. Select the Blend entry if another plugin
+**Blend's build skill**, **Blend's persist skill** or **Blend's project-setup skill**. Select the Blend entry if another plugin
 exposes the same name. The skill files are shared by both hosts. `use-blend` conditionally loads a Codex reference for tool mappings;
 other hosts don't load that reference.
 

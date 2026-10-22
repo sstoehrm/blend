@@ -11,12 +11,12 @@ for t in plugins/blend/templates/blend-*.edn; do
 stray=$(grep -rIn -i superpowers plugins/blend .claude-plugin | grep -v -e THIRD_PARTY_NOTICES.md -e ':Adapted from superpowers')
 [ -z "$stray" ] || bad "superpowers outside attribution: $stray"
 grep -q "Copyright (c) 2025 Jesse Vincent" plugins/blend/THIRD_PARTY_NOTICES.md || bad "MIT notice missing"
-for s in use-blend/SKILL.md:70 brainstorming/SKILL.md:60 build/SKILL.md:100 build/reviewer-prompt.md:30 persist/SKILL.md:80 use-blend/references/grok-tools.md:40; do
+for s in use-blend/SKILL.md:70 brainstorming/SKILL.md:60 build/SKILL.md:100 build/reviewer-prompt.md:30 persist/SKILL.md:80 project-setup/SKILL.md:70 project-setup/references/checklist.md:60 project-setup/references/vuln-gate.md:50 use-blend/references/grok-tools.md:40; do
   f=plugins/blend/skills/${s%%:*} max=${s##*:}
   [ -f "$f" ] || { bad "$f missing"; continue; }
   n=$(wc -l < "$f"); [ "$n" -le "$max" ] || bad "$f: $n lines > $max"; done
 # shellcheck disable=SC2012 # skill directory names are plain words
-[ "$(ls plugins/blend/skills)" = "$(printf 'brainstorming\nbuild\npersist\nuse-blend')" ] || bad "unexpected skill set: $(ls plugins/blend/skills | tr '\n' ' ')"
+[ "$(ls plugins/blend/skills)" = "$(printf 'brainstorming\nbuild\npersist\nproject-setup\nuse-blend')" ] || bad "unexpected skill set: $(ls plugins/blend/skills | tr '\n' ' ')"
 for n in planning executing debugging deduce project-views; do
   ! grep -rq "blend:$n\|skills/$n" README.md plugins/blend || bad "blend:$n still referenced"; done
 ! grep -rnE "features/(<slug>|\*)" README.md plugins/blend | grep -qv "persist/SKILL.md:.*features/\*\.md.: one" || bad "per-file feature layout referenced"
