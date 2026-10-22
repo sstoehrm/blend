@@ -6,6 +6,24 @@ SKILL.md step 1. Feeds: CISA KEV
 FIRST EPSS `https://api.first.org/data/v1/epss?cve=<id>,<id>,…`. Check
 current tool versions before pinning any.
 
+Scanner: OSV-Scanner only, never Trivy (its actions and v0.69.4 were
+compromised to steal CI secrets, CVE-2026-33634). Replace Trivy where a
+repo still uses it. The gate's own tools are supply chain too:
+
+- Download the OSV-Scanner release binary at a pinned version; verify
+  `osv-scanner_SHA256SUMS` and the SLSA provenance
+  (`multiple.intoto.jsonl`, slsa-verifier). Pin and checksum Syft,
+  the CycloneDX tools and babashka the same way; no mutable action tags.
+- The scan job holds no secrets: `permissions: contents: read`,
+  `persist-credentials: false`, separate from publish and deploy jobs.
+- Name the SBOM `*.cdx.json` so `osv-scanner scan source -L <file>
+  --format json` recognises it; images: `osv-scanner scan image <img:tag>`.
+- Run offline (`--offline-vulnerabilities --download-offline-databases`)
+  with `OSV_SCANNER_LOCAL_DB_CACHE_DIRECTORY` cached: the dependency
+  list stays in CI instead of going to osv.dev.
+- KEV and EPSS are keyed by CVE: map OSV ids via `aliases`. CVSS comes
+  as vectors in `severity[].score`; the filter computes the base score.
+
 Reuse first: ask whether a shared gate (reusable workflow or CI
 template, filter script, README) already exists. If it does, add only
 the caller and this repo's SBOM step. Only the first repo builds it all.
@@ -26,8 +44,8 @@ and adapt the steps.
    - Keep the SBOM as a build artifact.
 
 2. Scans
-   - Scan the SBOM with Trivy or OSV-Scanner.
-   - If a container image is built, scan the final image with Trivy too.
+   - Scan the SBOM with OSV-Scanner.
+   - If a container image is built, scan the final image with OSV-Scanner too.
 
 3. Gate policy (don't fail on CVSS alone)
    - Fail the build if any finding:
