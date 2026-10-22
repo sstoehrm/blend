@@ -1,9 +1,11 @@
 #!/usr/bin/env sh
 # Tests plugins/blend/hooks/install-grok-rules.sh against temporary Grok homes.
+# check() evals its single-quoted expression later, so $vars there are meant
+# to expand at eval time (SC2016); variables read only there look unused (SC2034).
+# shellcheck disable=SC2016
 set -u
 here="$(cd "$(dirname "$0")" && pwd)"
 script="$here/../plugins/blend/hooks/install-grok-rules.sh"
-skill="$here/../plugins/blend/skills/use-blend/SKILL.md"
 fail=0
 check() { if eval "$2"; then echo "ok   $1"; else echo "FAIL $1"; fail=1; fi; }
 tmp="$(mktemp -d)"; trap 'rm -rf "$tmp"' EXIT
@@ -16,6 +18,7 @@ check "outside Grok: nothing written" '[ ! -e "$tmp/g" ]'
 check "outside Grok: silent" '[ -z "$o" ]'
 
 # 2. under Grok: rules file with use-blend (no frontmatter) and the Grok reference
+# shellcheck disable=SC2034 # o and rc are read in check
 o=$(GROK_PLUGIN_ROOT=x GROK_HOME="$tmp/g" sh "$script"); rc=$?
 check "under Grok: exit 0, silent" '[ $rc -eq 0 ] && [ -z "$o" ]'
 check "rules file written" '[ -f "$out" ]'
@@ -37,6 +40,8 @@ check "no temp files left" '[ -z "$(ls -A "$tmp/g/rules" | grep "^\.blend")" ]'
 
 # 5. rules path is a file: no crash
 mkdir -p "$tmp/h"; echo keep > "$tmp/h/rules"
-GROK_PLUGIN_ROOT=x GROK_HOME="$tmp/h" sh "$script"; rc=$?
+GROK_PLUGIN_ROOT=x GROK_HOME="$tmp/h" sh "$script"
+# shellcheck disable=SC2034 # rc is read in check
+rc=$?
 check "rules is a file: exit 0, untouched" '[ $rc -eq 0 ] && [ "$(cat "$tmp/h/rules")" = keep ]'
 exit $fail

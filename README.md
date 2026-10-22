@@ -82,6 +82,11 @@ included.
 ```
 .claude-plugin/marketplace.json     # Claude Code marketplace catalog
 .agents/plugins/marketplace.json   # Codex marketplace catalog
+.github/workflows/ci.yml            # CI: the three test scripts and shellcheck
+.github/dependabot.yml              # weekly GitHub Actions updates
+LICENSE                             # MIT
+SECURITY.md                         # how to report a vulnerability
+.gitignore                          # local settings, blend build plan
 plugins/blend/                      # the "blend" plugin
 ├── .claude-plugin/plugin.json
 ├── .codex-plugin/plugin.json
@@ -253,3 +258,12 @@ fails, a run with it that passes. Validate before committing:
 ```bash
 claude plugin validate .
 ```
+
+## License
+
+MIT (`LICENSE`) for the whole repo, skill text and templates included.
+The text adapted from superpowers stays under its MIT notice in
+`plugins/blend/THIRD_PARTY_NOTICES.md`.
+
+blend collects no data. Its hooks only write `~/.simpleviz/templates`
+and `~/.grok/rules/blend.md`.

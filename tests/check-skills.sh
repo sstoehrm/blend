@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 # Checks blend's skills: line budgets, versions, attribution, no stale references.
 set -u
-cd "$(dirname "$0")/.."
+cd "$(dirname "$0")/.." || exit 1
 fail=0
 bad() { echo "FAIL $1"; fail=1; }
 ver=$(jq -r .version plugins/blend/.claude-plugin/plugin.json)
@@ -15,10 +15,11 @@ for s in use-blend/SKILL.md:70 brainstorming/SKILL.md:60 build/SKILL.md:100 buil
   f=plugins/blend/skills/${s%%:*} max=${s##*:}
   [ -f "$f" ] || { bad "$f missing"; continue; }
   n=$(wc -l < "$f"); [ "$n" -le "$max" ] || bad "$f: $n lines > $max"; done
+# shellcheck disable=SC2012 # skill directory names are plain words
 [ "$(ls plugins/blend/skills)" = "$(printf 'brainstorming\nbuild\npersist\nproject-setup\nuse-blend')" ] || bad "unexpected skill set: $(ls plugins/blend/skills | tr '\n' ' ')"
 for n in planning executing debugging deduce project-views; do
   ! grep -rq "blend:$n\|skills/$n" README.md plugins/blend || bad "blend:$n still referenced"; done
-[ -z "$(grep -rnE "features/(<slug>|\*)" README.md plugins/blend | grep -v "persist/SKILL.md:.*features/\*\.md.: one")" ] || bad "per-file feature layout referenced"
+! grep -rnE "features/(<slug>|\*)" README.md plugins/blend | grep -qv "persist/SKILL.md:.*features/\*\.md.: one" || bad "per-file feature layout referenced"
 ! grep -rq "blend-plan-view\|blend-build\b\|\.blend/builds\|builds/YYYY" README.md plugins/blend || bad "old template or build-graph path referenced"
 [ $fail -eq 0 ] && echo PASS
 exit $fail

@@ -1,5 +1,8 @@
 #!/usr/bin/env sh
 # Tests plugins/blend/hooks/install-templates.sh against temporary homes.
+# check() evals its single-quoted expression later, so $vars there are meant
+# to expand at eval time (SC2016); variables read only there look unused (SC2034).
+# shellcheck disable=SC2016
 set -u
 here="$(cd "$(dirname "$0")" && pwd)"
 script="$here/../plugins/blend/hooks/install-templates.sh"
@@ -34,7 +37,9 @@ check "other version replaced" 'cmp -s "$src/blend-modules.edn" "$tmp/h2/templat
 
 # 5. templates is a file: no crash, exit 0, file untouched
 mkdir -p "$tmp/h5"; echo keep > "$tmp/h5/templates"
-SIMPLEVIZ_HOME="$tmp/h5" sh "$script"; rc=$?
+SIMPLEVIZ_HOME="$tmp/h5" sh "$script"
+# shellcheck disable=SC2034 # rc is read in check
+rc=$?
 check "templates file: exit 0" '[ $rc -eq 0 ]'
 check "templates file: untouched" '[ "$(cat "$tmp/h5/templates")" = keep ]'
 
@@ -50,8 +55,9 @@ SIMPLEVIZ_HOME="$tmp/h6" sh "$script"
 check "stale blend template removed" '[ ! -e "$tmp/h6/templates/blend-plan-view.edn" ]'
 check "unmarked blend-* kept" '[ -f "$tmp/h6/templates/blend-mine.edn" ]'
 
-# 7. every template parses and checks clean
+# 7. every template parses and checks clean (skipped without simpleviz, e.g. in CI)
 for t in "$src"/blend-*.edn; do
+  if ! command -v simpleviz >/dev/null 2>&1; then echo "skip simpleviz check $(basename "$t"): simpleviz not installed"; continue; fi
   check "simpleviz check $(basename "$t")" 'simpleviz check "$t" >/dev/null'
 done
 

@@ -18,7 +18,7 @@ for f in "$src"/blend-*.edn; do
 done
 # Remove blend templates blend no longer ships (first line marks them as blend's).
 for dst in "$home/templates"/blend-*.edn; do
-  [ -f "$dst" ] && [ ! -f "$src/$(basename "$dst")" ] || continue
+  { [ -f "$dst" ] && [ ! -f "$src/$(basename "$dst")" ]; } || continue
   case "$(head -n 1 "$dst")" in ";; blend-template "*) rm -f "$dst" ;; esac
 done
 exit 0
