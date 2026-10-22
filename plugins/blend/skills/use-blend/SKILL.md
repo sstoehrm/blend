@@ -13,13 +13,14 @@ in one line and run it only when the user says yes or names it.
 | An idea, a feature to think through, "let's talk about …" | blend:brainstorming — collect it into features.md and the graphs |
 | "Build it", spec changes ready to implement | blend:build — implements what changed in `.blend/` since the last build, in one full-auto run |
 | "Update the graphs", work done outside blend | blend:persist |
+| A new repo, "what is this project missing", CI security or license setup | blend:project-setup — checklist report, then adds what you pick |
 
 A no holds for that request. Blend skills that name each other load
 each other without asking. Codex: read
 [references/codex-tools.md](references/codex-tools.md) first; Grok:
 [references/grok-tools.md](references/grok-tools.md).
 
-The skills need simpleviz; check right before the first use, and if one is
+The skills (not project-setup) need simpleviz; check right before the first use, and if one is
 missing give the fix and wait:
 
 | Dependency | Check | Fix |
