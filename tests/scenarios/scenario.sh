@@ -3,6 +3,10 @@
 # Usage: tests/scenarios/scenario.sh <name> <out-dir> [arm]   (arm defaults to new)
 # Names: brainstorm, build, build-empty, persist-merge, persist-migrate, onboarding
 # Prints the run.sh summary line, then one "ok"/"FAIL" line per check.
+# check() evals its single-quoted expression in the workdir: $vars there expand
+# at eval time (SC2016), and the helpers below are called only from there
+# (SC2317 in shellcheck 0.9, SC2329 from 0.10).
+# shellcheck disable=SC2016,SC2317,SC2329
 set -u
 here=$(cd "$(dirname "$0")" && pwd)
 name=$1 out=$2 arm=${3:-new}
@@ -14,9 +18,6 @@ case $name in
     p="Use blend:build." ;;
   build-empty) fx=cli-feature
     p="Use blend:build." ;;
-  build-empty)
-    check "no code changed" '[ -z "$(git diff --name-only '"$base"' -- . ":!.blend" ":!.gitignore")" ] && [ -z "$(git status --porcelain --untracked-files=all | grep -v " \.blend/\| \.gitignore$")" ]'
-    check "no new build commit" '! git log --format=%s '"$base"'..HEAD | grep -q "^blend: built"' ;;
   persist-merge) fx=persist-merge
     p="Use blend:persist with source git." ;;
   persist-migrate) fx=persist-migrate
@@ -61,6 +62,7 @@ edn() { bb -e "(prn (get-in (clojure.edn/read-string (slurp \"$1\")) $2))"; }
 # simpleviz check flags missing :pair targets but not :md-ref, so check those here
 graphs_ok() { for f in .blend/architecture.edn .blend/modules.edn .blend/intro.md .blend/features.md; do
     [ -f "$f" ] || continue; simpleviz check "$f" | grep -qx ok || return 1; done
+  # shellcheck disable=SC2013 # md-ref targets are file names without spaces
   for m in $(grep -ho ':md-ref "[^"]*"' .blend/*.edn | sed 's/:md-ref "\(.*\)"/\1/'); do [ -f ".blend/$m" ] || return 1; done; }
 # status <heading>: the Status: value of that features.md section
 status() { awk -v h="## $1" '$0==h{f=1;next} /^## /{f=0} f&&/^Status:/{print $2; exit}' .blend/features.md; }

@@ -5,6 +5,7 @@
   "author": {
     "name": "Sören Stöhrmann"
   },
+  "license": "MIT",
   "skills": "./skills/",
   "interface": {
     "displayName": "Blend",

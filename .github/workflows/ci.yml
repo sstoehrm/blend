@@ -1,0 +1,26 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: check skills
+        run: sh tests/check-skills.sh
+      - name: install-templates hook
+        run: sh tests/install-templates.test.sh
+      - name: install-grok-rules hook
+        run: sh tests/install-grok-rules.test.sh
+      - name: shellcheck
+        run: git ls-files -z -- '*.sh' ':!tests/scenarios/fixtures' | xargs -0 shellcheck

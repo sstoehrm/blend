@@ -48,7 +48,7 @@ one() {
 }
 
 for arm in ${ARMS:-old new}; do i=1; while [ $i -le "$n" ]; do
-  acc="python3 $here/acceptance_csv2json.py"; one green empty "$out/green-$arm.txt" $arm $i
-  acc="sh $here/acceptance_blackboard.sh";    one brown blackboard "$out/brown-$arm.txt" $arm $i
+  acc="python3 $here/acceptance_csv2json.py"; one green empty "$out/green-$arm.txt" "$arm" "$i"
+  acc="sh $here/acceptance_blackboard.sh";    one brown blackboard "$out/brown-$arm.txt" "$arm" "$i"
   i=$((i+1)); done; done
 cat "$sum"
