@@ -1,7 +1,7 @@
 #!/bin/sh
 # Run one named blend scenario headless and check its result.
 # Usage: tests/scenarios/scenario.sh <name> <out-dir> [arm]   (arm defaults to new)
-# Names: brainstorm, build, build-empty, persist-merge, persist-migrate
+# Names: brainstorm, build, build-empty, persist-merge, persist-migrate, onboarding
 # Prints the run.sh summary line, then one "ok"/"FAIL" line per check.
 # check() evals its single-quoted expression in the workdir: $vars there expand
 # at eval time (SC2016), and the helpers below are called only from there
@@ -22,6 +22,8 @@ case $name in
     p="Use blend:persist with source git." ;;
   persist-migrate) fx=persist-migrate
     p="Use blend:persist with source git." ;;
+  onboarding) fx=cli-feature
+    p="Use blend:onboarding. A new developer joins tomorrow." ;;
   *) echo "unknown scenario $name" >&2; exit 2 ;;
 esac
 w=$("$here/setup.sh" "$fx") || exit 1
@@ -42,7 +44,7 @@ case $name in
 esac
 base=$(git -C "$w" rev-parse HEAD)
 # persist scenarios: an unrelated staged file must stay out of persist's commit
-case $name in persist-*) echo "user work" > "$w/notes.txt"; git -C "$w" add notes.txt ;; esac
+case $name in persist-*|onboarding) echo "user work" > "$w/notes.txt"; git -C "$w" add notes.txt ;; esac
 printf '%s\n' "$p" > "$pre.prompt"
 "$here/run.sh" "$arm" "$w" "$pre.prompt" "$pre"
 echo "workdir $w"
@@ -128,5 +130,21 @@ case $name in
     check "graphs check ok" 'graphs_ok'
     check "staged file not committed" '! committed | grep -qx notes.txt && git diff --cached --name-only | grep -qx notes.txt'
     check "only .blend committed" '[ -z "$(committed | grep -v "^\.blend/")" ]' ;;
+  onboarding)
+    d=.blend/onboarding.md
+    check "deck checks ok" 'simpleviz check '$d' | grep -qx ok'
+    check "several slides" '[ "$(grep -cx -- "---" '$d')" -ge 4 ]'
+    check "architecture beside a slide" 'grep -q "^>> \[.*\](architecture\.edn)" '$d
+    check "modules beside a slide" 'grep -q "^>> \[.*\](modules\.edn)" '$d
+    check "no #id side links" '! grep -q "^>> .*#" '$d
+    check "built feature presented" 'grep -qiE "^#+ .*todos|todos.*\(built\)|built.*todos" '$d
+    check "planned feature presented" 'grep -qi "due date" '$d
+    check "deck committed" 'git log --format=%s '"$base"'..HEAD | grep -qx "docs: onboarding deck" && committed | grep -qx '$d
+    check "only the deck committed" '[ -z "$(committed | grep -vx '$d')" ]'
+    check "staged file not committed" 'git diff --cached --name-only | grep -qx notes.txt'
+    check "spec untouched" 'git diff --quiet '"$base"' -- .blend/intro.md .blend/features.md .blend/architecture.edn .blend/modules.edn'
+    check "graphs check ok" 'graphs_ok'
+    # the skill leaves its deck server running for the user; stop it by PID
+    for p in $(pgrep -f "simpleviz/bb.edn"); do [ "$(readlink "/proc/$p/cwd")" = "$(cd "$w" && pwd -P)" ] && kill "$p"; done ;;
 esac
 exit $fail

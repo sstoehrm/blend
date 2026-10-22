@@ -13,6 +13,7 @@ in one line and run it only when the user says yes or names it.
 | An idea, a feature to think through, "let's talk about …" | blend:brainstorming — collect it into features.md and the graphs |
 | "Build it", spec changes ready to implement | blend:build — implements what changed in `.blend/` since the last build, in one full-auto run |
 | "Update the graphs", work done outside blend | blend:persist |
+| Someone new joins, "onboarding deck", "walk me through the project" | blend:onboarding — a slide deck from `.blend/`, graphs beside the slides |
 | A new repo, "what is this project missing", CI security or license setup | blend:project-setup — checklist report, then adds what you pick |
 
 A no holds for that request. Blend skills that name each other load
@@ -26,7 +27,7 @@ missing give the fix and wait:
 | Dependency | Check | Fix |
 | --- | --- | --- |
 | simpleviz skill | in the skill list | `/plugin install simpleviz@simpleviz` ([simpleviz](https://github.com/sstoehrm/simpleviz)) |
-| simpleviz launcher | `simpleviz --version` ≥ v0.34.0 | `curl -fsSL https://raw.githubusercontent.com/sstoehrm/simpleviz/main/install.sh \| bash`; older: `simpleviz update` |
+| simpleviz launcher | `simpleviz --version` ≥ v0.40.0 | `curl -fsSL https://raw.githubusercontent.com/sstoehrm/simpleviz/main/install.sh \| bash`; older: `simpleviz update` |
 | babashka | `command -v bb` | https://github.com/babashka/babashka#installation |
 
 ## Style
