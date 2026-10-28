@@ -9,21 +9,18 @@ tool names; apply these mappings when following them.
   and this reference to `~/.grok/rules/blend.md`, which Grok loads in
   every session. It takes effect from the session after the first run.
 - `blend:<skill>` is the `<skill>` skill of the blend plugin. Another
-  plugin's skill with the same name (another brainstorming, say)
+  plugin's skill with the same name (another project-setup, say)
   is not it; use the qualified `blend:<skill>` form.
-- simpleviz: Grok picks up the Claude Code plugin; otherwise
-  `grok plugin marketplace add sstoehrm/simpleviz` and install it from
-  `/plugins`. The launcher and babashka checks in use-blend apply as is.
 
 ## Tools
 
 - **Subagents:** `spawn_subagent` (`prompt`, `description`, `background`).
   Only the top-level session spawns; a subagent can't spawn its own.
-- **Model tiers:** Grok hides `spawn_subagent`'s `model` argument when
+- **Models:** Grok hides `spawn_subagent`'s `model` argument when
   every available model is an xAI model, so subagents run on the
-  session's model and blend:build's tier table can't be applied per call.
-  Pass `model` only if the argument exists; otherwise say in the report
-  that subagents inherited the session model. Per-type pins live in
-  `~/.grok/config.toml` under `[subagents.models]` (the user's choice).
+  session's model. Pass `model` only if the argument exists; otherwise
+  say in the report that the reviewer inherited the session model.
+  Per-type pins live in `~/.grok/config.toml` under `[subagents.models]`
+  (the user's choice).
 - **Web:** `web_fetch` is off unless `GROK_WEB_FETCH=1`; use `web_search`
   for current docs when it is.

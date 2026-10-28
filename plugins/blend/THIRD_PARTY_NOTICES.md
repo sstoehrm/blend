@@ -1,7 +1,7 @@
 # Third-party notices
 
-blend:build (and its reviewer prompt) and the TDD, debugging and review
-rules in use-blend adapt text from superpowers
+The reviewer prompt and the TDD, debugging and review rules in use-blend
+adapt text from superpowers
 (https://github.com/obra/superpowers), used under the MIT License:
 
 ```

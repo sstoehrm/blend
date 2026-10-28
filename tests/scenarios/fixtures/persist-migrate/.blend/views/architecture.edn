@@ -1,2 +1,0 @@
-{:nodes {:app {:name "App" :type "service"} :store {:name "Store" :type "store"}}
- :edges {[:app :store] {:direction :-> :name "reads"}}}

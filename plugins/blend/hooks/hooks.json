@@ -10,10 +10,6 @@
           },
           {
             "type": "command",
-            "command": "sh \"${CLAUDE_PLUGIN_ROOT}/hooks/install-templates.sh\""
-          },
-          {
-            "type": "command",
             "command": "sh \"${CLAUDE_PLUGIN_ROOT}/hooks/install-grok-rules.sh\""
           }
         ]
