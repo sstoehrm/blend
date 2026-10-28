@@ -10,24 +10,11 @@ in one line and run it only when the user says yes or names it.
 
 | Request | Offer |
 | --- | --- |
-| An idea, a feature to think through, "let's talk about …" | blend:brainstorming — collect it into features.md and the graphs |
-| "Build it", spec changes ready to implement | blend:build — implements what changed in `.blend/` since the last build, in one full-auto run |
-| "Update the graphs", work done outside blend | blend:persist |
 | A new repo, "what is this project missing", CI security or license setup | blend:project-setup — checklist report, then adds what you pick |
 
-A no holds for that request. Blend skills that name each other load
-each other without asking. Codex: read
+A no holds for that request. Codex: read
 [references/codex-tools.md](references/codex-tools.md) first; Grok:
 [references/grok-tools.md](references/grok-tools.md).
-
-The skills (not project-setup) need simpleviz; check right before the first use, and if one is
-missing give the fix and wait:
-
-| Dependency | Check | Fix |
-| --- | --- | --- |
-| simpleviz skill | in the skill list | `/plugin install simpleviz@simpleviz` ([simpleviz](https://github.com/sstoehrm/simpleviz)) |
-| simpleviz launcher | `simpleviz --version` ≥ v0.34.0 | `curl -fsSL https://raw.githubusercontent.com/sstoehrm/simpleviz/main/install.sh \| bash`; older: `simpleviz update` |
-| babashka | `command -v bb` | https://github.com/babashka/babashka#installation |
 
 ## Style
 
@@ -58,11 +45,10 @@ missing give the fix and wait:
 
 ## Review
 
-One read-only reviewer (a subagent if the host has one, strong tier —
-see blend:build) gets the
-requirements, the exact scope (a commit range; uncommitted work: staged,
-unstaged and relevant untracked changes) and blend's
-`skills/build/reviewer-prompt.md`. Receiving review: check each finding
+One read-only reviewer (a subagent on a strong model if the host has
+one) gets the requirements, the exact scope (a commit range; uncommitted
+work: staged, unstaged and relevant untracked changes) and blend's
+`skills/use-blend/reviewer-prompt.md`. Receiving review: check each finding
 against the code; fix what holds, push back with evidence on what
 doesn't. Re-run affected tests after fixing.
 

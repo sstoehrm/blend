@@ -1,4 +1,0 @@
-{:nodes {:app-main {:name "app.main" :type "changed" :kind "app" :change "imports export" :pair "../views/modules.edn#app-main"}
-         :app-export {:name "app.export" :type "new" :kind "app" :change "CSV writer"}
-         :app-util {:name "app.util" :type "context" :kind "app" :pair "../views/modules.edn#app-util"}}
- :edges {[:app-main :app-export] {:direction :-> :type "new"} [:app-export :app-util] {:direction :-> :type "new"}}}
